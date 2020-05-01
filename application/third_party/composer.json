@@ -1,0 +1,18 @@
+{
+    "name": "gogreen/libs",
+    "authors": [
+        {
+            "name": "S K",
+            "email": "sk@g.co"
+        }
+    ],
+    "require": {
+        "telesign/telesignenterprise": "^2.1"
+    },
+    "repositories": {
+        "telesign/telesignenterprise": {
+            "type": "vcs",
+            "url": "ssh://git@github.com/TeleSign/php_telesign_enterprise"
+        }
+    }
+}
