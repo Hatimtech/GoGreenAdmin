@@ -14,6 +14,15 @@
 {
  text-decoration: underline;
 }
+.edit{
+  display: none;
+}
+.noedit{
+  display: block;
+}
+.fa-pencil{
+  cursor: pointer;
+}
 </style>
 <div class="right_col" id="cool" role="main">
   <div class="row">
@@ -27,7 +36,7 @@
 
             </div>
             <div class="col-md-3">
-              
+
              <?php echo $this->session->flashdata('stop_succs');?>
              <?php echo $this->session->flashdata('user_active');?>
             </div>
@@ -35,7 +44,7 @@
               <div class="title_left">
                 <a href="<?php echo base_url()?>user/excel_export" class="btn btn-info">Export Data</a>
               </div>
-            </div>  
+            </div>
             <div class="col-md-3">
                <select  class="form-control" id="filter_id" onchange="location = this.value;">
                   <option value="<?php echo base_url()?>user">All Users</option>
@@ -43,15 +52,15 @@
                  <option value="<?php echo base_url()?>user/filter_function?flag=3">Inactive Users</option>
                  <option value="<?php echo base_url()?>user/filter_function?flag=4">Users With No Car</option>
                </select>
-            </div>  
-            <div class="col-md-5"></div>  
+            </div>
+            <div class="col-md-5"></div>
 
           </div>
-         
+
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
-          
+
           <table id="datatable" class="table table-striped table-bordered">
             <thead>
               <tr>
@@ -86,7 +95,7 @@
 
                    // $expiry_date = $users[$key]['expiry_date'];
                     $newsate = date('d-M-y',strtotime($users[$key]['created_at']));
-                   
+
 
                     if($package_id)
                     {
@@ -96,7 +105,7 @@
                          //to stop package
                         $href_to_stop = base_url()."user/stop_package?id=".$id;
                         $stop_button = "";
-                      
+
                     }
                     else
                     {
@@ -120,7 +129,7 @@
                     <tr>
                       <td>".$newsate."</td>
                      <td><a  class='for_hover' href = '".base_url()."user/get_user_car_details?id=".$users[$key]['id']."'>".$users[$key]['name']."</a></td></a>
-                      <td>".$phone_number."</td>
+                      <td><span class='noedit actual'>".$phone_number."</span> <input type='text' data-id='".$users[$key]['id']."' value='".$phone_number."' placeholder='Phone Number' required class='edit edited'><button class='btn btn-success edit doneEdit' type='button'><i class='fa fa-check cancelEdit'></i></button><button class='btn btn-warning edit cancelEdit' type='button'><i class='fa fa-times'></i></button> <i class='fa fa-pencil text-warning noedit editPhone'></i></td>
                       <td>".$users[$key]['email']."</td>
                       <td>".$users[$key]['city']."</td>
                       <td>".$users[$key]['locality']."</td>
@@ -130,7 +139,7 @@
                       <td>".$users[$key]['active_cars']."</td>";
                       if($users[$key]['user_status']==1)
                       {
-                        
+
                         echo"<td><a  ".$disabled." href='".$href."' class='btn btn-warning to_inactive'>Inactive</td>";
                       }
                       else
@@ -150,8 +159,8 @@
                     </tr>";
                   }
               ?>
-             
-  
+
+
 
             </tbody>
           </table>
@@ -165,12 +174,12 @@
 
 
   <div class="row">
-   
-    
+
+
 
   </div>
 </div>
-    
+
 
 <?php
   // echo base_url(uri_string());
@@ -179,7 +188,7 @@
 <script>
   $( document ).ready(function() {
   document.getElementById("cool").style.minHeight = "697px";
-var url =   window.location.href; 
+var url =   window.location.href;
 // console.log(url);
 $('#filter_id').val(url);
 
@@ -192,8 +201,8 @@ $('#filter_id').val(url);
   $(document).ready(function(){
     $("#datatable").dataTable().fnDestroy()
     $('#datatable').dataTable({
-     
-            
+
+
             dom: 'lBfrtip',
             buttons: [
                       {
@@ -217,9 +226,9 @@ $('#filter_id').val(url);
       "sSearch": "Search:"
     },
     columnDefs : [
-                { 
-                    'searchable'    : true, 
-                    'targets'       : [1,2,3] 
+                {
+                    'searchable'    : true,
+                    'targets'       : [1,2,3]
                 },
             ],
             "bStateSave": true,
@@ -267,11 +276,46 @@ $('#filter_id').val(url);
     });
         $(document).on('click', '.for_pop_up_renew', function () {
         return confirm('Are you sure you want to renew services?');
-    });  
+    });
         $(document).on('click', '.to_inactive', function () {
         return confirm('Are you sure you want to inactivate the user?');
     });
         $(document).on('click', '.to_activate', function () {
         return confirm('Are you sure you want to activate the user?');
+    });
+    $(document).ready(function(){
+      $("body").on("click", ".editPhone", function(){
+        $(this).parent("td").find(".noedit").hide();
+        $(this).parent("td").find(".edit").show();
+      });
+      $("body").on("click", ".cancelEdit", function(){
+        $(this).parent("td").find(".edit").hide();
+        $(this).parent("td").find(".noedit").show();
+      });
+      $("body").on("click", ".doneEdit", function(){
+        var v = $(this).parent("td").find(".edited").val();
+        var i = $(this).parent("td").find(".edited").attr("data-id");
+        var dis = $(this);
+        if(v == ''){
+          alert("Enter Phone Number");
+        }else {
+
+          $.ajax({
+            method: "POST",
+            url: "<?php echo base_url()?>user/update",
+            data: {id: i, phone: v}
+          }).done(function(data){
+            console.log(data);
+            if(data.trim() == '1'){
+              dis.parent("td").find(".actual").text(v);
+              dis.parent("td").find(".edit").hide();
+              dis.parent("td").find(".noedit").show();
+            }
+          }).fail(function(data){
+            alert(data);
+          });
+        }
+
+      });
     });
     </script>

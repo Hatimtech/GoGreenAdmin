@@ -1,0 +1,8 @@
+[10:02 AM, 20/5/2020] Azhar: http://13.126.37.218/gogreen/index.php/admin
+[10:02 AM, 20/5/2020] Azhar: Username:- team@ripenapps.com
+Password:- greenteam
+
+[10:49 AM, 20/5/2020] Azhar: http://13.126.37.218/phpmyadmin/
+[10:49 AM, 20/5/2020] Azhar: root
+
+gogreen@987@#$

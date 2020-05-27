@@ -21,17 +21,17 @@
 `users`.device_type as device_type,
 `users`.is_phone_verified as is_phone_verified,
 `users`.is_payment as is_payment,
-count(car_detail.user_id) as no_of_cars, 
+count(car_detail.user_id) as no_of_cars,
 count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street`,bp.expiry_date,bp.id as package_id
 FROM `users`
-LEFT JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id` 
-LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id` 
+LEFT JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id`
+LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id`
 LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
  LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
  LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
- 
 
-GROUP BY  `users`.`id` 
+
+GROUP BY  `users`.`id`
 ,  `bp`.`id`
 
 ) user_dashboard
@@ -51,11 +51,11 @@ GROUP BY email order by  created_at desc");
       `users`.device_type as device_type,
       `users`.is_phone_verified as is_phone_verified,
       `users`.is_payment as is_payment,
-      count(car_detail.user_id) as no_of_cars, 
+      count(car_detail.user_id) as no_of_cars,
       count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street`,`bp`.`expiry_date`,`bp`.`id` as `package_id`
       FROM `users`
-      LEFT JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id` 
-      LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id` 
+      LEFT JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id`
+      LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id`
       LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
       LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
       LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
@@ -63,7 +63,7 @@ GROUP BY email order by  created_at desc");
       AND users.is_payment=2
       AND bp.expiry_date > CURDATE()
 
-      GROUP BY  `users`.`id` 
+      GROUP BY  `users`.`id`
       ,  `bp`.`id`
 
       ) user_dashboard
@@ -78,12 +78,12 @@ GROUP BY email order by  created_at desc");
       `users`.device_type as device_type,
       `users`.is_phone_verified as is_phone_verified,
       `users`.is_payment as is_payment,
-      count(car_detail.user_id) as no_of_cars, 
+      count(car_detail.user_id) as no_of_cars,
       count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street`,`bp`.`expiry_date`,`bp`.`id` as `package_id`
       FROM `users`
 
-      JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id` 
-      LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id` 
+      JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id`
+      LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id`
       LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
       LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
       LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
@@ -93,7 +93,7 @@ GROUP BY email order by  created_at desc");
        AND
        bp.status=1
 
-      GROUP BY  `users`.`id` 
+      GROUP BY  `users`.`id`
       ,  `bp`.`id`
 
       ) user_dashboard
@@ -108,19 +108,19 @@ GROUP BY email order by  created_at desc");
       `users`.device_type as device_type,
       `users`.is_phone_verified as is_phone_verified,
       `users`.is_payment as is_payment,
-      count(car_detail.user_id) as no_of_cars, 
-      count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street` 
+      count(car_detail.user_id) as no_of_cars,
+      count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street`
       FROM `users`
 
-      LEFT JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id` 
-      LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id` 
+      LEFT JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id`
+      LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id`
       LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
       LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
       LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
       Where users.status=1
       AND car_detail.user_id IS NULL
 
-      GROUP BY  `users`.`id` 
+      GROUP BY  `users`.`id`
       ,  `bp`.`id`
 
       ) user_dashboard
@@ -167,7 +167,7 @@ GROUP BY email order by  created_at desc");
       return $query->num_rows();
     }
 
-   
+
 
     public function get_car_details($id)
     {
@@ -213,8 +213,8 @@ GROUP BY email order by  created_at desc");
       $query = $this->db->get('users as u');
       return $query->row_array();
 
-    } 
-	
+    }
+
     public function get_data($where = array(),$column=array(),$tableName = null)
 	{
 	  $this->db->select($column);
@@ -260,7 +260,7 @@ GROUP BY email order by  created_at desc");
     public function get_orders_ledger($user_id)
     {
 
-      
+
       $this->db->select('up.*,bp.purchase_date');
       $this->db->where('up.user_id',$user_id);
       $this->db->join('booked_packages as bp','bp.payment_key=up.id','left');

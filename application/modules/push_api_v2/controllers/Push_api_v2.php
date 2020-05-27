@@ -13,7 +13,7 @@ class Push_api_v2 extends MX_Controller
         $this->load->model('push_api_model');
     }
 
-    public function get_7_days_ahead_renewals()
+ /*    public function get_7_days_ahead_renewals()
     {
         
         
@@ -102,11 +102,11 @@ class Push_api_v2 extends MX_Controller
         }
        // echo $this->db->last_query(); die;
     }
-
+ */
 
     // send push to those who are not paid more than 5 years in COD cash
 
-    public function get_5_days_fraudster()
+  /*   public function get_5_days_fraudster()
     {
         
         $all_data = $this->push_api_model->get_fraudster();
@@ -150,9 +150,9 @@ class Push_api_v2 extends MX_Controller
 
     }
     // get  expired packages with auto renewal
-
+ */
         //crone function
-    public function get_data_for_auto_renewal()
+/*     public function get_data_for_auto_renewal()
     {
 
         // get package who is expired today awith auto renewl mode on
@@ -385,7 +385,7 @@ class Push_api_v2 extends MX_Controller
         }
 
     }
-
+ */
     public function assiagn_team($user_id,$street_id,$insert_id)
     {
         $user_id = $user_id;
@@ -440,7 +440,7 @@ class Push_api_v2 extends MX_Controller
             $config['mailtype'] = 'html'; // or html
             $config['validation'] = TRUE; // bool whether to validate email or not      
             $this->load->library('email', $config);
-            $this->email->from('info@gogreen-uae.com','info@gogreen-uae.com');
+            $this->email->from('noreply@gogreen-uae.com','info@gogreen-uae.com');
             $this->email->to($email);
             $this->email->subject('Go Green-Order Confirmation Mail');
             // $message .="<a href = ".base_url()."admin/confirm_password?id=$id>Link</a>";

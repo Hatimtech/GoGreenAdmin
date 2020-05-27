@@ -19,15 +19,16 @@
                   <li><a href="<?php echo base_url('cleaner')?>"><i class="fa fa-paint-brush"></i> Cleaners <span class=""></span></a></li>
                   <li><a  href="<?php echo base_url('location')?>"><i class="fa fa-map"></i> Locations <span class=""></span></a></li>
                     <li><a href="<?php echo base_url('packages')?>"><i class="fa fa-server"></i> Packages <span class=""></span></a></li>
-                       
-                          <li><a href="<?php echo base_url('teams')?>"><i class="fa fa fa-star-half-o"></i> Teams <span class=""></span></a></li>   
+
+                          <li><a href="<?php echo base_url('teams')?>"><i class="fa fa fa-star-half-o"></i> Teams <span class=""></span></a></li>
                             <li><a href="<?php echo base_url('admin/change_password')?>"><i class="fa fa fa-exchange"></i> Change Password <span class=""></span></a></li>
+                            <li><a href="<?php echo base_url('admin/push_notification')?>"><i class="fa fa fa-bell"></i> Push Notifications <span class=""></span></a></li>
                               <li><a href="<?php echo base_url('admin/logout')?>"><i class="fa fa fa-rocket"></i>Logout<span class=""></span></a></li>
                 </ul>
               </div>
-              
+
 
             </div>
-            
+
             </div>
         </div>

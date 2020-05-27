@@ -60,7 +60,7 @@ class Manual extends MX_Controller {
 			}
 			else
 			{
-				alert('Error In Insertion');	
+				alert('Error In Insertion');
 			}
 
 		}
@@ -68,7 +68,7 @@ class Manual extends MX_Controller {
 	 public function send_mail($email,$password)
     {
 
-       
+
             $this->load->library('email');
             $config['protocol']    = 'smtp';
             $config['smtp_host']    = 'smtp.gmail.com';
@@ -79,7 +79,7 @@ class Manual extends MX_Controller {
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html
-            $config['validation'] = TRUE; // bool whether to validate email or not      
+            $config['validation'] = TRUE; // bool whether to validate email or not
             $this->load->library('email', $config);
             $this->email->from('vicky@ripenapps.com', 'vicky');
             $this->email->to($email);
@@ -102,7 +102,7 @@ class Manual extends MX_Controller {
     	{
     		$all_cars = $this->manual_model->get_all_cars($user_id);
 
-    		
+
    //  		$all_cars = $this->manual_model->get_inactive_cars($user_id);
    //  		$data['cars'] = $all_cars;
 			$all_brands = $this->manual_model->get_all_brands();
@@ -209,7 +209,7 @@ class Manual extends MX_Controller {
 
 	public function check_phone_existence()
 	{
-		
+
 		$phone_number = $this->input->post('phone_number');
 
 		$row = $this->manual_model->is_phone_exist($phone_number);
@@ -225,7 +225,7 @@ class Manual extends MX_Controller {
 	}
 	public function check_email_existence()
 	{
-		
+
 		$email = $this->input->post('email');
 
 		$row = $this->manual_model->is_email_exist($email);
@@ -320,11 +320,11 @@ class Manual extends MX_Controller {
 		//echo $car_id; die;
 		$locality_id = $this->input->post('locality');
 		$services = $this->input->post('services');
-		$package_type = $this->input->post('type');		
+		$package_type = $this->input->post('type');
 		$frequency = $this->input->post('frequency');
 		$no_of_months = $this->input->post('no_of_months');
 
-		
+
 		if(empty($frequency))
 		{
 			$frequency=0;
@@ -392,7 +392,7 @@ class Manual extends MX_Controller {
 					}
 
 				}
-				
+
 					$price = ($price * $no_of_months);
 					$discount = ($price * $monthly_discount)/100;
 					$price = $price - $discount;
@@ -401,20 +401,20 @@ class Manual extends MX_Controller {
 					// echo"<br>";
 					// echo $price; die;
 			}
-			else 			//package type is once here  
+			else 			//package type is once here
 			{
 
 				if($services==2) // exteriror services only
 				{
 					$price = $package_row['price_exterior'];
 				}
-				else 		// 3 i.e enterior + exterior Service 
+				else 		// 3 i.e enterior + exterior Service
 				{
 					$price = $package_row['price_interior']+$package_row['price_exterior'];
 
 				}
 			}
-				
+
 		}
 
 
@@ -444,7 +444,7 @@ class Manual extends MX_Controller {
             $this->manual_model->update_order_id($insert_id, $order_id);
 
 
-            // foreach loop to insert details in booked_package tabel start from here 
+            // foreach loop to insert details in booked_package tabel start from here
             $this->assiagn_team($user_id,$street_id,$insert_id);
             $car_id = $car_id;
             $package_type = $package_type;
@@ -511,7 +511,7 @@ class Manual extends MX_Controller {
 
             }
         }
-		
+
 	}
 	public function assiagn_team($user_id,$street_id,$insert_id)
     {
@@ -545,14 +545,14 @@ class Manual extends MX_Controller {
 
      public function send_mail_order_detial($insert_id,$paid_amount)
     {
-    	
+
     	$row = $this->manual_model->get_mail_address_and_paid_amount($insert_id);
     	$email = $row['email'];
     	$amount = $row['net_paid'];
        $order_id = 100000 + $insert_id;
        $amount = $paid_amount;
        $data['order_id'] = $order_id;
-       
+
        $message = $this->load->view('email_template',$data,true);
             $this->load->library('email');
             $config['protocol']    = 'smtp';
@@ -564,12 +564,12 @@ class Manual extends MX_Controller {
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html
-            $config['validation'] = TRUE; // bool whether to validate email or not      
+            $config['validation'] = TRUE; // bool whether to validate email or not
             $this->load->library('email', $config);
-            $this->email->from('info@gogreen-uae.com ', 'GO GREEN');
+            $this->email->from('noreply@gogreen-uae.com', 'GO GREEN');
             $this->email->to($email);
             $this->email->subject('Go Green');
-            $this->email->message($message);  
+            $this->email->message($message);
             // $this->email->send();
     }
 

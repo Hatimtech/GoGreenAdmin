@@ -570,7 +570,7 @@ class Add_customer extends MX_Controller {
             $config['mailtype'] = 'html'; // or html
             $config['validation'] = TRUE; // bool whether to validate email or not      
             $this->load->library('email', $config);
-            $this->email->from('info@gogreen-uae.com ', 'GO GREEN');
+            $this->email->from('noreply@gogreen-uae.com', 'GO GREEN');
             $this->email->to($email);
             $this->email->subject('Go Green');
             $this->email->message($message);  

@@ -59,14 +59,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | the query builder class.
 */
 
+$whitelist = array(
+    '127.0.0.1',
+    '::1'
+);
+
+if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+	$user = 'arosh';
+	$pass = 'localpass';
+}else{
+	$user = 'root';
+	$pass = 'gogreen@987@#$';
+}
+
+
 $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => 'gogreen@987@#$',
+	'username' => $user,
+	'password' => $pass,
 	'database' => 'gogreen',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',

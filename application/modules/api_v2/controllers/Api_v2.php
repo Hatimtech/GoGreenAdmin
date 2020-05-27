@@ -19,7 +19,7 @@ class Api_v2 extends MY_Controller
        	if(!empty($postDataArray->method))
        	{
             $method = $postDataArray->method;
-            //echo $method; die; 
+            //echo $method; die;
             if(!empty($postDataArray->app_key))
             {
                 //Verify AppKey
@@ -29,7 +29,7 @@ class Api_v2 extends MY_Controller
                     $Code = ResponseConstant::UNSUCESS;
                     $rescode = ResponseConstant::HEADER_UNAUTHORIZED;
                     $Message = ResponseConstant::message('HEADER_UNAUTHORIZED');
-                    $this->sendResponse($Code,$rescode, $Message); // return data                                 
+                    $this->sendResponse($Code,$rescode, $Message); // return data
                 }
             }
             else
@@ -37,18 +37,18 @@ class Api_v2 extends MY_Controller
                 $Code = ResponseConstant::UNSUCCESS;
                 $rescode = ResponseConstant::APPKEY_NOT_FOUND;
                 $Message = ResponseConstant::message('APPKEY_NOT_FOUND');
-                $this->sendResponse($Code, $Message); // return data    
+                $this->sendResponse($Code, $Message); // return data
             }
         }
         else
-        { 
+        {
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::METHOD_NOT_FOUND;
             $Message = ResponseConstant::message('METHOD_NOT_FOUND');
-            $this->sendResponse($Code, $Message); // return data      
+            $this->sendResponse($Code, $Message); // return data
         }
         switch($method)
-        { 
+        {
             case 'login':
             $this->login($postDataArray);
             break;
@@ -92,7 +92,11 @@ class Api_v2 extends MY_Controller
             case 'check_app_compatiblity':
             $this->check_app_compatiblity($postDataArray);
             break;
-            
+
+            case 'get_car_details':
+            $this->get_car_details($postDataArray);
+            break;
+
         }
     }
 
@@ -106,7 +110,7 @@ class Api_v2 extends MY_Controller
 		{
 			$Code = ResponseConstant::UNSUCCESS;
 			$rescode = 0; // Common Parameter is missing
-			$Message = ResponseConstant::message('REQUIRED_PARAMETER');			
+			$Message = ResponseConstant::message('REQUIRED_PARAMETER');
 			$this->sendResponse($Code,$rescode, $Message);
 		}
 		else
@@ -167,7 +171,7 @@ class Api_v2 extends MY_Controller
 					if($bool)
 					{	//echo"hello";
 						//print_r($bool); die;
-						$key =  $bool['is_phone_verified']; 
+						$key =  $bool['is_phone_verified'];
 						$user_id = $bool['id'];
 						$is_phone_varified = $key;
 						$data['user_id'] = $bool;
@@ -182,7 +186,7 @@ class Api_v2 extends MY_Controller
 						$Code = ResponseConstant::SUCCESS;
 						$rescode = ResponseConstant::SUCCESS;// Email is already exist
 						$Message = "SOCIAL_ID_UPDATED";
-						$this->sendResponse($Code,$rescode, $Message,array($response)); // return data   
+						$this->sendResponse($Code,$rescode, $Message,array($response)); // return data
 					}
 					else
 					{
@@ -190,7 +194,7 @@ class Api_v2 extends MY_Controller
 						$rescode = ResponseConstant::UNSUCCESS;// Email is already exist
 						$Message = "ERROR IN UPDATING SOCIAL KEY";
 						$this->sendResponse($Code,$rescode, $Message);
-					}     
+					}
 				}
 				else
 				{
@@ -200,7 +204,7 @@ class Api_v2 extends MY_Controller
 					$this->sendResponse($Code,$rescode, $Message);
 				}
 			}
-			
+
 
 			//  else
 			// {	//echo $login_type; die;
@@ -209,7 +213,7 @@ class Api_v2 extends MY_Controller
 				{
 
 					//echo $login_type; die;
-					$email_existed = $this->api_model->check_email_existence($email);	
+					$email_existed = $this->api_model->check_email_existence($email);
 					if(empty($social_id))
 					{
 						$Code = ResponseConstant::UNSUCCESS;
@@ -229,7 +233,7 @@ class Api_v2 extends MY_Controller
 						{
 							$is_phone_verified = '0';
 						}
-						
+
 
 						$bool = $this->api_model->update_social_id_fb($email,$social_id,$phone_number,$is_phone_verified);
 						if($bool)
@@ -246,7 +250,7 @@ class Api_v2 extends MY_Controller
 							$Code = ResponseConstant::SUCCESS;
  							$rescode = ResponseConstant::SUCCESS;// Email is already exist
 							$Message = "SOCIAL_ID_UPDATED";
-							$this->sendResponse($Code,$rescode, $Message,array($response)); // return data   
+							$this->sendResponse($Code,$rescode, $Message,array($response)); // return data
 						}
 						else
 						{
@@ -272,7 +276,7 @@ class Api_v2 extends MY_Controller
 						'login_type'=>$login_type,
 						'created_at'=>$date
 						);
-				
+
 						$result = $this->api_model->insert_data($data);
 						if($result)
 						{
@@ -311,7 +315,7 @@ class Api_v2 extends MY_Controller
 			elseif($login_type =='GL')
 			{
 				//echo $login_type; die;
-				$email_existed = $this->api_model->check_email_existence($email);	
+				$email_existed = $this->api_model->check_email_existence($email);
 				if(empty($social_id))
 				{
 					$Code = ResponseConstant::UNSUCCESS;
@@ -347,7 +351,7 @@ class Api_v2 extends MY_Controller
 						$Code = ResponseConstant::SUCCESS;
 						$rescode = ResponseConstant::SUCCESS;// Email is already exist
 						$Message = "SOCIAL_ID_UPDATED";
-						$this->sendResponse($Code,$rescode, $Message,array($response)); // return data   
+						$this->sendResponse($Code,$rescode, $Message,array($response)); // return data
 					}
 					else
 					{
@@ -355,7 +359,7 @@ class Api_v2 extends MY_Controller
 						$rescode = ResponseConstant::UNSUCCESS;// Email is already exist
 						$Message = "ERROR IN UPDATING SOCIAL KEY";
 						$this->sendResponse($Code,$rescode, $Message);
-					}     
+					}
 					//die;
 				}
 				else
@@ -371,7 +375,7 @@ class Api_v2 extends MY_Controller
 					'login_type'=>$login_type,
 					'created_at'=>$date
 					);
-			
+
 					$result = $this->api_model->insert_data($data);
 					//echo $result; die;
 					if($result)
@@ -413,7 +417,7 @@ class Api_v2 extends MY_Controller
 					$Code = ResponseConstant::UNSUCCESS;
 					$rescode = ResponseConstant::UNSUCCESS;// Email is already exist
 					$Message = ResponseConstant::message('EMAIL_ALREADYEXIST');
-					$this->sendResponse($Code, $rescode,$Message); // return data         
+					$this->sendResponse($Code, $rescode,$Message); // return data
 					//die;
 				}
 				else
@@ -434,7 +438,7 @@ class Api_v2 extends MY_Controller
 					$result = $this->api_model->insert_data($data);
 					if($result)
 					{
-						$data['user_id'] = $result; 
+						$data['user_id'] = $result;
 						$response = array(
 
 							'id' => strval($result),
@@ -450,7 +454,7 @@ class Api_v2 extends MY_Controller
 							// $response['email'] = $email;
 							// $response['phone_number'] = $phone_number;
 							// $response['is_phone_verified'] = '0';
-						
+
 
 						$Code = ResponseConstant::SUCCESS;
 						$rescode = ResponseConstant::SUCCESS;
@@ -469,6 +473,73 @@ class Api_v2 extends MY_Controller
 					}
 				}
 			}
+      elseif($login_type == 'PH')
+      {
+          //echo"dfdf";die;
+
+        $email_existed = $this->api_model->check_phone_existence($phone_number);
+        if($email_existed)
+        {
+          $Code = ResponseConstant::UNSUCCESS;
+          $rescode = ResponseConstant::UNSUCCESS;// Email is already exist
+          $Message = ResponseConstant::message('MOBILE_ALREADYEXIST');
+          $this->sendResponse($Code, $rescode,$Message); // return data
+          //die;
+        }
+        else
+        {
+        // inserting post data to databse
+          $data = array(
+            'name'=>$name,
+            'email'=>$email,
+            'password'=>md5($password),
+            'phone_number'=>$phone_number,
+            'device_type'=>$device_type,
+            'device_token' =>$device_token,
+            //if(!empty($social_id)){'social_id' =>$social_id}
+            'login_type'=>$login_type,
+            'created_at'=>$date
+          );
+          //$this->load->model('user_model');
+          $result = $this->api_model->insert_data($data);
+          if($result)
+          {
+            $data['user_id'] = $result;
+            $response = array(
+
+              'id' => strval($result),
+              'name' => $name,
+              'email' => $email,
+              'phone_number' => $phone_number,
+              'is_phone_verified' => '0',
+            );
+            send_sms($phone_number, "".$phone_number." Registerd Succesfully With Go Green Team.");
+
+              // $response['id'] = strval($result);
+              // $response['name'] = $name;
+              // $response['email'] = $email;
+              // $response['phone_number'] = $phone_number;
+              // $response['is_phone_verified'] = '0';
+
+
+            $Code = ResponseConstant::SUCCESS;
+            $rescode = ResponseConstant::SUCCESS;
+            $Message = ResponseConstant::message('DA_ADD_SUCCESSFULLY');
+            $this->sendResponse($Code,$rescode,$Message,array($response));
+            //echo"succesfullt inserted";
+          }
+          else
+          {
+
+            $Code = ResponseConstant::UNSUCCESS;
+            $rescode = ResponseConstant::UNSUCCESS;
+            $Message = ResponseConstant::message('DATA_NOT_INSERTED');
+            $this->sendResponse($Code, $Message);
+            //echo"error in insertions";
+          }
+        }
+      }
+
 		}
 	}
 
@@ -486,7 +557,7 @@ class Api_v2 extends MY_Controller
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html
-            $config['validation'] = TRUE; // bool whether to validate email or not      
+            $config['validation'] = TRUE; // bool whether to validate email or not
             $this->load->library('email', $config);
             $this->email->from('vicky@ripenapps.com', 'Go Green');
             $this->email->to('info@gogreen-uae.com');
@@ -494,7 +565,7 @@ class Api_v2 extends MY_Controller
             $message = "".$email." Registerd Succesfully With Go Green Team.
             ";
             // $message .="<a href = ".base_url()."admin/confirm_password?id=$id>Link</a>";
-            $this->email->message($message);  
+            $this->email->message($message);
             $this->email->send();
 		}
 
@@ -513,7 +584,7 @@ class Api_v2 extends MY_Controller
 		$social_id = (isset($postDataArray->social_id) && !empty($postDataArray->social_id)) ? $postDataArray->social_id: '';
 		$is_phone_varified=false;
 			// when login with google email,name,phone number ,login type and device type is mandadotry parameter
-			
+
 		if($postDataArray->login_type == 'GL')
 		{
 
@@ -522,7 +593,7 @@ class Api_v2 extends MY_Controller
 			{
 				$Code = ResponseConstant::UNSUCCESS;
 				$rescode = 2;  // Social ID Not Found
-				$Message = ResponseConstant::message('REQUIRED_PARAMETER'); 
+				$Message = ResponseConstant::message('REQUIRED_PARAMETER');
 				//$Message = 'Social Id Not Found';
 				$this->sendResponse($Code,$rescode, $Message);
 			}
@@ -559,7 +630,7 @@ class Api_v2 extends MY_Controller
 					//$object = new stdClass();
 					$Code = ResponseConstant::UNSUCCESS;
 					$rescode = 2;  // Social ID Not Found
-					$Message = ResponseConstant::message('REQUIRED_PARAMETER'); 
+					$Message = ResponseConstant::message('REQUIRED_PARAMETER');
 					//$Message = 'Social Id Not Found';
 					$this->sendResponse($Code,$rescode, $Message);
 				}
@@ -584,7 +655,42 @@ class Api_v2 extends MY_Controller
 						$this->sendResponse($Code,$rescode,$Message);
 					}
 				}
-				
+
+		}
+    elseif($postDataArray->login_type == 'PH')
+		{
+			//getting parameter when user login with facebook
+				if(empty($phone_number))
+				{
+					//$object = new stdClass();
+					$Code = ResponseConstant::UNSUCCESS;
+					$rescode = 2;  // Social ID Not Found
+					$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+					//$Message = 'Social Id Not Found';
+					$this->sendResponse($Code,$rescode, $Message);
+				}
+				else
+				{
+
+					$data = $this->api_model->check_phone_existence($phone_number);
+					if($data)
+					{
+						$Code = ResponseConstant::SUCCESS;
+						$rescode = 1;
+						//$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+						$Message = 'Login Successfull With Phone Number';
+						$this->sendResponse($Code,$rescode,$Message,array($data));
+					}
+					else
+					{
+						$Code = ResponseConstant::UNSUCCESS;
+						$rescode = ResponseConstant::SOCIAL_ID_NOT_BELONG_TO_DATABASE;
+						//$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+						$Message = 'Phone Number Not Belong To Database';
+						$this->sendResponse($Code,$rescode,$Message);
+					}
+				}
+
 		}
 		else
 		{
@@ -605,16 +711,16 @@ class Api_v2 extends MY_Controller
 			}
 			else
 			{
-				
+
 					$data = $this->api_model->login($email,$password);
-					
+
 				if($data)
-				{	
+				{
 					//print_r($data); die;
 					$Code = ResponseConstant::SUCCESS;
 					$rescode =1;
 					//$Message = ResponseConstant::message('REQUIRED_PARAMETER');
-					$Message = 'Login Successfull'; 
+					$Message = 'Login Successfull';
 					$this->sendResponse($Code,$rescode,$Message,array($data));
 				}
 				else
@@ -626,13 +732,13 @@ class Api_v2 extends MY_Controller
 
 				}
 			}
-		}	
-		
+		}
+
 	}
 
 	public function insert_car_detail($postDataArray)
 	{
-		
+
 		$user_id = $postDataArray->user_id;
 		$brand = $postDataArray->brand;
 		$model = $postDataArray->model;
@@ -663,7 +769,7 @@ class Api_v2 extends MY_Controller
 				'reg_no' =>$reg_no,
 				'parking_number' =>$parking_number,
 				'apartment_number' =>$apartment_number,
-	 		
+
 			);
 
 			$inserted_data = $this->api_model->insert_car_details($data);
@@ -680,7 +786,7 @@ class Api_v2 extends MY_Controller
 				$Message = ResponseConstant::message('DATA_NOT_INSERTED');
 				$this->sendResponse($Code, $Message);
 			}
-		}		
+		}
 	}
 
 	public function update_device_token($postDataArray)
@@ -774,7 +880,7 @@ class Api_v2 extends MY_Controller
 	}
 	// public function phone_varification($postDataArray)
 	// {
-	
+
 	// 	$phone_number = (isset($postDataArray->phone_number) && !empty($postDataArray->phone_number)) ? $postDataArray->phone_number: '';
 	// 	//$phone_number = 9034195001;
 	// 	if(empty($phone_number))
@@ -794,7 +900,7 @@ class Api_v2 extends MY_Controller
 	// 			$email = $data['email'];
 	// 			$id = $data['id'];
 	// 			$phone_number = $data['phone_number'];
-	// 			$otp =  rand(1052,9986);			
+	// 			$otp =  rand(1052,9986);
 	// 			// $this->api_model->send_otp_to_phone($phone_number,$otp);
 	// 			$account_sid = 'ACb91f71e69b710a801bedd6f2e9fea091';
 	// 			$auth_token = '6fd3d4aecff231f1d51c0aaa12b6db5a';
@@ -813,7 +919,7 @@ class Api_v2 extends MY_Controller
 	// 			$response = ResponseConstant::SUCCESS;
 	// 			$Message = "SUCCESFULLY SEND OTP";
 	// 			$factor[0]['id'] = $data['id'];
-	// 			$factor[0]['otp'] = $otp; 
+	// 			$factor[0]['otp'] = $otp;
 	// 			$this->sendResponse($Code,$response,$Message,$factor);
 	// 		}
 	// 		else
@@ -825,7 +931,7 @@ class Api_v2 extends MY_Controller
 	// 		}
 
 	// 	}
-		
+
 	// }
 	// public function update_verification_key($postDataArray)
 	// {
@@ -877,7 +983,7 @@ class Api_v2 extends MY_Controller
 			$this->sendResponse($Code,$response,$Message);
 		}
 		else
-		{	
+		{
 			$row_data = $this->api_model->check_email_to_reset_password($email);
 			//echo $email; die;
 			//print_r($row_data); die;
@@ -906,10 +1012,10 @@ class Api_v2 extends MY_Controller
 
 				$config['mailtype'] = 'html'; // or html
 
-				$config['validation'] = TRUE; // bool whether to validate email or not      
+				$config['validation'] = TRUE; // bool whether to validate email or not
 				$this->load->library('email', $config);
 				$this->email->from('vicky@ripenapps.com');
-				$this->email->to($email); 
+				$this->email->to($email);
 
 
 				$this->email->subject('Password Verification Link');
@@ -922,7 +1028,7 @@ class Api_v2 extends MY_Controller
 				//$message .= '</body></html>';
 				//echo $message;  die;
 				$this->email->message($message);
-                                
+
 
 				if($this->email->send())
 				//if(mail('vinodthalwal87@gmail.com','test','hello','abc@gmail.com'))
@@ -940,18 +1046,18 @@ class Api_v2 extends MY_Controller
 				}
 
 				//echo $this->email->print_debugger();die;
-	
+
 			}
 			else
 			{
-				
+
 					$Code = ResponseConstant::UNSUCCESS;
 					$response = ResponseConstant::UNSUCCESS;
 					$Message = "Email Does Not Belong To Any User";
 					$this->sendResponse($Code,$response,$Message);
 			}
-			
-		}	
+
+		}
 	}
 
 
@@ -981,7 +1087,7 @@ class Api_v2 extends MY_Controller
 			else
 			{
 
-			
+
 				$bool = $this->api_model->update_phone_number($id,$phone_number);
 				if($bool)
 				{
@@ -1013,7 +1119,7 @@ class Api_v2 extends MY_Controller
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::UNSUCCESS;
             $Message = ResponseConstant::message('REQUIRED_PARAMETER');
-            $this->sendResponse($Code,$rescode,$Message); 
+            $this->sendResponse($Code,$rescode,$Message);
         }
         else
         {
@@ -1104,7 +1210,7 @@ class Api_v2 extends MY_Controller
 
     }
 
-    public function phone_varification($request = null) 
+    public function phone_varification($request = null)
     {
     	if($request->user_id)
     	{
@@ -1122,7 +1228,7 @@ class Api_v2 extends MY_Controller
                     $Message = 'Account verification otp sent to your phone number.';
                     $this->sendResponse($Code,$rescode,$Message);
                 }
-                else 
+                else
                 {
                     $Code = ResponseConstant::UNSUCCESS;
                     $rescode = ResponseConstant::UNSUCCESS;
@@ -1139,7 +1245,7 @@ class Api_v2 extends MY_Controller
         die;
     }
 
-    public function update_verification_key($request = null) 
+    public function update_verification_key($request = null)
     {
     	if($request->user_id && $request->otp)
     	{
@@ -1148,11 +1254,11 @@ class Api_v2 extends MY_Controller
             			->where('attempt <=', 5)
             			->order_by('id',"desc")->limit(1)
             			->get('opt_varification')->row();
-            			
+
             if($data)
             {
             	$verified = false;
-            	if($request->otp == $data->otp) 
+            	if($request->otp == $data->otp)
             	{
             		$verified = true;
             		$this->db->where('id', $request->user_id)->update('users', ['is_phone_verified'=> true]);
@@ -1174,7 +1280,7 @@ class Api_v2 extends MY_Controller
             	}
         		die;
             }
-            else 
+            else
             {
             	$Code = ResponseConstant::UNSUCCESS;
                 $rescode = ResponseConstant::UNSUCCESS;
@@ -1189,7 +1295,36 @@ class Api_v2 extends MY_Controller
         $this->sendResponse($Code,$rescode, $Message);
         die;
     }
-	
+
+    public function get_car_details($postDataArray)
+  	{
+      $user_id = $postDataArray->user_id;
+  		//echo "hello";die;
+  		$result = $this->api_model->get_car_details($user_id);
+  		if($result)
+  		{
+        $result2 = array();
+        foreach ($result as $key => $value) {
+          if($value['is_package'] == 1){
+              $value['is_package'] = "No Package";
+            } else {
+              $value['is_package'] = "With Package";
+          }
+          $result2[] = $value;
+        }
+  			$Code = ResponseConstant::SUCCESS;
+  			$rescode=ResponseConstant::SUCCESS;
+  			$Message = 'Successfully Get Cities';
+  			//print_r($result); die;
+  			$this->sendResponse($Code,$rescode,$Message,$result2);
+  		}
+  		else
+  		{
+  			$Code = ResponseConstant::UNSUCCESS;
+  			$rescode=ResponseConstant::UNSUCCESS;
+  			$Message = 'No Cities Found';
+  			$this->sendResponse($Code,$rescode,$Message,$result);
+  		}
+  	}
+
 }  // class api extends ci controller closed here
-
-

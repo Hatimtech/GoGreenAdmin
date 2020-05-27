@@ -1,7 +1,7 @@
 <?php
   Class Cleaner_api_model extends CI_Model
   {
-     
+
     public function validate_login_cleaner($phone_number,$password)
     {
       $this->db->select('cleaners.id,cleaners.phone_number,cleaners.email,cleaners.first_name,cleaners.last_name,city.name as city,locality.name as locality');
@@ -18,6 +18,13 @@
     {
       $this->db->select('id,phone_number');
       $this->db->where('phone_number',$phone_number);
+      $query = $this->db->get('cleaners');
+      return $query->row_array();
+    }
+    public function get_report($user_id)
+    {
+      $this->db->select('report');
+      $this->db->where('id',$user_id);
       $query = $this->db->get('cleaners');
       return $query->row_array();
     }

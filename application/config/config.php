@@ -19,7 +19,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | environments.
 |
 */
-$config['base_url'] = 'http://ec2-13-233-152-148.ap-south-1.compute.amazonaws.com/index.php';
+$whitelist = array(
+    '127.0.0.1',
+    '::1'
+);
+
+if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+$config['base_url'] = 'http://localhost/gogreen/index.php';;
+}else{
+$config['base_url'] = 'http://13.126.37.218/gogreen/index.php';
+}
+
 //$config['base_url_custom'] = 'http://13.126.99.14/gogreen/';
 
 /*

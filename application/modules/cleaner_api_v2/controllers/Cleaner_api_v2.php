@@ -1,11 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-//require(APPPATH.'/libraries/REST_Controller.php');
+
+// $config['upload_path'] = './uploads/';
+// $config['max_size']     = '100';
+// $this->load->library('upload', $config);
 
 class Cleaner_api_v2 extends MY_Controller
 {
 
-	
+
 	function __construct()
     {
         //echo"helllo";die;
@@ -15,12 +18,36 @@ class Cleaner_api_v2 extends MY_Controller
 		//$this->load->model('standard_model');
 		//responseconstant
 		$this->load->model('responseconstant');
+		if(isset($_POST['method']) && $_POST['method'] == 'collection_file'){
+			if(isset($_FILES['collection_file']) && $_FILES['collection_file']['tmp_name'] != ''){
+				//
+				// $this->upload->data('collection_file');
+				if(move_uploaded_file($_FILES['collection_file']['tmp_name'], UPLOADS.$_FILES['collection_file']['name'])){
+					$this->update_collection_file($_FILES['collection_file']['name'], $_POST['user_id']);
+					$Code = ResponseConstant::SUCCESS;
+					$rescode = ResponseConstant::SUCCESS;
+					$Message ='SUCCESS';
+					$this->sendResponse($Code,$rescode,$Message,array(HOME."uploads/".$_FILES['collection_file']['name']));
+				}else{
+					$Code = ResponseConstant::UNSUCCESS;
+					$rescode = ResponseConstant::UNSUCCESS;
+					$Message = ResponseConstant::message('UNSUCCESS');
+					$this->sendResponse($Code,$rescode,$Message);
+				}
+				// echo UPLOADS	;
+			}else{
+				$Code = ResponseConstant::UNSUCCESS;
+				$rescode = ResponseConstant::UNSUCCESS;
+				$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+				$this->sendResponse($Code,$rescode,$Message);
+			}
+		}else{
 		$postData =  file_get_contents('php://input');
 		$postDataArray = json_decode($postData);
        	if(!empty($postDataArray->method))
        	{
             $method = $postDataArray->method;
-            //echo $method; die; 
+            //echo $method; die;
             if(!empty($postDataArray->app_key))
             {
                 //Verify AppKey
@@ -30,7 +57,7 @@ class Cleaner_api_v2 extends MY_Controller
                     $Code = ResponseConstant::UNSUCESS;
                     $rescode = ResponseConstant::HEADER_UNAUTHORIZED;
                     $Message = ResponseConstant::message('HEADER_UNAUTHORIZED');
-                    $this->sendResponse($Code,$rescode, $Message); // return data                                 
+                    $this->sendResponse($Code,$rescode, $Message); // return data
                 }
             }
             else
@@ -38,19 +65,19 @@ class Cleaner_api_v2 extends MY_Controller
                 $Code = ResponseConstant::UNSUCCESS;
                 $rescode = ResponseConstant::APPKEY_NOT_FOUND;
                 $Message = ResponseConstant::message('APPKEY_NOT_FOUND');
-                $this->sendResponse($Code,$Message); // return data    
+                $this->sendResponse($Code,$Message); // return data
             }
         }
         else
-        { 
+        {
 
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::METHOD_NOT_FOUND;
             $Message = ResponseConstant::message('METHOD_NOT_FOUND');
-            $this->sendResponse($Code,$Message); // return data      
+            $this->sendResponse($Code,$Message); // return data
         }
         switch($method)
-        { 
+        {
             case 'cleaner_login':
             $this->cleaner_login($postDataArray);
             break;
@@ -66,9 +93,19 @@ class Cleaner_api_v2 extends MY_Controller
             case 'change_password':
             $this->change_password($postDataArray);
             break;
-            
-             
+						case 'collection_file':
+            $this->change_password($postDataArray);
+            break;
+						case 'update_report':
+            $this->update_report($postDataArray);
+            break;
+
+						case 'report_url':
+            $this->report_url($postDataArray);
+            break;
+
         }
+			}
     }
     public function cleaner_login($postDataArray)
     {
@@ -92,7 +129,7 @@ class Cleaner_api_v2 extends MY_Controller
 				$Code = ResponseConstant::SUCCESS;
 				$rescode = ResponseConstant::SUCCESS;
 				$Message ='Login Successfully';
-				$this->sendResponse($Code,$rescode,$Message,array($row_array));	
+				$this->sendResponse($Code,$rescode,$Message,array($row_array));
 			}
 			else
 			{
@@ -143,7 +180,7 @@ class Cleaner_api_v2 extends MY_Controller
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::UNSUCCESS;
             $Message = ResponseConstant::message('REQUIRED_PARAMETER');
-            $this->sendResponse($Code,$rescode,$Message); 
+            $this->sendResponse($Code,$rescode,$Message);
         }
         else
         {
@@ -191,7 +228,7 @@ class Cleaner_api_v2 extends MY_Controller
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::UNSUCCESS;
             $Message = ResponseConstant::message('REQUIRED_PARAMETER');
-            $this->sendResponse($Code,$rescode,$Message); 
+            $this->sendResponse($Code,$rescode,$Message);
         }
         else
         {
@@ -236,6 +273,136 @@ class Cleaner_api_v2 extends MY_Controller
         }
     }
 
+		public function update_report($postDataArray)
+    {
+       // echo"hello";die;
+        $user_id = (isset($postDataArray->user_id) && !empty($postDataArray->user_id)) ? $postDataArray->user_id: '';
+        $report = (isset($postDataArray->form_data) && !empty($postDataArray->form_data)) ? json_encode($postDataArray->form_data, JSON_UNESCAPED_SLASHES): '';
+
+        if(empty($user_id) || empty($report))
+        {
+            $Code = ResponseConstant::UNSUCCESS;
+            $rescode = ResponseConstant::UNSUCCESS;
+            $Message = ResponseConstant::message('REQUIRED_PARAMETER');
+            $this->sendResponse($Code,$rescode,$Message);
+        }
+        else
+        {
+           $row =  $this->cleaner_api_model->check_user_id($user_id);
+           if($row)
+           {
+
+                $data = array(
+                    'report'=>$report
+                );
+                $bool = $this->cleaner_api_model->update_user_info($data,$user_id);
+                if($bool)
+                {
+                    $Code = ResponseConstant::SUCCESS;
+                    $rescode = ResponseConstant::SUCCESS;
+                    $Message = 'SUCCESSFULL';
+                    $this->sendResponse($Code,$rescode,$Message);
+                }
+                else
+                {
+                    $Code = ResponseConstant::UNSUCCESS;
+                    $rescode = ResponseConstant::UNSUCCESS;
+                    $Message = 'Error';
+                    $this->sendResponse($Code,$rescode,$Message);
+                }
+
+           }
+           else
+           {
+                $Code = ResponseConstant::UNSUCCESS;
+                $rescode = ResponseConstant::UNSUCCESS;
+                $Message = 'USER ID NOT EXIST';
+                $this->sendResponse($Code,$rescode,$Message);
+           }
+
+        }
+    }
+
+		public function report_url($postDataArray)
+    {
+       // echo"hello";die;
+        $user_id = (isset($postDataArray->user_id) && !empty($postDataArray->user_id)) ? $postDataArray->user_id: '';
+
+        if(empty($user_id))
+        {
+            $Code = ResponseConstant::UNSUCCESS;
+            $rescode = ResponseConstant::UNSUCCESS;
+            $Message = ResponseConstant::message('REQUIRED_PARAMETER');
+            $this->sendResponse($Code,$rescode,$Message);
+        }
+        else
+        {
+           $row =  $this->cleaner_api_model->check_user_id($user_id);
+           if($row)
+           {
+
+						 	$report =  $this->cleaner_api_model->get_report($user_id);
+							$report['report'];
+							if($report['report'] != ''){
+								$Code = ResponseConstant::SUCCESS;
+						    $rescode = ResponseConstant::SUCCESS;
+						    $Message = 'SUCCESSFULL';
+						    $this->sendResponse($Code,$rescode,$Message, array(HOME."index.php/cleaner_report/get/".$user_id));
+							}else{
+								$Code = ResponseConstant::UNSUCCESS;
+                $rescode = ResponseConstant::UNSUCCESS;
+                $Message = 'No Report Data Found';
+                $this->sendResponse($Code,$rescode,$Message);
+							}
+                //$bool = $this->cleaner_api_model->update_user_info($data,$user_id);
+                // if($bool)
+                // {
+                //     $Code = ResponseConstant::SUCCESS;
+                //     $rescode = ResponseConstant::SUCCESS;
+                //     $Message = 'SUCCESSFULL';
+                //     $this->sendResponse($Code,$rescode,$Message);
+                // }
+                // else
+                // {
+                //     $Code = ResponseConstant::UNSUCCESS;
+                //     $rescode = ResponseConstant::UNSUCCESS;
+                //     $Message = 'Error';
+                //     $this->sendResponse($Code,$rescode,$Message);
+                // }
+
+           }
+           else
+           {
+                $Code = ResponseConstant::UNSUCCESS;
+                $rescode = ResponseConstant::UNSUCCESS;
+                $Message = 'USER ID NOT EXIST';
+                $this->sendResponse($Code,$rescode,$Message);
+           }
+
+        }
+    }
+
+		public function update_collection_file($path, $user_id)
+		{
+
+
+					 $row =  $this->cleaner_api_model->check_user_id($user_id);
+					 if($row)
+					 {
+
+								$data = array(
+
+										'last_collection_file'=>$path
+
+								);
+								$bool = $this->cleaner_api_model->update_user_info($data,$user_id);
+
+
+					 }
+
+
+		}
+
 
     public function change_password($postDataArray)
     {
@@ -248,7 +415,7 @@ class Cleaner_api_v2 extends MY_Controller
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::UNSUCCESS;
             $Message = ResponseConstant::message('REQUIRED_PARAMETER');
-            $this->sendResponse($Code,$rescode,$Message); 
+            $this->sendResponse($Code,$rescode,$Message);
         }
         else
         {
@@ -294,4 +461,3 @@ class Cleaner_api_v2 extends MY_Controller
 
     }
 }
-			

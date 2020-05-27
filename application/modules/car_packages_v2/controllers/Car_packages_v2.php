@@ -643,7 +643,7 @@ class Car_packages_v2 extends MY_Controller {
             $config['mailtype'] = 'html'; // or html
             $config['validation'] = TRUE; // bool whether to validate email or not      
             $this->load->library('email', $config);
-            $this->email->from('info@gogreen-uae.com','info@gogreen-uae.com');
+            $this->email->from('noreply@gogreen-uae.com','info@gogreen-uae.com');
             $this->email->to($email);
             $this->email->subject('Go Green-Order Confirmation Mail');
             // $message .="<a href = ".base_url()."admin/confirm_password?id=$id>Link</a>";

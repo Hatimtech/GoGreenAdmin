@@ -38,6 +38,22 @@ class Cleaner extends MX_Controller {
 		$data['page'] = 'add_cleaner_view';
 		_layout($data);
 	}
+	public function get_report($user_id)
+	{
+		$row = $this->cleaner_model->get_report($user_id);
+		if(isset($row['report']) && $row['report'] != ''){
+			$arr = json_decode($row['report'], true);
+			header("Content-type: text/csv");
+			header("Content-Disposition: attachment; filename=file.csv");
+			header("Pragma: no-cache");
+			header("Expires: 0");
+			foreach ($arr as $key => $value) {
+				echo $key.",".$value."\n";
+			}
+			die;
+		}
+	}
+
 	public function get_locality()
 	{
 		$city_id = $this->input->post('city_id');
@@ -141,7 +157,7 @@ class Cleaner extends MX_Controller {
 					'phone_number'=>$phone_number,
 					'city_id'=>$city,
 					'locality_id'=>$locality
-					
+
 				);
 				$bool = $this->cleaner_model->update_cleaner_data($data,$cleaner_id);
 				if($bool)
@@ -202,15 +218,11 @@ class Cleaner extends MX_Controller {
 		 {
 		 	$output .='<label for="one">
         <input name="locality_id[]" type="checkbox" value="'.$value['id'].'" id="'.$value['id'].'" />'.$value['name'].'</label>';
-		 } 
+		 }
 		 $data = array(
 			'option'=>$output,
 		 );
 		 //print_r($data); die;
 		 echo json_encode($data);
 	}
-}   
-  
-
-	
-
+}

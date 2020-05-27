@@ -40,9 +40,9 @@ class User extends MX_Controller {
 		 $arr = array();
 		foreach ($car_detail as $key => $item) {
 		 $arr[$item['id']][$key] = $item;
-		  
+
 		}
-		
+
 		/*echo "<pre>"; print_r(array_values($arr)); die;
 
 		$brand_name =  array();
@@ -52,9 +52,9 @@ class User extends MX_Controller {
 					$brand_name[$key][] = $value['brand'];
 					$brand_name[$key][] = $value['expiry_date'];
 				}
-				
+
 			}else{
-				
+
 			}
 		}
 		echo "<pre>";print_r($brand_name);die; */
@@ -63,7 +63,7 @@ class User extends MX_Controller {
 		//echo "<pre>";print_r($data); die;
 		//$data['user_detail'] = $car_detail;
 		 $data['page'] ='user_car_view';
-		 
+
 		//$this->template->load('template', 'user_view',$data);
 		_layout($data);
 		//$this->template->load('template', 'user_car_view',$data);
@@ -100,17 +100,26 @@ class User extends MX_Controller {
 
 		//$this->template->load('template', 'purchase_history',$data);
 	}
+	public function update(){
+		$phone = $_POST['phone'];
+		$id = $_POST['id'];
+		$tableName = 'users';
+		$where = array('id'=> $id);
+		$column = array('phone_number'=> $phone);
+		$row = $this->user_model->update($where,$column,$tableName);
+		echo $row;
+	}
 	public function cancel_package()
 	{
 		$package_id= $this->input->get('id');
 		$user_id= $this->input->get('u_id');
-		
+
 		$tableName = 'booked_packages as bp';
 		$where = array('id'=>$package_id);
 		$column = array('bp.id','bp.car_id','bp.expiry_date');
 		$booked_package_data = $this->user_model->get_data($where,$column,$tableName);
 		//echo "<pre>"; print_r($booked_package_data); die;
-	
+
 		//echo $yesterday_date ; die;
 		// update  car package  2 to 1
 		//$booked_package_data[]
@@ -118,7 +127,7 @@ class User extends MX_Controller {
 		$where = array('id'=>$booked_package_data['car_id']);
 		$column = array('is_package'=>1);
 		$row = $this->user_model->update($where,$column,$tableName);
-		
+
 		// update  booked_packages expiry_date
 	//	$booked_package_data[]
 		$tableName = 'booked_packages';
@@ -130,7 +139,7 @@ class User extends MX_Controller {
 	//	$data['page'] ='get_user_car_details?id='.$user_id;
 		redirect('user/get_user_car_details?id='.$user_id);
 	//	_layout($data);
-	
+
 
 		//$this->template->load('template', 'purchase_history',$data);
 	}
@@ -163,7 +172,7 @@ class User extends MX_Controller {
 
 		$users = $this->user_model->get_all_users_for_excel();
 		//echo $this->db->last_query(); die;
-		// echo"<pre>";print_r($users); 
+		// echo"<pre>";print_r($users);
 		// // $data[] = array('x'=> 1, 'y'=> 2, 'z'=> 2, 'a'=> 4);
 		// header("Content-type: application/csv");
 		// header("Content-Disposition: attachment; filename=\"test".".csv\"");
@@ -316,7 +325,7 @@ class User extends MX_Controller {
 	// 		curl_close($ch);
 
 	// 	// sinch doc ends here
-	// } 
+	// }
 
 	public function send_payment_link()
 	{
@@ -358,18 +367,18 @@ class User extends MX_Controller {
 			if($bool)
 			{
 				// send push to user
-				
+
 				if(!empty($device_token))
 				{
 					$message = "Dear Customer, Your Subscription Has been Renewed.";
 					$user_name = 'Go Green';
 					$title = 'Subscription renewed';
-					$body = $message;  
+					$body = $message;
 					$notification = array('title' =>$title , 'body' => $body, 'sound' => 'default', 'badge' => '1');
 					$arrayToSend = array('to' => $device_token, 'notification' => $notification,'priority'=>'high');
 					$json = json_encode($arrayToSend);
 					if(!empty($device_token))
-					{ 
+					{
 						$next_level=  $this->user_model->sendPush($json);
 						print_r($next_level);
 						// echo "hellllo";die;
@@ -402,12 +411,12 @@ class User extends MX_Controller {
 					$message = "Dear Customer, Your Subscription Has been cancelled.";
 					$user_name = 'Go Green';
 					$title = 'Subscription cancelled';
-					$body = $message;  
+					$body = $message;
 					$notification = array('title' =>$title , 'body' => $body, 'sound' => 'default', 'badge' => '1');
 					$arrayToSend = array('to' => $device_token, 'notification' => $notification,'priority'=>'high');
 					$json = json_encode($arrayToSend);
 					if(!empty($device_token))
-					{ 
+					{
 						$next_level=  $this->user_model->sendPush($json);
 						print_r($next_level);
 						// echo "hellllo";die;
@@ -427,7 +436,7 @@ class User extends MX_Controller {
 				redirect('user');
 			}
 		}
-	} 
+	}
 
 	function activate_user()
 	{
@@ -445,8 +454,4 @@ class User extends MX_Controller {
 
 		redirect('user');
 	}
-}   
-  
-
-	
-
+}

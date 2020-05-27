@@ -134,5 +134,12 @@
       $this->db->where('cleaner_id',$cleaner_id);
       $this->db->delete('team_cleaner');
     }
+    public function get_report($user_id)
+    {
+      $this->db->select('report');
+      $this->db->where('id',$user_id);
+      $query = $this->db->get('cleaners');
+      return $query->row_array();
+    }
   }
 ?>

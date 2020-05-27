@@ -6,7 +6,7 @@
       $this->db->insert('users', $data);
       $result = $this->db->insert_id();
       return $result;
-    } 
+    }
  public function update($where,$column,$table)
     {
     //  $this->db->set('is_package',2);
@@ -174,7 +174,7 @@
       $query = $this->db->get('locality');
       $locality =  $query->result_array();
       return $locality;
-      //print_r($locality); die; 
+      //print_r($locality); die;
     }
 
      public function get_street_api($id)
@@ -186,7 +186,7 @@
       $query = $this->db->get('street');
       $locality =  $query->result_array();
       return $locality;
-      //print_r($locality); die; 
+      //print_r($locality); die;
     }
     public function varify_phone_number($phone_number)
     {
@@ -240,14 +240,14 @@
 //      //    return 2;
 //      //   }
 //      //  echo $message; die;
-     
+
 //      // $subject = "Password  Reset Link";
 //      //  $message = "Your OTP is ".$otp.". Do Not Share It With Anyone";
 //      //   echo "$message"; die;
 //      //  $subject = "Password Varification Link";
-//      //  $headers =  'MIME-Version: 1.0' . "\r\n"; 
+//      //  $headers =  'MIME-Version: 1.0' . "\r\n";
 //      //  $headers .= 'From:vicky@ripenapps.com' . "\r\n";
-//      //  $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n"; 
+//      //  $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 //      //  $bool = mail($to,$subject,$message,$headers);
 //      //   echo $bool;
 //      //   return $bool;
@@ -272,18 +272,18 @@
 
 //      //  $config['mailtype'] = 'text'; // or html
 
-//      //  $config['validation'] = TRUE; // bool whether to validate email or not      
+//      //  $config['validation'] = TRUE; // bool whether to validate email or not
 
 //      //  $this->email->initialize($config);
 
 
 //      //  $this->email->from('veee.kay258@gmail.com', 'vicky');
-//      //  $this->email->to('coolkashyap.com@gmail.com'); 
+//      //  $this->email->to('coolkashyap.com@gmail.com');
 
 
 //      //  $this->email->subject('Email Test');
 
-//      //  $this->email->message('Testing the email class.');  
+//      //  $this->email->message('Testing the email class.');
 
 //      //  $this->email->send();
 
@@ -304,7 +304,7 @@
       }
       else{
         return 0;
-      } 
+      }
     }
     public function update_social_id_fb($email,$social_id,$phone_number,$is_phone_verified)
     {
@@ -323,7 +323,7 @@
        {
         return 0;
        }
-       
+
     }
      public function update_social_id_gl($email,$social_id,$phone_number,$is_phone_verified)
     {
@@ -354,7 +354,7 @@
       }
       else{
         return 0;
-      } 
+      }
 
     }
     public function check_user_id($user_id)
@@ -392,6 +392,18 @@
       $this->db->where('phone_number',$phone_number);
       $query = $this->db->get('users');
       return $query->row_array();
+    }
+
+    public function get_car_details($user_id)
+    {
+
+      $this->db->select('car_detail.*');
+      $this->db->join('car_model','car_detail.model=car_model.id','left');
+      $this->db->join('car_brand','car_detail.brand=car_brand.id','left');
+      $this->db->where('car_detail.user_id', $user_id);
+      $query = $this->db->get('car_detail');
+       //echo $this->db->last_query(); die;
+      return $query->result_array();
     }
   }
 ?>

@@ -204,7 +204,7 @@ switch (ENVIRONMENT)
 		// Ensure there's a trailing slash
 		$system_path = rtrim($system_path, '/').'/';
 	}
-	
+
 	// Is the system path correct?
 	if ( ! is_dir($system_path))
 	{
@@ -224,16 +224,30 @@ switch (ENVIRONMENT)
 	// Path to the system folder
 	define('BASEPATH', str_replace('\\', '/', $system_path));
 	//define('base_url_custom', 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
-	define('base_url_custom','http://13.126.37.218/gogreen/');
+	$whitelist = array(
+	    '127.0.0.1',
+	    '::1'
+	);
+
+	if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+		define('base_url_custom','http://localhost/gogreen/');
+		define('HOME', "http://localhost/gogreen/" );
+	}else{
+		define('base_url_custom','http://13.126.37.218/gogreen/');
+		define('HOME', "http://13.126.37.218/gogreen/" );
+	}
+
 	//echo base_url_custom; die;
 	//echo "<pre>"; print_r($_SERVER); die;
 	//echo SELF; die;
 	// Path to the front controller (this file)
 	define('FCPATH', dirname(__FILE__).'/');
 
+
+
 	// Name of the "system folder"
 	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
-
+	define('UPLOADS',getcwd().'/uploads/' );
 	// The path to the "application" folder
 	if (is_dir($application_folder))
 	{

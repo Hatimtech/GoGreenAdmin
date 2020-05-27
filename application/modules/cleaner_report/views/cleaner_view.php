@@ -147,7 +147,6 @@
                     <td>".$cleaner['city']."</td>
                     <td>".$cleaner['locality']."</td>
                     <td><a href='"HOME."/uploads/".$cleaner['last_collection_file']."' target='_BLANK'>Download</a></td>
-                    <td><a href='"HOME."index.php/cleaner_report/get/".$cleaner['id']."' target='_BLANK'>View Report</a></td>
                     <td>".$flag."</td>
                     <td>
                     <a href='".base_url()."cleaner/inactive_cleaner?id=".$cleaner['id']."' class='btn btn-danger btn-sm'><i class='fa fa-trash-o m-right-xs'></i>Delete

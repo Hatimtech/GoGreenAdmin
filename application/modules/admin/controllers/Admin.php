@@ -1,7 +1,7 @@
 <?php
 
 /*
-	
+
 
 
 */
@@ -11,12 +11,13 @@ class Admin extends MX_Controller {
 
 	function __construct()
     {
-    	
+
 		parent::__construct();
 		$this->load->model('admin_model');
+		$this->load->library('session');
 	}
 
-	
+
 	public function index()
 	{
 		// $SQL = "SELECT NOW()";
@@ -29,7 +30,7 @@ class Admin extends MX_Controller {
 
 	public function login()
 	{
-		$this->form_validation->set_rules('email', 'Email', 'required'); 
+		$this->form_validation->set_rules('email', 'Email', 'required');
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 
@@ -37,19 +38,21 @@ class Admin extends MX_Controller {
 		// $this->session->set_userdata(array('authorized' => 1));
 		 // echo"<pre>";
 		  //print_r($admin_detail);
-		 
+
 			if(($admin_detail['email'] == $email) && ($admin_detail['password'] == $password))
 			{
 				$this->session->set_userdata('session_data',$admin_detail);
 				$this->session->set_userdata(array('authorized' => 1));
+
 				redirect(base_url('dashboard'));
+
 			}
 			else
 			{
 				$this->session->set_flashdata('item','item-value');
 			}
-			
-		
+
+
 		redirect(base_url('admin'));
 	}
 
@@ -69,7 +72,7 @@ class Admin extends MX_Controller {
 	}
 	public function send_link()
 	{
-		
+
 		if($_POST)
 		{
 			 $email = $this->input->post('email');
@@ -78,7 +81,7 @@ class Admin extends MX_Controller {
 
 			if($bool == true)
 			{
-				
+
 				$id = $this->admin_model->get_id_by_email($email);
 				// echo"<a href = ".base_url('admin/confirm_password')."?id=$id>";
 				// echo"click here";
@@ -95,7 +98,7 @@ class Admin extends MX_Controller {
 				$config['charset']    = 'utf-8';
 				$config['newline']    = "\r\n";
 				$config['mailtype'] = 'html'; // or html
-				$config['validation'] = TRUE; // bool whether to validate email or not      
+				$config['validation'] = TRUE; // bool whether to validate email or not
 				$this->load->library('email', $config);
 				$this->email->from('vicky@ripenapps.com', 'vicky');
 				$this->email->to($email);
@@ -103,7 +106,7 @@ class Admin extends MX_Controller {
 				$message = "Click on the link below to reset your password";
 				$message .=  "<br>";
 				$message .="<a href = ".base_url()."admin/confirm_password?id=$id>Link</a>";
-				$this->email->message($message);  
+				$this->email->message($message);
 				if($this->email->send())
 				{
 					echo "Password Reset Link Sent To Your Mail. Please Check Your Mail To Update Your Password";
@@ -121,15 +124,15 @@ class Admin extends MX_Controller {
 				//echo"<script>alert('email not existed')</script>";
 			}
 		}
-		
+
 		redirect('admin/forget_password');
 	}
 
 
 	public function confirm_password()
 	{
-		
-		
+
+
 		//echo $id; die;
 
 		$this->form_validation->set_rules('password1', 'Password', 'required');
@@ -146,7 +149,7 @@ class Admin extends MX_Controller {
 			//echo $id; die;
 			$password = $this->input->post('password1');
 
-			
+
 			$data = array
 			(
 				'password'=>$password,
@@ -188,7 +191,7 @@ class Admin extends MX_Controller {
 			//echo $id; die;
 			$password = $this->input->post('password1');
 
-			
+
 			$data = array
 			(
 				'password'=>md5($password),
@@ -200,7 +203,7 @@ class Admin extends MX_Controller {
 			// $this->session->set_flashdata('go_to_app', 'Password Updated!,Login With New Password');
 			// redirect('admin');
 				//$this->load->view('go_to_app');
-				
+
 				//die;
 				echo"Your Password Is Updated Successfully. Please Go To App To Login With A New Password"; die;
 			}
@@ -249,6 +252,6 @@ class Admin extends MX_Controller {
 	}
 	// public function logout()
 	// {
-		
+
 	// }
 }
