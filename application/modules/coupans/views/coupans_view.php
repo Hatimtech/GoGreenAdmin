@@ -84,6 +84,7 @@
                 <th>Valid To</th>
                 <th>Coupon Code</th>
                 <th>Discount %</th>
+                <th>Fixed Discount %</th>
                 <th>Minimum Order</th>
                 <th>User Type</th>
                 <th>Max Discount</th>
@@ -93,6 +94,7 @@
 
             <tfoot>
               <tr>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -129,6 +131,7 @@
                     <td>".$valid_upto."</td>
                     <td>".$value['coupan_code']."</td>
                     <td>".$value['discount']."</td>
+                    <td>".$value['FixedDiscount']."</td>
                     <td>".$value['minimum_order']."</td>
                     <td>".$user_type."</td>
                     <td>".$value['max_discount']."</td>
