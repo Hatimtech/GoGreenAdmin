@@ -955,7 +955,9 @@ class Car_packages_v2 extends MY_Controller {
                             $Message = 'AMOUNT IS LESS THAN THE MINIMUM ORDER';
                             $this->sendResponse($Code, $rescode, $Message);
                         } else {
-                            $discount_amount = ($amount * $coupan_row['discount']) / 100;
+                            $discount_amount = (($amount * $coupan_row['discount']) / 100)  ; 
+                            $fixed_discount_amount = $coupan_row['fixedDiscount'];
+
                             //echo $discount_amount; die;
                             if ($discount_amount > $coupan_row['max_discount'])
                             {
@@ -969,6 +971,11 @@ class Car_packages_v2 extends MY_Controller {
                                 $Message = 'SUCCESS';
                                 $this->sendResponse($Code, $rescode, $Message, array($coupan_row));
                             } else {
+                                if ($fixed_discount_amount > 0)
+                                {
+                                    $discount = (($fixed_discount_amount * 100) / $amount );
+                                $coupan_row['discount'] = intval($discount);
+                                }
                                 $Code = ResponseConstant::SUCCESS;
                                 $rescode = ResponseConstant::SUCCESS;
                                 $Message = 'SUCCESS';
@@ -1004,6 +1011,11 @@ class Car_packages_v2 extends MY_Controller {
                                 $Message = 'MAX DISCOUNT LIMIT EXCEEDS';
                                 $this->sendResponse($Code, $rescode, $Message);
                             } else {
+                                if ($fixed_discount_amount > 0)
+                                {
+                                $discount = (($fixed_discount_amount * 100) / $amount );
+                                $coupan_row['discount'] = intval($discount);
+                                }
                                 $Code = ResponseConstant::SUCCESS;
                                 $rescode = ResponseConstant::SUCCESS;
                                 $Message = 'SUCCESS';
