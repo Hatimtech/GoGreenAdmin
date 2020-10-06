@@ -259,6 +259,7 @@ class Manual extends MX_Controller {
 	{
 		$user_id = $this->input->get('id');
 		$car_id = $this->input->get('c_id');
+		$edit = $this->input->get('edit');
 		//echo $car_id; die;
 		if(empty($user_id) || empty($car_id))
 		{
@@ -267,12 +268,21 @@ class Manual extends MX_Controller {
 		}
 		else
 		{
+			if($edit == 'true'){
+				$all_cars = $this->manual_model->get_active_cars($user_id);
+				$data['title'] = 'Active';
+			}else{
+				$all_cars = $this->manual_model->get_inactive_cars($user_id);
+				$data['title'] = 'Inactive';
+			}
 			$city_array = $this->manual_model->get_city();
 			$data['cities'] = $city_array;
-			$all_cars = $this->manual_model->get_inactive_cars($user_id);
-    		$data['cars'] = $all_cars;
-    		$data['user_id'] = $user_id;
-    		$data['car_id'] = $car_id;
+			//$all_cars = $this->manual_model->get_inactive_cars($user_id);
+
+  		$data['cars'] = $all_cars;
+  		$data['user_id'] = $user_id;
+
+  		$data['car_id'] = $car_id;
 			$data['page'] ='activate_package';
 			_layout($data);
 		}
@@ -312,6 +322,7 @@ class Manual extends MX_Controller {
 	{
 		// print_r($_POST); die;
 		// check is package exist on the selected locality and car_type
+		$edit = $this->input->post('edit');
 		$city_id = $this->input->post('city');
 		$locality_id = $this->input->post('locality');
 		$street_id = $this->input->post('street');
@@ -422,7 +433,16 @@ class Manual extends MX_Controller {
 		$price = $price + 5;
 		//echo"<br>";
 		//echo $price; die;
-
+		if($edit == 1){
+			$pk = $this->manual_model->get_book_package($user_id, $car_id);
+			foreach($pk as $value) {
+				// print_r($value);
+				$this->manual_model->delete_data_to_assiagned_team($value);
+				$this->manual_model->delete_user_payment_data($value);
+			}
+			$this->manual_model->delete_book_package($user_id, $car_id);
+			//die;
+		}
 		//echo $no_of_months; die;
 	 	$user_payment_data = array(
             'user_id' => $user_id,

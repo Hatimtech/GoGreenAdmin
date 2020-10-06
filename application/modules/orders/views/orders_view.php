@@ -20,7 +20,7 @@
     /*margin: 2px 0 10px 7px;*/
     padding: 4px;
 }
-.multiselect 
+.multiselect
 {
 
   width: 65%;
@@ -47,58 +47,40 @@
 }
 
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
+<a href="<?php echo base_url('dashboard'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" role="main" id="cool">
   <div class="page-title">
-    <div class="row"> 
+    <div class="row">
+      <form method="post" action="<?php echo base_url()?>orders">
       <div class="col-md-4">
-         <select onchange="get_locality_for_street(this.value)" id="city_multiselect" class="select" multiple >
-          <?php if(!empty($city)){foreach ($city as $key => $value) {
-        
-          echo"<option value=".$value['id'].">".ucfirst($value['name'])."</option>";}}?>
+         <select onchange="get_locality_for_street(this.value)" id="city_multiselect" class="select" multiple name="city[]">
+           <!-- <option value="" disabled selected>Select City</option> -->
+          <?php
+          $scity = (isset($_POST['city'])) ? $_POST['city'] : array();
+          if(!empty($city)){foreach ($city as $key => $value) {
+            $sel = (in_array($value['id'], $scity)) ? 'selected' : '' ;
+            echo"<option $sel value=".$value['id'].">".ucfirst($value['name'])."</option>";}}
+          ?>
           </select>
       </div>
       <div class="col-md-4">
-          <div class="multiselect">
-            <div class="selectBox" onclick="showCheckboxes()">
-              <select class="btn btn-default">
-              <option>Select an option</option>
-              </select>
-              <div class="overSelect"></div>
-            </div>
-            <?php if($this->input->get('cashtab'))
-            {
-              ?>
-            <form method="post" action="<?php echo base_url()?>orders?cashtab=1">
-              <?php
-            }
-            else
-              {?>
-                 <form method="post" action="<?php echo base_url()?>orders">
-                <?php
+        <select id="locality_multiselect" class="select" multiple name="locality_id[]">
 
-              }?>
-            <div id="checkboxes">
-           <!--  <label for="one">
-            <input type="checkbox" id="one" />First checkbox</label>
-            <label for="two">
-            <input type="checkbox" id="two" />Second checkbox</label>
-            <label for="three">
-            <input type="checkbox" id="three" />Third checkbox</label> -->
-            </div>  
-        </div>
-      </div>
-      <div class="col-md-4">
+        </select>
+    </div>
+      <div class="col-md-2">
         <button type="submit" value="" class="btn btn-info" style="padding: 7px 22px">Submit</button>
-        </form>
+
       </div>
+      </form>
     </div>
     <div class="title_left">
       <h3>Orders</h3>
 
         <ul class="nav nav-tabs">
-          <?php 
+          <?php
           if($this->input->get('cashtab'))
           {
             $class ='active';
@@ -112,14 +94,14 @@
 
           ?>
           <li class="<?php echo $online_class?>"><a href="<?php echo base_url()?>orders">Online</a></li>
-          <li class="<?php echo $class?>"><a href="<?php echo base_url()?>orders/index?cashtab=1">Cash</a></li>
+
           <li><a href="<?php echo base_url()?>orders/pending">Pending</a></li>
         </ul>
-      
+
     </div>
 
     <div class="title_right">
-      
+
     </div>
   </div>
   <div class="row">
@@ -153,7 +135,7 @@
             </select>
  -->
           </div>
-        </div> 
+        </div>
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
@@ -162,12 +144,50 @@
           <?php echo $this->session->flashdata('status_changed');?>
           <?php echo $this->session->flashdata('data_registered');?>
         </font>
-          <table id="datatable-responsive" class="table table-striped table-bordered">
+        <div class="filters text-center mt-1 mb-2 d-block clearfix">
+          <form class="" action="" method="get">
+            <?php if(isset($_GET['flag'])){ ?>
+            <input type="hidden" name="flag" value="<?php echo $_GET['flag']; ?>">
+            <?php } ?>
+            <span id="fthold">
+              <input type="radio" name="ft" value="1" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '1') ? 'checked' : ''; ?>> Today
+              <input type="radio" name="ft" value="2" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '2') ? 'checked' : ''; ?>> This Week
+              <input type="radio" name="ft" value="3" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '3') ? 'checked' : ''; ?>> This Month
+              <input type="radio" name="ft" value="4" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '4') ? 'checked' : ''; ?>> This Quarter
+              <input type="radio" name="ft" value="5" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '5') ? 'checked' : ''; ?>> This Year
+              <input type="radio" name="ft" value="6" class="ftf" id="customft" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '6') ? 'checked' : ''; ?>> Custom
+            </span>
+            <div style="max-width:600px; margin:20px auto; display:<?php echo (isset($_GET['ft']) && $_GET['ft'] == '6') ? 'block' : 'none'; ?>;" class="row" id="ftcustom">
+              <div class="col-md-6">
+                  <input type="text" value="<?php echo (isset($_GET['ftfr'])) ? $_GET['ftfr'] : ''; ?>" class="form-control has-feedback-left" id="single_cal2" placeholder="From Date" aria-describedby="inputSuccess2Status2" name="ftfr">
+                  <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-6">
+                <input type="text" value="<?php echo (isset($_GET['ftto'])) ? $_GET['ftto'] : ''; ?>" class="form-control has-feedback-left" id="custom_calender" placeholder="To Date" aria-describedby="inputSuccess2Status2" name="ftto">
+                <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
+              </div>
+            </div>
+            <button class="btn btn-success ml-2" name="button">Filter</button>
+            <a href="?" class="btn btn-warning ml-2" name="button">Reset</a>
+          </form>
+          <script type="text/javascript">
+
+            document.getElementById("fthold").addEventListener("click", function(){
+              if(document.getElementById("customft").checked){
+                document.getElementById("ftcustom").style.display = "block";
+              }else{
+                document.getElementById("ftcustom").style.display = "none";
+              }
+            })
+          </script>
+        </div>
+          <table id="datatable" class="table table-striped table-bordered">
             <thead>
-              <tr>
                 <tr>
                 <th>Order ID</th>
                 <th>Date</th>
+                <th>Activities</th>
+                <th>Additional Services</th>
                 <th>Customer Name</th>
                 <th>Car Number</th>
                 <th>Team</th>
@@ -182,26 +202,47 @@
                 <th>Street</th>
                 <th>Add Amount</th>
                 <th>Team Assign</th>
-                <!-- <th>Payment Status</th> -->
-              </tr>
               </tr>
             </thead>
+            <tfoot>
+                <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </tfoot>
             <tbody id="">
               <?php
               //echo"hello";die;
                  foreach($orders as $key => $value)
                  {
-                  //echo "<pre>";print_r($orders); die;
-                   $due = $value['net_paid'] - $value['partial_payment'];
+
+                  $due = $value['net_paid'] - $value['partial_payment'];
+
                   if($value['payment_status']==2)
                   {
                     $status = 'collected';
                   }
-
                   else
                   {
-                      $status ='collected';
+                    $status ='collected';
                   }
+
                   $data=array
                   (
                     'primary_id'=>$value['primary_id'],
@@ -216,6 +257,8 @@
                   <tr>
                     <td>".$value['orders_id']."</td>
                     <td>".$newsate."</td>
+                    <td><a href='".base_url()."orders/activity?id=".$value['orders_id']."' class='text-primary'>View</a></td>
+                    <td><a href='".base_url()."orders/additional?id=".$value['orders_id']."' class='text-primary'>View</a></td>
                     <td><a href=".base_url()."orders/get_customer_detail?id=".$value['user_id']."&&primary_id=".$value['primary_id'].">".$value['username']."</a></td>
                     <td>".$value['reg_no']."</td>
                     <td>".$value['team_name']."</td>
@@ -242,8 +285,8 @@
                       </tr>";
                  }
               ?>
-              
-              
+
+
              <!-- <tr>
                 <td>Garrett Winters</td>
                 <td>Accountant</td>
@@ -323,16 +366,16 @@
   </div>
 
 
- 
+
 
 
   <div class="row">
-   
-    
+
+
 
   </div>
 </div>
-    
+
 
 <!-- modal for manuall team change -->
 <div style="" class="modal fade" id="team_modal" role="dialog">
@@ -349,7 +392,7 @@
             <label>Team Name</label>
             <!-- <input required type="text" class="form-control" id="city_ajax_name" name="city" placeholder="City Name"> -->
             <select class="form-control" required id="modal_team_name" name="team_id">
-            
+
 
             </select>
             <span id="modal_span" style="color: red"></span>
@@ -486,58 +529,116 @@ function update_payment_status_as_collect(id)
   $(document).ready(function(){
     document.getElementById("cool").style.minHeight = "697px";
 
-    $("#datatable-responsive").dataTable().fnDestroy()
-    $('#datatable-responsive').dataTable({
-            
-           
-            
-            dom: 'lBfrtip',
-            buttons: [
-                      {
-                extend: 'excelHtml5',
-                title: 'Data export',
-                 exportOptions: {
-                     columns: [ 0, 1, 2,3,4,5,6 ]
-                }
-            },
-            {
-                extend: 'csvHtml5',
-                title: 'Data export',
-                exportOptions: {
-                   columns: [ 0, 1, 2,3,4,5,6 ]
-                }
-            },
-    ],
-    oLanguage: {
-      "sSearch": "Search:"
-    },
-    columnDefs : [
-                { 
-                    'searchable'    : true, 
-                    'targets'       : [1,2,3] 
-                },
-            ],
-            "bStateSave": true,
-        "fnStateSave": function (oSettings, oData) {
-            localStorage.setItem('offersDataTables', JSON.stringify(oData));
-        },
-        "fnStateLoad": function (oSettings) {
-            return JSON.parse(localStorage.getItem('offersDataTables'));
-        }
+    $("#datatable").dataTable().fnDestroy()
+    $('#datatable').dataTable({
+      initComplete: function() {
+          this.api().columns().every(function() {
+              var column = this;
+              var select = $('<select><option value="">All</option></select>')
+                  .appendTo($(column.footer()).empty())
+                  .on("click", function(e) {
+                      e.stopPropagation();
+                  })
+                  .on('change', function() {
+                      var val = $.fn.dataTable.util.escapeRegex(
+                          $(this).val()
+                      );
+                      column.search(val ? '^' + val + '$' : '', true, false).draw();
+                      //console.log($(this).val());
+                      //column.search(val).draw();
+                  });
+
+              column.data().unique().sort().each(function(d, j) {
+                  d = d.replace(/(<([^>]+)>)/ig, "");
+                  if(select.find('option[value="' + d + '"]').length <= 0){
+                    select.append('<option value="' + d + '">' + d + '</option>');
+                  }
+              });
           });
+          // $("#datatable tfoot select option").val(function(idx, val) {
+          //   $(this).siblings('[value="'+ val +'"]').remove();
+          // });
+      },
+      dom: 'lBfrtip',
+      buttons: [{
+              extend: 'excelHtml5',
+              title: 'Data export',
+              exportOptions: {
+                  columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+              }
+          },
+          {
+              extend: 'csvHtml5',
+              title: 'Data export',
+              exportOptions: {
+                  columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+              }
+          },
+      ],
+      ordering: true,
+      oLanguage: {
+          "sSearch": "Search:"
+      }
+  });
 });
 
 </script>
 
 
 
+
 <script>
-$('#city_multiselect').multiselect({
-  nonSelectedText: 'Select City',
-  enableFiltering: true,
-  enableCaseInsensitiveFiltering: true,
-  buttonWidth:'250px'
- });
+$(document).ready(function(){
+  <?php if(isset($_POST['city'])){ ?>
+    $("#city_multiselect").change();
+  <?php } ?>
+    multify();
+  $('#city_multiselect').multiselect({
+    nonSelectedText: 'Select City',
+    enableFiltering: true,
+    enableCaseInsensitiveFiltering: true,
+    buttonWidth:'250px'
+   });
+});
+function multify(){
+  $('#locality_multiselect').multiselect({
+   nonSelectedText: 'Select City',
+   enableFiltering: true,
+   enableCaseInsensitiveFiltering: true,
+   buttonWidth:'250px'
+  });
+}
+</script>
+<script>
+  function get_locality_for_street(val)
+ {
+
+    var id =   $('#city_multiselect').val();
+   // alert(id);
+
+    if (typeof id !== 'undefined' && id.length > 0)
+    {
+    // the array is defined and has at least one element
+    var sel = '<?php echo (isset($_POST['locality_id'])) ? implode("|", $_POST['locality_id']) : ''; ?>';
+        $.ajax
+        ({
+            type : "POST",
+            url : "<?php echo base_url(); ?>cleaner/get_locality_for_street",
+            dataType : "json",
+            data : {"city_id" : id, selected: sel},
+            success : function(data) {
+              $("#locality_multiselect").html(data.option).multiselect('rebuild');
+            },
+            error : function(data) {
+                alert('Something went wrong');
+            }
+        });
+    }
+    else
+    {
+      $("#locality_ajax").html('<option disabled selected>Choose City First</option>');
+    }
+  }
 </script>
 <script>
 var expanded = false;
@@ -554,42 +655,6 @@ function showCheckboxes() {
 }
 </script>
 
-<script>
-  function get_locality_for_street(val)
- {
-
-    var id =   $('#city_multiselect').val();
-   // alert(id);
-    
-    if (typeof id !== 'undefined' && id.length > 0)
-    {
-    // the array is defined and has at least one element
-        $.ajax
-        ({
-            type : "POST",
-            url : "<?php echo base_url(); ?>cleaner/get_locality_for_street",
-            dataType : "json",
-            data : {"city_id" : id},
-            success : function(data) {
-                 $("#checkboxes").html(data.option);
-
-                  //$("#locality_ajax").multiselect('refresh');
-
-                 //$("#locality_ajax_table").html(data.dropdown);
-                 //alert('hello');
-                 console.log(data);
-            },
-            error : function(data) {
-                alert('Something went wrong');
-            }
-        });
-    }
-    else
-    {
-      $("#locality_ajax").html('<option disabled selected>Choose City First</option>');
-    }
-  } 
-</script>
 
 <script>
 $('#remark_submit').on('click',function(e){
@@ -605,12 +670,12 @@ if(confirm('Are you sure you want to update'))
   if(partial_amount > outstanding_balance )
   {
     alert('Partial Amount Should Be Less Than Equal To Total Due  Amount');
-    e.preventDefault();  
+    e.preventDefault();
   }
 }
 else
 {
-  e.preventDefault(); 
+  e.preventDefault();
   // do nothing
 }
 })

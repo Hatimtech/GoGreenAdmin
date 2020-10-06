@@ -29,7 +29,7 @@
   margin-top: 5px;
 }
 </style>
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url('coupans'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
   <div class="row">
 
@@ -39,7 +39,7 @@
         <h2>Edit Coupon</h2>
         <?php
          if($this->session->flashdata('image_error'))
-        { 
+        {
             //echo"alresdy exist";die;
           echo"<div style='margin-left: 150px;'>";
           echo  $this->session->flashdata('image_error')['error'];
@@ -47,14 +47,14 @@
         }
 
         if($this->session->flashdata('Failure'))
-        { 
+        {
             //echo"alresdy exist";die;
           echo"<div style='margin-left: 150px;'>";
           echo  $this->session->flashdata('Failure');
           echo"</div>";
         }
         if($this->session->flashdata('choose_file'))
-        { 
+        {
             //echo"alresdy exist";die;
           echo"<div style='margin-left: 150px;'>";
           echo  $this->session->flashdata('choose_file');
@@ -67,14 +67,14 @@
           echo validation_errors();
           echo"</font>";
           echo"</div>";
-          
+
 
         ?>
 
         <div class="clearfix"></div>
       </div>
       <div class="x_content">
-        <form enctype="multipart/form-data" method="post" action="<?php echo base_url()?>coupans/add_coupans?id=<?php echo $coupan['id'];?>" id="" data-parsley-validate class="form-horizontal form-label-left"> 
+        <form enctype="multipart/form-data" method="post" action="<?php echo base_url()?>coupans/add_coupans?id=<?php echo $coupan['id'];?>" id="" data-parsley-validate class="form-horizontal form-label-left">
           <div class="form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Coupon Image <!-- <span class="required">*</span> -->
             </label>
@@ -101,7 +101,7 @@
             <?php
              $date = date("m/d/Y", strtotime($coupan['valid_from']));
              $valid_upto = date("m/d/Y", strtotime($coupan['valid_upto']));
-            
+
             ?>
             <input type="text" value="<?php echo  $date;?>" class="form-control has-feedback-left" id="single_cal2" placeholder="First Name" aria-describedby="inputSuccess2Status2" name="valid_from">
             <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
@@ -163,6 +163,12 @@
           <div class="col-md-2 col-sm-3 col-xs-6 custom_label">
             <label>New User</label>
           </div>
+          <div class="col-md-2 col-sm-3 col-xs-6 custom">
+            <input type="radio" name="user_type" required="required" value="3" <?php echo ($coupan['user_type']== 3) ?  "checked" : "" ;  ?>  class="form-control">
+          </div>
+          <div class="col-md-2 col-sm-3 col-xs-6 custom_label">
+            <label>Both</label>
+          </div>
         </div>
 
         <div class="ln_solid"></div>
@@ -171,7 +177,7 @@
             <button type="submit" class="btn btn-success">Submit</button>
           </div>
         </div>
-      </form>  
+      </form>
     </div>
   </div><!--x panel-->
 </div>
@@ -190,7 +196,7 @@
     url : "<?php echo base_url(); ?>cleaner/get_locality",
     dataType : "json",
     data : {"city_id" : city_id},
-    success : function(data) 
+    success : function(data)
     {
      $("#locality_select").html(data);
      console.log(data);
@@ -249,12 +255,12 @@ function previewFile() {
          $("#code").val('');
         },
     });
-  } 
+  }
 </script>
 
 <script>
 function percentage(val)
-{ 
+{
   var percentage = parseInt(val);
   if(percentage >100)
   {

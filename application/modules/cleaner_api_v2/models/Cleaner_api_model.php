@@ -43,6 +43,18 @@
         return 0;
       }
     }
+    public function create_user($data)
+    {
+      $this->db->insert('users', $data);
+      $result = $this->db->insert_id();
+      return $result;
+    }
+    public function insert_collection_file($data)
+    {
+      $this->db->insert('collection_files', $data);
+      $result = $this->db->insert_id();
+      return $result;
+    }
     public function check_user_id($user_id)
     {
       $this->db->select('*');
@@ -85,6 +97,30 @@
       else{
         return 0;
       }
+    }
+    public function get_complaints($cleaner_id)
+    {
+
+      $this->db->select('*');
+      $this->db->where('cleaner_id', $cleaner_id);
+      $query = $this->db->get('complaints');
+       //echo $this->db->last_query(); die;
+      return $query->result_array();
+    }
+
+    public function get_complaint_replies($cleaner_id, $complaint_id)
+    {
+      $this->db->select('*');
+      $this->db->where('complaint_id', $complaint_id);
+      $query = $this->db->get('complaint_replies');
+       //echo $this->db->last_query(); die;
+      return $query->result_array();
+    }
+    public function reply_to_complaint($data)
+    {
+      $this->db->insert('complaint_replies', $data);
+      $result = $this->db->insert_id();
+      return $result;
     }
   }
 ?>

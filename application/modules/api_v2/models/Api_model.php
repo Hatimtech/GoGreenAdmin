@@ -92,6 +92,14 @@
       $query = $this->db->get('users');
       return $query->row_array();
     }
+    public function phone_or_email_existence($phone_number,$email)
+    {
+      $this->db->select('*');
+      $this->db->where('phone_number',$phone_number);
+      $this->db->or_where('email',$email);
+      $query = $this->db->get('users');
+      return $query->row_array();
+    }
 
     public function insert_car_details($data)
     {
@@ -107,6 +115,18 @@
 
       $this->db->select('id,name,email,phone_number,is_phone_verified,is_payment');
       $this->db->where('email',$email);
+      $this->db->where('status',1);
+      //$this->db->or_where('phone_number',$phone_number);
+      $this->db->where('password',md5($password));
+      $query =  $this->db->get('users');
+      return $query->row_array();
+
+    }
+    public function login_mobile($mobile,$password)
+    {
+
+      $this->db->select('id,name,email,phone_number,is_phone_verified,is_payment');
+      $this->db->where('phone_number',$mobile);
       $this->db->where('status',1);
       //$this->db->or_where('phone_number',$phone_number);
       $this->db->where('password',md5($password));
@@ -396,7 +416,6 @@
 
     public function get_car_details($user_id)
     {
-
       $this->db->select('car_detail.*');
       $this->db->join('car_model','car_detail.model=car_model.id','left');
       $this->db->join('car_brand','car_detail.brand=car_brand.id','left');
@@ -405,5 +424,80 @@
        //echo $this->db->last_query(); die;
       return $query->result_array();
     }
+
+    public function get_additional_services($locality_id=null)
+    {
+      $this->db->where('is_del',1);
+      if(!empty($locality_id))
+      {
+        $this->db->where_in('locality_id',$locality_id);
+      }
+      $this->db->select('additional_services.*,city.name as city,locality.name as locality');
+      $this->db->join('city','city.id=additional_services.city_id');
+      $this->db->join('locality','locality.id=additional_services.locality_id');
+
+      $query = $this->db->get('additional_services');
+      return $query->result_array();
+    }
+
+    public function sendPushNotification($device_token, $device_type, $title = 'Welcome to GoGreen', $body = 'You have successfully became a member of GoGreen.')
+    {
+      if($device_token != ''){
+
+      $url = "https://fcm.googleapis.com/fcm/send";
+      // $token = $target;
+       $serverKey = "AAAAuNPqydM:APA91bHlf3OKR8YVWvTkXvhkuKJBO5uxVlfCgjP4v0x59eGJ-QjyInshYaKicrFY9irdr8BptL7p01nCvtn65Hb3eHu7TcufSOgy9mtnvXA5YGRf8uT4Y9xTA379TduU3wnhO5XVOuUn";
+       if (!defined('API_ACCESS_KEY')) define('API_ACCESS_KEY', $serverKey);
+
+       $registrationIds = array($device_token);
+
+        $msg = array
+        (
+          'message'  => $body,
+          'title'    => $title
+        );
+        $fields = array
+        (
+          'registration_ids'    => $registrationIds,
+          'notification' => $msg,
+          'data' => array
+          (
+           'message'  => $body,
+           'title'    => $title,
+           'notification_for'=>'go green'
+          )
+        );
+
+
+        $headers = array
+        (
+           'Authorization: key=' .$serverKey,
+           'Content-Type: application/json'
+       );
+       // return json_encode($registrationIds);
+
+       $ch = curl_init();
+        curl_setopt( $ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt( $ch,CURLOPT_POST, true );
+
+        curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
+        curl_setopt( $ch,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
+        //echo $device_type; die;
+
+        // if($device_type=='Android')
+        // {
+          curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields));
+        //}
+        // else
+        // {
+        //   curl_setopt( $ch,CURLOPT_POSTFIELDS,$json);
+        // }
+        $result = curl_exec($ch );
+        curl_close( $ch );
+        return $result;
+      }
+     }
+
   }
 ?>

@@ -1,7 +1,7 @@
 <?php
   Class Car_packages_model extends CI_Model
   {
-     
+
 
     public function insert_car_details($data)
     {
@@ -70,7 +70,7 @@
       $query = $this->db->get('car_brand');
       //echo $this->db->last_query(); die;
       return $query->row_array();
-      
+
     }
     public function check_model_name($name)
     {
@@ -79,7 +79,7 @@
       $query = $this->db->get('car_brand');
       //echo $this->db->last_query(); die;
       return $query->row_array();
-      
+
     }
     public function insert_brand($data)
     {
@@ -135,6 +135,12 @@
       $insert_id = $this->db->insert_id();
       return  $insert_id;
     }
+    public function insert_additional_services($user_payment_data)
+    {
+      // $query = $this->db->insert('booked_additional_services',$user_payment_data);
+      // $insert_id = $this->db->insert_id();
+      // return  $insert_id;
+    }
     public function is_package_on_car($car_id)
     {
       $this->db->select('*');
@@ -185,7 +191,7 @@
     }
     public function get_week_before_data($user_id,$today,$next_week)
     {
-      $this->db->select('booked_packages.user_id,booked_packages.expiry_date,booked_packages.amount,booked_packages.days,booked_packages.package_type,booked_packages.purchase_date,cd.parking_number,cd.type,md.name as model,cb.name as brand');
+      $this->db->select('booked_packages.payment_key as pkey, booked_packages.user_id,booked_packages.expiry_date,booked_packages.amount,booked_packages.days,booked_packages.package_type,booked_packages.purchase_date,cd.parking_number,cd.type,md.name as model,cb.name as brand');
       $this->db->where('expiry_date>',$today);
       $this->db->where('expiry_date<',$next_week);
       $this->db->where('booked_packages.user_id',$user_id);
@@ -221,7 +227,7 @@
         $this->db->where('user_id',$user_id);
         $this->db->where('id',$car_id);
         $query = $this->db->get('car_detail');
-        //echo $this->db->last_query(); die;  
+        //echo $this->db->last_query(); die;
         return $query->row_array();
 
     }
@@ -276,7 +282,7 @@
       $query = $this->db->get('users');
       return $query->row_array();
     }
-   
+
   public function get_coupan_code_detail($data)
   {
     $this->db->select('id,offer_name,coupan_code,discount,minimum_order,max_discount');
@@ -287,13 +293,22 @@
   }
   public function get_expired_packages_detail($user_id)
   {
-    $this->db->select('booked_packages.user_id,booked_packages.expiry_date,booked_packages.amount,booked_packages.days,booked_packages.package_type,booked_packages.purchase_date,cd.parking_number,cd.type,md.name as model,cb.name as brand');
+    $this->db->select('booked_packages.payment_key as pkey, booked_packages.user_id,booked_packages.expiry_date,booked_packages.amount,booked_packages.days,booked_packages.package_type,booked_packages.purchase_date,cd.parking_number,cd.type,md.name as model,cb.name as brand');
     $this->db->join('car_detail as cd','cd.id=booked_packages.car_id','left');
     $this->db->join('car_brand as cb','cb.id=cd.brand','left');
     $this->db->join('car_model as md','md.id=cd.model');
     $this->db->where('booked_packages.user_id',$user_id);
     $this->db->where('booked_packages.expiry_date<=','CURDATE()',FALSE);
     $query = $this->db->get('booked_packages');
+    //echo $this->db->last_query(); die;
+    return $query->result_array();
+  }
+  public function get_additional_services($payment_key)
+  {
+    $this->db->select('A.additional_services_id, B.service_name, A.amount, A.purchase_date, A.status, A.status_reason');
+    $this->db->join('additional_services as B','B.id=A.additional_services_id','inner');
+    $this->db->where('A.payment_key',$payment_key);
+    $query = $this->db->get('booked_additional_services AS A');
     //echo $this->db->last_query(); die;
     return $query->result_array();
   }

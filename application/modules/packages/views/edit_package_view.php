@@ -18,15 +18,15 @@ if($this->session->flashdata('frequency'))
 <style>
 .span_ajax_class
 {
- cursor: pointer; 
+ cursor: pointer;
 }
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     -moz-appearance: none;
     -ms-appearance: none;
     appearance: none;
-    margin: 0; 
+    margin: 0;
 }
 </style>
 <style>
@@ -51,6 +51,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #checkboxes {
+    position: relative;
   display: none;
   border: 1px #dadada solid;
 }
@@ -98,7 +99,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 </style>
 <link href="<?php echo base_url_custom;?>build/css/example-styles.css" rel="stylesheet">
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url('packages/'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
 
   <div class="row">
@@ -113,9 +114,9 @@ input[type=number]::-webkit-outer-spin-button {
           <form class="form-horizontal form-label-left" method="post" action="<?php echo base_url()?>packages/update_package?id=<?php echo  $package_row['id']; ?>">
             <div class="form-group">
               <div class="control-label col-md-3 col-sm-3 col-xs-12">
-                <label>Package Name</label>           
+                <label>Package Name</label>
               </div>
-              <div class="col-md-6 col-sm-6 col-xs-12">           
+              <div class="col-md-6 col-sm-6 col-xs-12">
                 <input type="text" required class="form-control" name="pname" value="<?php echo $package_row['name']?>" placeholder="Enter Package Name">
                 <input type="hidden" name="package_id" id="package_id" value=<?php echo $package_row['id'];?>>
               </div>
@@ -146,19 +147,19 @@ input[type=number]::-webkit-outer-spin-button {
               </div>
               <div id="checkboxes_city">
 
-                <?php 
+                <?php
                 if(!empty($all_cities))
                 {
                   foreach ($all_cities as $key => $value)
-                  {  
+                  {
                     // echo $value['id']; die;
                     ?>
 
                     <label for="one">
                       <input name="to_get_checked" onclick="demo(this.value)" <?=in_array($value['id'],$package_city) ? 'checked' : ''?> value="<?php echo $value['id']; ?>" type="checkbox" id="city_<?php echo $value['id'];?>"/><?=$value['name']?></label>
                   <!--   echo"<label for='one'>
-                    <input onclick='demo(this.value)' ".in_array($all_cities,$package_city) ? 'checked' : ''." value='".$value['id']."' type='checkbox' id='city_".$value['id']."']'/>".$value['name']."</label>";--> 
-                                                                                
+                    <input onclick='demo(this.value)' ".in_array($all_cities,$package_city) ? 'checked' : ''." value='".$value['id']."' type='checkbox' id='city_".$value['id']."']'/>".$value['name']."</label>";-->
+
                     <?php
                   }
                 }
@@ -166,7 +167,7 @@ input[type=number]::-webkit-outer-spin-button {
               </div>
             </div>
           </div>
-          
+
           <div class="form-group">
             <div class="control-label col-md-3 col-sm-3 col-xs-12">
               <label>Selected Cities</label>
@@ -199,11 +200,11 @@ input[type=number]::-webkit-outer-spin-button {
               <label>Select Locality</label>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
-              <div  required class="selectBox" onclick="showCheckboxes()"> 
+              <div  required class="selectBox" onclick="showCheckboxes()">
                 <select>
                   <option>Select locality</option>
 
-               
+
 
                 </select>
                 <?php
@@ -219,7 +220,7 @@ input[type=number]::-webkit-outer-spin-button {
                   if(!empty($all_localities))
                 {
                   foreach ($all_localities as $key => $value)
-                  { 
+                  {
                     if(in_array($value['city_id'], $package_city))
                     {
                     ?>
@@ -227,8 +228,8 @@ input[type=number]::-webkit-outer-spin-button {
                       <label for="one">
                         <input onclick="get_final_locality_textarea(this.id)" <?=in_array($value['id'],$package_locality) ? 'checked' : ''?> value="<?php echo  $value['id']?>,<?php echo $value['city_id']?>" name="locality_checkbox[]" type="checkbox" id="locality_<?php echo $value['id'];?>"/><?=$value['name']?>(<?php echo $value['city']?>)</label>
                       <!--   echo"<label for='one'>
-                        <input onclick='demo(this.value)' ".in_array($all_cities,$package_city) ? 'checked' : ''." value='".$value['id']."' type='checkbox' id='city_".$value['id']."']'/>".$value['name']."</label>";--> 
-                                                                                
+                        <input onclick='demo(this.value)' ".in_array($all_cities,$package_city) ? 'checked' : ''." value='".$value['id']."' type='checkbox' id='city_".$value['id']."']'/>".$value['name']."</label>";-->
+
                     <?php
                   }
                   }
@@ -296,7 +297,7 @@ input[type=number]::-webkit-outer-spin-button {
                      <div class="col-md-8 col-sm-6 col-xs-12">
                       <input  type="number" class="form-control"  value="<?php echo $package_row['exterior_once']?>" name="exterior_once" id="exterior_once" placeholder="Enter Cost">
                     </div>
-                  </div> 
+                  </div>
                   <div class="form-group">
                     <div class="control-label col-md-4 col-sm-3 col-xs-12">
                      <label>Interior Cost(thrice)</label>
@@ -312,7 +313,7 @@ input[type=number]::-webkit-outer-spin-button {
                  <div class="col-md-8 col-sm-6 col-xs-12">
                   <input  type="number" class="form-control" value="<?php echo $package_row['exterior_thrice']?>" name="exterior_thrice" id="exterior_thrice" placeholder="Enter Cost">
                 </div>
-              </div> 
+              </div>
               <div class="form-group">
                 <div class="control-label col-md-4 col-sm-3 col-xs-12">
                  <label>Interior Cost(five)</label>
@@ -329,7 +330,7 @@ input[type=number]::-webkit-outer-spin-button {
               <input  type="number" class="form-control" value="<?php echo $package_row['exterior_five']?>"  name="exterior_five" id="exterior_five" placeholder="Enter Cost">
             </div>
           </div>
-        </div><!--/when monthly close-->  
+        </div><!--/when monthly close-->
       </div>
       <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
         <div id="whenonce" style="">
@@ -358,7 +359,7 @@ input[type=number]::-webkit-outer-spin-button {
                 <option value="monthly">Monthly</option> <option value="once">Once</option>
               </select> -->
             </div>
-          </div>  
+          </div>
 
           <!-- <div class="form-group" id="frequency_select">
             <div class="control-label col-md-3 col-sm-3 col-xs-12">
@@ -369,16 +370,16 @@ input[type=number]::-webkit-outer-spin-button {
                 <option value="1">Once A Week</option>
                 <option value="2">Thrice A Week</option>
                 <option value="3">Five Times A Week</option>
-              </select>    
+              </select>
             </div>
           </div>   -->
-          
+
 
 
           <!-- when user choose monthy package-->
 
 
-          
+
           <!--/ when user choose monthy package-->
 
 
@@ -387,7 +388,7 @@ input[type=number]::-webkit-outer-spin-button {
         </form>
       </div>
     </div>
-    <div class="col-md-3"></div>   
+    <div class="col-md-3"></div>
   </div><!--x panel-->
 </div>
 </div>
@@ -425,7 +426,7 @@ function get_locality_and_city(val)
              },
              error : function(data) {
               alert('Something went wrong');
-            } 
+            }
           });
   //}
   // else
@@ -465,8 +466,8 @@ function get_city_for_textarea(val)
 <!-- jquery multi select -->
 <script type="text/javascript">
  $(function(){
-     // $('.forplugin').multiSelect();     
-     $('#cityid').multiSelect();     
+     // $('.forplugin').multiSelect();
+     // $('#cityid').multiSelect();
    });
 
  </script>
@@ -478,7 +479,7 @@ function get_city_for_textarea(val)
   {
     // var car_type = document.getElementById('car_type').value;
     // if(car_type)
-    // {  
+    // {
      var myArray = [];
      var to_get_city = [];
 
@@ -516,7 +517,7 @@ function get_city_for_textarea(val)
     // else
     // {
     //   alert('Select Car Type First');
-    // }     
+    // }
     //alert("Checked: " + myArray.join(","));
   }
 </script>
@@ -571,7 +572,7 @@ function get_city_for_textarea(val)
     //$("."+to_delete_locality).remove();
      //document.getElementsByClassName("to_delete_locality_7").remove();
      $('.to_delete_locality_'+id).remove();
-    // 
+    //
     // document.getElementById(id).remove();
   }
 </script>
@@ -821,7 +822,7 @@ $('#button').on('click',function(e)
 
     // var interior_five = $("#interior_five").val();
     var exterior_five = $("#exterior_five").val();
-    
+
     if((!exterior_cost || exterior_cost==0) || (!exterior_once || exterior_once==0) || (!exterior_thrice || exterior_thrice==0) || (!exterior_five || exterior_five==0))
     {
       alert('Please Fill Up The All Exterior Amount Field');

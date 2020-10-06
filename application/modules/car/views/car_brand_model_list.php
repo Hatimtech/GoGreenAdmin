@@ -12,7 +12,8 @@
 <style>
 
 </style>
-<br><br>
+<br>
+<a href="<?php echo base_url('dashboard'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
   <div class="row">
 
@@ -43,6 +44,12 @@
             echo"<font color='red'>Deletion In Error</font>";
             echo"</div>";
           }
+          if($this->session->flashdata('exist'))
+          {
+            echo"<div style='margin-left: 150px;'>";
+            echo"<font color='red'>Model already exist</font>";
+            echo"</div>";
+          }
           ?>
           <a href="<?php echo base_url()?>car/add_brand_with_model">
       <button style="float: right; width:10%">Add New</button></a>
@@ -51,8 +58,8 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
-          
-          <table id="datatable" class="table table-striped table-bordered">
+
+          <table id="datatable2" class="table table-striped table-bordered">
             <thead>
               <tr>
                 <th>Brand Name</th>
@@ -61,11 +68,17 @@
                <!--  <th>Delete</th> -->
               </tr>
             </thead>
-
+            <tfoot>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </tfoot>
 
             <tbody id="">
               <?php
-              
+
                  foreach($brand_model as $key => $value)
                  {
                    // echo"<pre>";print_r($brand_model); die;
@@ -75,14 +88,14 @@
                    <td>".$value['model']."</td>
                    <td><button class='btn btn-info' onclick='open_edit_modal(".$value['model_id'].")'>Edit</button></td>
                   </tr>";
-                 }                 
+                 }
               ?>
-             
-             
+
+
             <!--  <td>
                    <a href='".base_url()."car/delete_brand_model?b_id=".$value['brand_id']."&m_id=".$value['model_id']."' class='btn btn-danger btn-sm'><i class='fa fa-trash-o m-right-xs'></i>Delete</a>
                    </td>-->
-              
+
               <!-- <tr>
                 <td>Airi Satou</td>
                 <td>Accountant</td>
@@ -118,7 +131,7 @@
                 <td>Customer Support</td>
                 <td>New York</td>
                 <td>27</td>
-              </tr> 
+              </tr>
  -->
             </tbody>
           </table>
@@ -132,12 +145,12 @@
 
 
   <div class="row">
-   
-    
+
+
 
   </div>
 </div>
-    
+
 
 
 <!-- modal for manuall team change -->
@@ -160,7 +173,7 @@
             <br>
              <label>Model Name</label>
             <input required type="text" class="form-control" required id="modal_edit" name="modal_edit" placeholder="City Name">
-            
+
             <span id="modal_span" style="color: red"></span>
             <input type="hidden" name="payment_key" id="payment_key">
           </div>
@@ -190,7 +203,7 @@
            <form method="post" action="<?php base_url();?>car/delete_brand">
             <label>Choose Brand To Delete</label>
            <select class="form-control" name="brand_del">
-                  <?php 
+                  <?php
                   foreach($all_brands as $key => $value)
                  {
                     ?>
@@ -199,7 +212,7 @@
                     <?php
                  }
                  ?>
-           </select> 
+           </select>
             <span id="modal_span" style="color: red"></span>
             <input type="hidden" name="payment_key" id="payment_key">
           </div>
@@ -229,7 +242,7 @@
              <label>Please Select Brand</label>
              <select onchange="get_respective_models(this.value)" class="form-control" name="all_brands">
               <option disabled selected>Choose A Brand </option>
-              <?php 
+              <?php
                   foreach($all_brands as $key => $value)
                  {
                     ?>
@@ -243,7 +256,7 @@
             <label>Choose Model To Delete</label>
            <select required class="form-control" name="model_del" id="ajax_model">
                  <option disabled selected>Choose Brand First</option>
-           </select> 
+           </select>
             <span id="modal_span" style="color: red"></span>
             <input type="hidden" name="payment_key" id="payment_key">
           </div>
@@ -268,7 +281,7 @@
 <script>
 function open_edit_modal(id)
 {
-  var model_id = id;  
+  var model_id = id;
   $.ajax
       ({
         type : "POST",
@@ -285,7 +298,7 @@ function open_edit_modal(id)
 
           $('#modal_edit').val(data.model);
           $('#brand_edit_modal').modal('show');
-          
+
          // $("#locality_ajax_table").html(data.dropdown);
              //alert('hello');
              console.log(data);
@@ -319,8 +332,8 @@ function open_edit_modal(id)
 
           }
           // alert(data.model_id);
-          
-          
+
+
          // $("#locality_ajax_table").html(data.dropdown);
              //alert('hello');
              console.log(data);
@@ -354,6 +367,63 @@ function get_respective_models(id)
             alert('Something went wrong');
         }
         });
-   
+
 }
+</script>
+<script>
+
+     $(document).ready(function(){
+       $('#datatable2').dataTable({
+         initComplete: function() {
+             this.api().columns().every(function() {
+                 var column = this;
+                 var select = $('<select><option value="">All</option></select>')
+                     .appendTo($(column.footer()).empty())
+                     .on("click", function(e) {
+                         e.stopPropagation();
+                     })
+                     .on('change', function() {
+                         var val = $.fn.dataTable.util.escapeRegex(
+                             $(this).val()
+                         );
+                         column.search(val ? '^' + val + '$' : '', true, false).draw();
+                         //console.log($(this).val());
+                         //column.search(val).draw();
+                     });
+
+                 column.data().unique().sort().each(function(d, j) {
+                     d = d.replace(/(<([^>]+)>)/ig, "");
+                     if(select.find('option[value="' + d + '"]').length <= 0){
+                       select.append('<option value="' + d + '">' + d + '</option>');
+                     }
+                 });
+             });
+             // $("#datatable tfoot select option").val(function(idx, val) {
+             //   $(this).siblings('[value="'+ val +'"]').remove();
+             // });
+         },
+         dom: 'lBfrtip',
+         buttons: [{
+                 extend: 'excelHtml5',
+                 title: 'Data export',
+                 exportOptions: {
+                     columns: [0, 1]
+                 }
+             },
+             {
+                 extend: 'csvHtml5',
+                 title: 'Data export',
+                 exportOptions: {
+                     columns: [0, 1]
+                 }
+             },
+         ],
+         ordering: true,
+         oLanguage: {
+             "sSearch": "Search:"
+         }
+     });
+
+    } );
+
 </script>

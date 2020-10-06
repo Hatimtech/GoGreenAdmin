@@ -7,10 +7,25 @@
    {
     return $this->db->get('users')->result_array();
    }
+   public function get_single_user($id=1)
+   {
+     $this->db->where("id", $id);
+    return $this->db->get('users')->row();
+
+   }
    public function insert_user($data)
    {
     $this->db->insert('users',$data);
     return $this->db->insert_id();
+   }
+   public function update_user($data, $id)
+   {
+     foreach ($data as $key => $value) {
+       $this->db->set($key, $value);
+     }
+    $this->db->where("id", $id);
+    $this->db->update('users');
+    return 1;
    }
     public function get_all_brands()
     {
@@ -64,10 +79,16 @@
       $query = $this->db->get('users');
       return $query->row_array();
     }
-    public function is_email_exist($email)
+    public function is_email_exist($email, $id)
     {
-      $this->db->where('email',$email);
-      $query = $this->db->get('users');
+      if($id == ''){
+        $this->db->where('email',$email);
+        $query = $this->db->get('users');
+      }else{
+        $this->db->where('email',$email);
+        $this->db->where('id !=',$id);
+        $query = $this->db->get('users');
+      }
       return $query->row_array();
     }
     public function check_reg_no($reg_no,$car_id)

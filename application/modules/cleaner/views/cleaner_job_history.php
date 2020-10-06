@@ -15,13 +15,13 @@
 
 }
 </style>
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url('cleaner'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" role="main">
   <div class="page-title">
     <div class="title_left">
       <?php echo $this->session->flashdata('cleaner_delleted');?>
       <?php if($this->session->flashdata('cleaner_added'))
-      { 
+      {
         //echo"alresdy exist";die;
         echo"<div style='margin-left: 150px;'>";
         echo"<font color='green'>Cleaner Added Succesfully</font>";
@@ -31,7 +31,7 @@
     </div>
 
     <div class="title_right">
-      
+
     </div>
   </div>
   <div class="row">
@@ -45,7 +45,43 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
-          
+          <div class="filters text-center mt-1 mb-2 d-block clearfix">
+            <form class="" action="" method="get">
+              <?php if(isset($_GET['id'])){ ?>
+              <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
+              <?php $reset = "id=".$_GET['id']; } ?>
+              <span id="fthold">
+                <input type="radio" name="ft" value="1" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '1') ? 'checked' : ''; ?>> Today
+                <input type="radio" name="ft" value="2" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '2') ? 'checked' : ''; ?>> This Week
+                <input type="radio" name="ft" value="3" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '3') ? 'checked' : ''; ?>> This Month
+                <input type="radio" name="ft" value="4" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '4') ? 'checked' : ''; ?>> This Quarter
+                <input type="radio" name="ft" value="5" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '5') ? 'checked' : ''; ?>> This Year
+                <input type="radio" name="ft" value="6" class="ftf" id="customft" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '6') ? 'checked' : ''; ?>> Custom
+              </span>
+              <div style="max-width:600px; margin:20px auto; display:<?php echo (isset($_GET['ft']) && $_GET['ft'] == '6') ? 'block' : 'none'; ?>;" class="row" id="ftcustom">
+                <div class="col-md-6">
+                    <input type="text" value="<?php echo (isset($_GET['ftfr'])) ? $_GET['ftfr'] : ''; ?>" class="form-control has-feedback-left" id="single_cal2" placeholder="From Date" aria-describedby="inputSuccess2Status2" name="ftfr">
+                    <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
+                </div>
+                <div class="col-md-6">
+                  <input type="text" value="<?php echo (isset($_GET['ftto'])) ? $_GET['ftto'] : ''; ?>" class="form-control has-feedback-left" id="custom_calender" placeholder="To Date" aria-describedby="inputSuccess2Status2" name="ftto">
+                  <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
+                </div>
+              </div>
+              <button class="btn btn-success ml-2" name="button">Filter</button>
+              <a href="?<?php echo $reset; ?>" class="btn btn-warning ml-2" name="button">Reset</a>
+            </form>
+            <script type="text/javascript">
+
+              document.getElementById("fthold").addEventListener("click", function(){
+                if(document.getElementById("customft").checked){
+                  document.getElementById("ftcustom").style.display = "block";
+                }else{
+                  document.getElementById("ftcustom").style.display = "none";
+                }
+              })
+            </script>
+          </div>
           <table id="datatable" class="table table-striped table-bordered">
             <thead>
               <tr>
@@ -86,7 +122,7 @@
                   </tr>";
                  }
               ?>
-              
+
              <!--  <tr>
                 <td>Tiger Nixon</td>
                 <td>System Architect</td>
@@ -156,51 +192,50 @@
   </div>
 
 
- 
+
 
 
   <div class="row">
-   
-    
+
+
 
   </div>
 </div>
-    
+
 
 
 <script>
 
      $(document).ready(function(){
-     
+
   //   fetch_data('no');
 //function fetch_data(change_location,location_id =''){
-   
+
     ///----------------on load get da list start
-     $('#datatable-responsive').dataTable( { 
+     $('#datatable-responsive').dataTable( {
              "columns": [
                 {"data": "id"},
-    {"data": "first_name"},       
+    {"data": "first_name"},
                 {"data": "name"},
             ],
             columnDefs: [
                { orderable: false, targets: [-1,2,3,5] },
-             
-            ], 
+
+            ],
            // "processing": true,
             "serverSide": true,
             "ajax": {
                 url: '<?php echo base_url(); ?>ajax_pagination/pagination',
                 type: 'POST',
                  "data": {
-                   
+
                 }
  //           }
     } );
   ///----------------on load get da list end
  }
- 
+
 
     } );
-   
-</script>   
 
+</script>

@@ -23,7 +23,7 @@ class Packages extends MX_Controller {
 		$localities_id = $this->input->post('locality_id');
 		// print_r($localities_id); die;
 		$data['packages'] = $this->packages_model->get_packages($localities_id);
-		// echo $this->db->last_query(); die; 
+		// echo $this->db->last_query(); die;
 		$data['page'] ='packages_view';
 		_layout($data);
 		// $this->template->load('template', 'packages_view',$data);
@@ -49,7 +49,7 @@ class Packages extends MX_Controller {
 		 {
 		 	$output .='<label for="one">
         <input name="locality_id[]" type="checkbox" value="'.$value['id'].'" id="'.$value['id'].'" />'.$value['name'].'</label>';
-		 } 
+		 }
 		 $data = array(
 			'option'=>$output,
 		 );
@@ -63,7 +63,7 @@ class Packages extends MX_Controller {
 		$city_id = $this->input->post('city_id');
 		$car_type = $this->input->post('car_type');
 
-		 $localities = $this->packages_model->get_locality_and_city($city_id,$car_type);		
+		 $localities = $this->packages_model->get_locality_and_city($city_id,$car_type);
 		 $output='';
 			 foreach ($localities as $key => $value)
 			 {
@@ -73,7 +73,7 @@ class Packages extends MX_Controller {
 			 	</label>
 				";
 			 }
-		
+
 		  $data = array(
 			 'option'=>$output,
 			 // 'textarea'=>$textarea,
@@ -104,8 +104,8 @@ class Packages extends MX_Controller {
 		$pacakge_location =$this->packages_model->get_package_location_by_id($package_id);
 		$package_city = array_column($pacakge_location, 'city_id');
 		$package_locality = array_column($pacakge_location, 'locality_id');
-		//echo "<pre>"; print_r($package_locality); 
-		
+		//echo "<pre>"; print_r($package_locality);
+
 		// controller code to show selected loclities ends here
 
 		$city_id = $this->input->post('city_id');
@@ -114,7 +114,7 @@ class Packages extends MX_Controller {
 		// $car_type = 'saloon';
 		//echo "dfs"; die;
 
-		 $localities = $this->packages_model->get_locality_and_city_edit($city_id,$car_type,$package_locality);		
+		 $localities = $this->packages_model->get_locality_and_city_edit($city_id,$car_type,$package_locality);
 		 $output='';
 			 foreach ($localities as $key => $value)
 			 {
@@ -134,14 +134,14 @@ class Packages extends MX_Controller {
 			 	</label>
 
 				";
-				 
+
 			 }
-		
+
 		  $data = array(
 			 'option'=>$output,
 			 // 'textarea'=>$textarea,
 		  );
-		//echo "<pre>"; print_r($data); 
+		//echo "<pre>"; print_r($data);
 		//die;
 		 echo json_encode($data);
 	}
@@ -151,9 +151,9 @@ class Packages extends MX_Controller {
 	{
 		 $city_id = $this->input->post('city_id');
 		// echo $city_id; die;
-		
 
-		 $cities = $this->packages_model->get_city_via_ajax($city_id);		
+
+		 $cities = $this->packages_model->get_city_via_ajax($city_id);
 		 //print_r($cities); die;
 
 		 $textarea='';
@@ -167,9 +167,9 @@ class Packages extends MX_Controller {
 			$counter++;
 		 }
 
-		
+
 		  $data = array(
-			 
+
 			  'textarea'=>$textarea,
 		  );
 		 // //print_r($data); die;
@@ -180,9 +180,9 @@ class Packages extends MX_Controller {
 	{
 		 $city_id = $this->input->post('city_id');
 		// echo $city_id; die;
-		
 
-		 $cities = $this->packages_model->get_city_via_ajax($city_id);		
+
+		 $cities = $this->packages_model->get_city_via_ajax($city_id);
 		 //print_r($cities); die;
 
 		 $textarea='';
@@ -196,9 +196,9 @@ class Packages extends MX_Controller {
 			$counter++;
 		 }
 
-		
+
 		  $data = array(
-			 
+
 			  'textarea'=>$textarea,
 		  );
 		 // //print_r($data); die;
@@ -352,8 +352,8 @@ class Packages extends MX_Controller {
 
 					);
 					$insert_id = $this->packages_model->insert_package_details($data);
-						// to update is _package key of locality tabel					
-					
+						// to update is _package key of locality tabel
+
 
 				foreach ($_POST['locality_checkbox'] as $key => $value)
 				{
@@ -367,7 +367,7 @@ class Packages extends MX_Controller {
 						'city_id'=>$city_id,
 						'locality_id'=>$locality_id
 					);
-					$this->packages_model->insert_locations_of_inserted_package($data);	
+					$this->packages_model->insert_locations_of_inserted_package($data);
 					if($car_type == 'saloon')
 					{
 						$this->packages_model->update_is_saloon($locality_id);
@@ -375,7 +375,7 @@ class Packages extends MX_Controller {
 					else
 					{
 						$this->packages_model->update_is_suv($locality_id);
-					}				
+					}
 				}
 
 				if($insert_id)
@@ -396,7 +396,7 @@ class Packages extends MX_Controller {
 		// else
 		// {
 		// 	redirect('packages');
-		// }		
+		// }
 	}
 
 
@@ -426,8 +426,8 @@ class Packages extends MX_Controller {
 		// $this->form_validation->set_rules('p_type', 'type', 'required',array('required' =>'Please Choose A Package Type'));
 		// $this->form_validation->set_rules('interior', 'interior cost', 'required');
 		// $this->form_validation->set_rules('exterior', 'exterior cost', 'required');
-	    
-		
+
+
 
 		if(empty($this->input->post('locality_checkbox')))
 		{
@@ -534,11 +534,11 @@ class Packages extends MX_Controller {
 					'exterior_five'=>$exterior_five,
 					'interior_five'=>$interior_five,
 				);
-			 
+
 				$bool = $this->packages_model->update_package_details($data,$package_id);
 				// echo $bool; die;
-					// to update is _package key of locality tabel					
-				
+					// to update is _package key of locality tabel
+
 
 			foreach ($_POST['locality_checkbox'] as $key => $value)
 			{
@@ -552,7 +552,7 @@ class Packages extends MX_Controller {
 					'city_id'=>$city_id,
 					'locality_id'=>$locality_id
 				);
-				$this->packages_model->insert_locations_of_inserted_package($data);	
+				$this->packages_model->insert_locations_of_inserted_package($data);
 				if($car_type == 'saloon')
 				{
 					$this->packages_model->update_is_saloon($locality_id);
@@ -561,7 +561,7 @@ class Packages extends MX_Controller {
 				else
 				{
 					$this->packages_model->update_is_suv($locality_id);
-				}				
+				}
 			}
 
 			if($bool)
@@ -574,7 +574,7 @@ class Packages extends MX_Controller {
 				$this->session->set_flashdata('package_falied','Package');
 			}
 		}
-		
+
 
 	}
 
@@ -584,7 +584,7 @@ class Packages extends MX_Controller {
 		// $id = (int)$id;
 		// var_dump($id); die;
 		// $locality_id = $this->input->get('l_id');
-		
+
 		// print_r($package_localities); die;
 		$type = $this->input->get('type');
 		//echo $locality_id; die;
@@ -600,9 +600,9 @@ class Packages extends MX_Controller {
 		}
 
 		if($bool)
-		{			
+		{
 				$this->session->set_flashdata('delete_succ', 'Deleted Successfully');
-				redirect('packages');	
+				redirect('packages');
 		}
 		else{
 			$this->session->set_flashdata('error_del','error deleted');
@@ -614,7 +614,7 @@ class Packages extends MX_Controller {
 	public function get_final_locality_for_textarea()
 	{
 		$locality_id = $this->input->post('locality_id');
-		 $localities = $this->packages_model->get_final_locality($locality_id);		
+		 $localities = $this->packages_model->get_final_locality($locality_id);
 		 $span_list='';
 		 foreach ($localities as $key => $value)
 		 {
@@ -623,7 +623,7 @@ class Packages extends MX_Controller {
 		 	<span id='".$value['id']."' onclick='removespan(this.id)' class='span_ajax_class' title='Remove City'>x</span></span>
 			";
 		 }
-		
+
 		  $data = array(
 			 'option'=>$span_list,
 			 // 'textarea'=>$textarea,
@@ -666,9 +666,5 @@ class Packages extends MX_Controller {
 	 	// echo "<pre>";print_r($pacakge_location); die;
 		$data['page'] = 'edit_package_view';
 		_layout($data);
-	}	
-}   
-  
-
-	
-
+	}
+}

@@ -15,6 +15,7 @@
 
 }
 </style>
+<a href="<?php echo base_url('car'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" role="main">
   <div class="page-title">
     <div class="title_left">
@@ -22,7 +23,7 @@
     </div>
 
     <div class="title_right">
-      
+
     </div>
   </div>
   <div class="row">
@@ -49,7 +50,7 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
-          
+
           <table id="datatable" class="table table-striped table-bordered">
             <thead>
               <tr>
@@ -60,7 +61,14 @@
 
               </tr>
             </thead>
-
+            <tfoot>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </tfoot>
 
             <tbody id="">
               <?php
@@ -80,9 +88,9 @@
 
 
               ?>
-             
-             
-              
+
+
+
              <!--  <tr>
                 <td>Tiger Nixon</td>
                 <td>System Architect</td>
@@ -156,47 +164,68 @@
 
 
   <div class="row">
-   
-    
+
+
 
   </div>
 </div>
-    
+
 
 
 <script>
 
      $(document).ready(function(){
-     
-  //   fetch_data('no');
-//function fetch_data(change_location,location_id =''){
-   
-    ///----------------on load get da list start
-     $('#datatable-responsive').dataTable( { 
-             "columns": [
-                {"data": "id"},
-    {"data": "first_name"},       
-                {"data": "name"},
-            ],
-            columnDefs: [
-               { orderable: false, targets: [-1,2,3,5] },
-             
-            ], 
-           // "processing": true,
-            "serverSide": true,
-            "ajax": {
-                url: '<?php echo base_url(); ?>ajax_pagination/pagination',
-                type: 'POST',
-                 "data": {
-                   
-                }
- //           }
-    } );
-  ///----------------on load get da list end
- }
- 
+       $('#datatable').dataTable({
+         initComplete: function() {
+             this.api().columns().every(function() {
+                 var column = this;
+                 var select = $('<select><option value="">All</option></select>')
+                     .appendTo($(column.footer()).empty())
+                     .on("click", function(e) {
+                         e.stopPropagation();
+                     })
+                     .on('change', function() {
+                         var val = $.fn.dataTable.util.escapeRegex(
+                             $(this).val()
+                         );
+                         column.search(val ? '^' + val + '$' : '', true, false).draw();
+                         //console.log($(this).val());
+                         //column.search(val).draw();
+                     });
+
+                 column.data().unique().sort().each(function(d, j) {
+                     d = d.replace(/(<([^>]+)>)/ig, "");
+                     if(select.find('option[value="' + d + '"]').length <= 0){
+                       select.append('<option value="' + d + '">' + d + '</option>');
+                     }
+                 });
+             });
+             // $("#datatable tfoot select option").val(function(idx, val) {
+             //   $(this).siblings('[value="'+ val +'"]').remove();
+             // });
+         },
+         dom: 'lBfrtip',
+         buttons: [{
+                 extend: 'excelHtml5',
+                 title: 'Data export',
+                 exportOptions: {
+                     columns: [0, 1, 2, 3]
+                 }
+             },
+             {
+                 extend: 'csvHtml5',
+                 title: 'Data export',
+                 exportOptions: {
+                     columns: [0, 1, 2, 3]
+                 }
+             },
+         ],
+         ordering: true,
+         oLanguage: {
+             "sSearch": "Search:"
+         }
+     });
 
     } );
-   
-</script>   
 
+</script>

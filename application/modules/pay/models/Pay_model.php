@@ -16,7 +16,7 @@ class Pay_model extends CI_Model
     $this->db->set('paytab_status', 2);
     $this->db->set('status', 2);
 
-    $this->db->set('created_at', $date);
+    $this->db->set('modified_at', $date);
     $query = $this->db->update('payment_collected');
     if ($query) {
       return 1;
@@ -39,6 +39,7 @@ class Pay_model extends CI_Model
     $this->db->where('u.id', $id);
     $this->db->where('cd.status', 1);
     $query = $this->db->get('users as u');
+    //echo $this->db->last_query();
     return $query->row_array();
   }
 }

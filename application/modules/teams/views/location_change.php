@@ -61,7 +61,7 @@ select
 }
 .span_ajax_class
 {
- cursor: pointer; 
+ cursor: pointer;
 }
 
 .btn-save
@@ -77,10 +77,10 @@ select
 </style>
 
 <link href="<?php echo base_url(); ?>/build/css/example-styles.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
 
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url('teams'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
 
   <div class="row">
@@ -103,7 +103,7 @@ select
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <select required name="city" onchange="get_city_wise_locality(this.value)">
                   <option >Select City</option>
-                  <?php 
+                  <?php
                     if(!empty($city))
                     {
                       foreach ($city as $key => $value)
@@ -130,7 +130,7 @@ select
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <select name="locality" onchange="get_streets_by_locality_id(this.value)" id="locality_row" required>
                   <!-- <option value="" disabled selected>Select locality</option> -->
-                   <?php 
+                   <?php
                     if(!empty($localities))
                     {
                       foreach ($localities as $key => $value)
@@ -159,7 +159,7 @@ select
               <label>Select Streets</label>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
-              <div  required class="selectBox" id="showbox"> 
+              <div  required class="selectBox" id="showbox">
                 <select>
                   <option >Select Streets</option>
                 </select>
@@ -170,8 +170,8 @@ select
                   if(!empty($streets))
                 {
                   foreach ($streets as $key => $value)
-                  { 
-                    
+                  {
+
                     ?>
                       <label for="one">
                         <input value="<?php echo  $value['id']?>" name="streets_checkbox[]" <?=in_array($value['name'],$location_array['streets']) ? 'checked' : ''?> type="checkbox" id=""><?=$value['name']?></label>
@@ -188,10 +188,10 @@ select
 
 
 
-        
+
           <br>
           <input type="submit" class="btn btn-primary btn-md btn-save" value="Update">
-          <div class="col-md-3"></div>   
+          <div class="col-md-3"></div>
           </form>
         </div><!--x panel-->
       </div>
@@ -257,7 +257,7 @@ select
           }
         });
 
-    
+
 
 
  }
@@ -285,8 +285,8 @@ function add_street(val)
             console.log('Something went wrong');
           }
         });
-  
-  
+
+
 }
 
 </script>
@@ -333,7 +333,7 @@ function add_street(val)
   // }
 
 
-// to add cleaners in textarea 
+// to add cleaners in textarea
 // function add_cleaner(val)
 // {
 //   cleaner_id = val;
@@ -385,7 +385,7 @@ function add_street(val)
       expanded = false;
     }
   });
- 
+
   // function showCheckboxes() {
   //   // alert('hello');
   //   // return false;

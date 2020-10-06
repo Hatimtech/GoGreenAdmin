@@ -18,7 +18,7 @@ select
 }
 .span_ajax_class
 {
- cursor: pointer; 
+ cursor: pointer;
 }
 
 .btn-save
@@ -34,7 +34,7 @@ select
 </style>
 
 <link href="<?php echo base_url(); ?>/build/css/example-styles.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
 <div class="right_col" id="cool" role="main">
   <div class="page-title">
@@ -59,18 +59,18 @@ select
         </div>
         <div class="x_content">
           <form class="form-horizontal form-label-left" method="post" action="<?php echo base_url()?>teams/update_team?id=<?=$team['id']?>">
-            
+
             <div class="form-group">
               <div class="control-label col-md-3 col-sm-3 col-xs-12">
-                <label>Team Name</label>           
+                <label>Team Name</label>
               </div>
-              <div class="col-md-6 col-sm-6 col-xs-12">           
+              <div class="col-md-6 col-sm-6 col-xs-12">
                 <input type="text" required class="form-control" value="<?=$team['name'];?>" name="tname" placeholder="Enter Team Name">
               </div>
             </div>
           <?php echo"<font color = 'red'>"; echo form_error('car_type');echo"</font>";?>
-          
-          <?php echo"<font color = 'red'>"; echo form_error('city');echo"</font>";?>         
+
+          <?php echo"<font color = 'red'>"; echo form_error('city');echo"</font>";?>
           <!--/custom checkbox-->
           <div class="form-group">
             <div class="control-label col-md-3 col-sm-3 col-xs-12">
@@ -115,10 +115,10 @@ select
           <br>
           <!-- <button class="btn btn-primary btn-md btn-save">Save</button> -->
           <input type="submit" class="btn btn-primary btn-md btn-save" value="Update">
-       
+
       <!-- </div> -->
     <!-- </div> -->
-    <div class="col-md-3"></div>   
+    <div class="col-md-3"></div>
      </form>
   </div><!--x panel-->
 </div>
@@ -182,7 +182,7 @@ select
           }
         });
 
-    
+
 
 
  }
@@ -210,8 +210,8 @@ function add_street(val)
             console.log('Something went wrong');
           }
         });
-  
-  
+
+
 }
 
 </script>
@@ -258,7 +258,7 @@ function add_street(val)
   }
 
 
-// to add cleaners in textarea 
+// to add cleaners in textarea
 function add_cleaner(val)
 {
   cleaner_id = val;

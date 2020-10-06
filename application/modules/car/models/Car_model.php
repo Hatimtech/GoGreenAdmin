@@ -10,6 +10,15 @@
     }
     public function insert_model($data)
     {
+
+      $this->db->where("name", $data['name']);
+      $this->db->where("brand_id", $data['brand_id']);
+      $this->db->from('car_model');
+      $nr=$this->db->count_all_results();
+// echo $nr; die;
+      if($nr > 0){
+        return 0;
+      }else {
      $query =  $this->db->insert('car_model',$data);
      if($query)
      {
@@ -18,6 +27,7 @@
      else{
       return 0;
      }
+   }
     }
     public function add_brand($data)
     {
@@ -39,7 +49,7 @@
       // {
         $this->db->where('id', $model_id);
         $this->db->where('brand_id', $brand_id);
-        $bool = $this->db->delete('car_model'); 
+        $bool = $this->db->delete('car_model');
         return $bool;
      // }
 

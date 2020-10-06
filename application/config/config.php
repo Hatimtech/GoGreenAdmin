@@ -27,7 +27,7 @@ $whitelist = array(
 if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 $config['base_url'] = 'http://localhost/gogreen/index.php';;
 }else{
-$config['base_url'] = 'http://13.126.37.218/gogreen/index.php';
+$config['base_url'] = 'http://13.126.37.218/gogreenstaging/index.php';
 }
 
 //$config['base_url_custom'] = 'http://13.126.99.14/gogreen/';

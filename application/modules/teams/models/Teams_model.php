@@ -23,7 +23,9 @@
     public function get_streets($letters,$locality_id)
     {
       $this->db->where('locality_id',$locality_id);
-      $this->db->like('name', $letters, 'after');
+      if($letters != ''){
+        $this->db->like('name', $letters, 'after');
+      }
       $query =  $this->db->get('street');
       return $query->result_array();
     }
@@ -44,7 +46,9 @@
       $this->db->where('locality_id',$locality_id);
       $this->db->where('status',1);
       $this->db->where('is_del',1);
-      $this->db->like('first_name', $string, 'after');
+      if($string != ''){
+        $this->db->like('first_name', $string, 'after');
+      }
       $query=  $this->db->get('cleaners');
       return $query->result_array();
     }
@@ -173,7 +177,7 @@
       return $query->result_array();
     }
     // public function update_cleaner_status($ids)
-    // { 
+    // {
     //   $this->db->where_in('id',$ids);
     //   $this->db->set('status',1);
     //   $this->db->update('cleaners');

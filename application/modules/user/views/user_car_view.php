@@ -24,7 +24,7 @@
 
 }
 </style>
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url().$back; ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" role="main">
   <div class="page-title">
     <div class="title_left">
@@ -35,7 +35,7 @@
             }?></h3>
     </div>
     <div class="title_right">
-      
+
     </div>
   </div>
   <div class="row">
@@ -61,7 +61,7 @@
               echo $personal_detail['phone_number'];
             }?></div>
           </div>
-          
+
           <!-- <ul class="nav navbar-right panel_toolbox">
             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
             </li>
@@ -78,15 +78,15 @@
             </li>
           </ul> -->
           <div class="clearfix">
-            
+
           </div>
         </div>
         <div class="x_content">
-			<span style="color:green; display:none" id="myElem">              
+			<span style="color:green; display:none" id="myElem">
              <?php echo $this->session->flashdata('cancel_package');?>
             </span>
             <div class="row">
-			
+
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
                   <div class="row">
@@ -101,7 +101,7 @@
 
                 </div>
                 <div class="col-md-4"></div>
-				
+
             </div>
           <table id="datatable" class="table table-striped table-bordered">
             <thead>
@@ -145,12 +145,12 @@
 						   $cancel = 'Cancel Package';
 						  $url = base_url()."user/cancel_package?id=".$user_detail[$key]['package_id']."&u_id=".$user_detail[$key]['package_user_id'];
 						  $url1 = "<a class='for_hover confirmation btn btn-warning to_inactive' href=".$url." >".$cancel."</a>";
-						 
+
 					  }else{
 						 // $cancel = 'NA';
-						  $url1 = '<div class="btn btn-warning to_inactive">NA</div>';						   
+						  $url1 = '<div class="btn btn-warning to_inactive">NA</div>';
 					  }
-					  
+
                     //print_r($users); die;
                     echo"
                     <tr>
@@ -161,18 +161,18 @@
                       <td>".$user_detail[$key]['team']."</td>
                       <td><a class='for_hover' href='".base_url()."user/purchase_history?id=".$user_detail[$key]['package_id']."&u_id=".$user_detail[$key]['package_user_id']."'>".$user_detail[$key]['package_type']."</a></td>
                       <td>".$user_detail[$key]['expiry_date']."</td>
-                      <td>".$status."</td> 
+                      <td>".$status."</td>
                       <td>".$url1."</td>
                     </tr>";
 					   }
 					$i++;
                    }
-				   
+
 			  }
-              } 
+              }
               ?>
-             
-             
+
+
 
             </tbody>
           </table>
@@ -181,18 +181,18 @@
     </div>
   </div>
 
- 
+
 
 
 
 
   <div class="row">
-   
-    
+
+
 
   </div>
 </div>
-     
+
 <script type="text/javascript">
 $("#myElem").show();
 setTimeout(function() { $("#myElem").hide(); }, 5000);

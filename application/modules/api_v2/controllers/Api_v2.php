@@ -16,6 +16,7 @@ class Api_v2 extends MY_Controller
 		$this->load->model('responseconstant');
 		$postData =  file_get_contents('php://input');
 		$postDataArray = json_decode($postData);
+
        	if(!empty($postDataArray->method))
        	{
             $method = $postDataArray->method;
@@ -54,6 +55,8 @@ class Api_v2 extends MY_Controller
             break;
             case 'sign_up':
             $this->sign_up($postDataArray);
+            case 'test':
+            $this->test($postDataArray);
             break;
             case 'update_device_token':
             $this->update_device_token($postDataArray);
@@ -97,6 +100,10 @@ class Api_v2 extends MY_Controller
             $this->get_car_details($postDataArray);
             break;
 
+            case 'get_additional_services':
+            $this->get_additional_services($postDataArray);
+            break;
+
         }
     }
 
@@ -106,6 +113,7 @@ class Api_v2 extends MY_Controller
             $user_id = (isset($postDataArray->user_id) && !empty($postDataArray->user_id)) ? $postDataArray->user_id: '';
             $email =  (isset($postDataArray->email) && !empty($postDataArray->email)) ? $postDataArray->email: '';
             $name = (isset($postDataArray->name) && !empty($postDataArray->name)) ? $postDataArray->name: '';
+            $phone_number = (isset($postDataArray->phone_number) && !empty($postDataArray->phone_number)) ? $postDataArray->phone_number: '';
             if(empty($user_id))
 		{
 			$Code = ResponseConstant::UNSUCCESS;
@@ -115,7 +123,7 @@ class Api_v2 extends MY_Controller
 		}
 		else
 		{
-                    $column = array('email'=>$email,'name'=>$name);
+                    $column = array('email'=>$email,'name'=>$name, 'phone_number' => $phone_number);
                     $where = array('id'=>$user_id);
                     $table = 'users';
                     $update_user = $this->api_model->update($where,$column,$table);
@@ -146,6 +154,7 @@ class Api_v2 extends MY_Controller
 			// Check For Common Parameters
 		if(empty($name) || empty($email) || empty($phone_number)  || empty($device_type) ||empty($login_type))
 		{
+
 			$Code = ResponseConstant::UNSUCCESS;
 			$rescode = 0; // Common Parameter is missing
 			$Message = ResponseConstant::message('REQUIRED_PARAMETER');
@@ -156,7 +165,9 @@ class Api_v2 extends MY_Controller
 		else
 		{
 
-
+      if(strlen($phone_number) <= 10){
+        $phone_number = "+971".$phone_number;
+      }
 			$bool = $this->api_model->check_phone_existence($phone_number);
 			if($bool)
 			{
@@ -240,7 +251,6 @@ class Api_v2 extends MY_Controller
 						{
 							$data['user_id'] = $bool;
 							$response = array(
-
 								'id' => strval($bool),
 								'name' => $name,
 								'email' => $email,
@@ -382,7 +392,6 @@ class Api_v2 extends MY_Controller
 					{
 						//$data['user_id'] = $result;
 						$response = array(
-
 							'id' => strval($result),
 							'name' => $name,
 							'email' => $email,
@@ -447,6 +456,7 @@ class Api_v2 extends MY_Controller
 							'phone_number' => $phone_number,
 							'is_phone_verified' => '0',
 						);
+            $this->api_model->sendPushNotification($device_token, $device_type);
 						$this->send_mail_to_user($email);
 
 							// $response['id'] = strval($result);
@@ -542,32 +552,44 @@ class Api_v2 extends MY_Controller
 
 		}
 	}
-
-	public function send_mail_to_user($email)
+  public function test($array){
+    $o = $this->api_model->sendPushNotification($array->device_token, $array->device_type);
+    $o = $this->send_mail_to_user($array->email);
+    $Code = ResponseConstant::SUCCESS;
+    $rescode = 1;
+    $this->sendResponse($Code,$rescode, $array);
+  }
+	public function send_mail_to_user($email, $subject = 'Welcome to Go Green', $message = '')
 	{
+
 		if(!empty($email))
 		{
-			$this->load->library('email');
+      if($message == ''){
+        $message = "".$email." Registerd Succesfully With Go Green Team.";
+      }
+			//$this->load->library('email');
             $config['protocol']    = 'smtp';
-            $config['smtp_host']    = 'smtp.gmail.com';
-            $config['smtp_port']    = '567';
-            $config['smtp_timeout'] = '7';
-            $config['smtp_user']    = 'veee.kay258@gmail.com';
-            //$config['smtp_pass']    = 'Heyudude@0';
+            $config['smtp_host']    = 'smtp.sendgrid.net';
+            $config['smtp_port']    = 587;
+            $config['smtp_timeout'] = '10';
+            $config['smtp_user']    = 'gogreen4app@gmail.com';
+            $config['smtp_pass']    = 'Gogreen@1234';
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html
             $config['validation'] = TRUE; // bool whether to validate email or not
             $this->load->library('email', $config);
-            $this->email->from('vicky@ripenapps.com', 'Go Green');
-            $this->email->to('info@gogreen-uae.com');
-            $this->email->subject('Go Green-Order Confirmation Mail');
-            $message = "".$email." Registerd Succesfully With Go Green Team.
-            ";
+            $this->email->from("gogreen4app@gmail.com", 'Go Green');
+            $this->email->to($email);
+            $this->email->subject($subject);
+
             // $message .="<a href = ".base_url()."admin/confirm_password?id=$id>Link</a>";
             $this->email->message($message);
-            $this->email->send();
-		}
+            $o = $this->email->send();
+            return $o;
+		}else{
+      return false;
+    }
 
 	}
 
@@ -659,37 +681,44 @@ class Api_v2 extends MY_Controller
 		}
     elseif($postDataArray->login_type == 'PH')
 		{
-			//getting parameter when user login with facebook
-				if(empty($phone_number))
-				{
-					//$object = new stdClass();
-					$Code = ResponseConstant::UNSUCCESS;
-					$rescode = 2;  // Social ID Not Found
-					$Message = ResponseConstant::message('REQUIRED_PARAMETER');
-					//$Message = 'Social Id Not Found';
-					$this->sendResponse($Code,$rescode, $Message);
-				}
-				else
-				{
+      // login when user login_type is normal
+      $password = (isset($postDataArray->password) && !empty($postDataArray->password)) ? $postDataArray->password: '';
+      $mobile = (isset($postDataArray->phone_number) && !empty($postDataArray->phone_number)) ? $postDataArray->phone_number: '';
+      //$phone_number = (isset($postDataArray->phone_number) && !empty($postDataArray->phone_number)) ? $postDataArray->phone_number: '';
+      if(empty($password) || empty($mobile))
+      {
+        //$object = new stdClass();
+        $Code = ResponseConstant::UNSUCCESS;
+        //$Message = "required paramenter of normal user";
+        $rescode = 0; // parameter missing
+        $Message = ResponseConstant::message('REQUIRED_PARAMETER');
+        //$Message = "Normal login case parameter missing";
+        //$Message = "parameter missing in normal case";
+        $this->sendResponse($Code,$rescode,$Message);
+      }
+      else
+      {
 
-					$data = $this->api_model->check_phone_existence($phone_number);
-					if($data)
-					{
-						$Code = ResponseConstant::SUCCESS;
-						$rescode = 1;
-						//$Message = ResponseConstant::message('REQUIRED_PARAMETER');
-						$Message = 'Login Successfull With Phone Number';
-						$this->sendResponse($Code,$rescode,$Message,array($data));
-					}
-					else
-					{
-						$Code = ResponseConstant::UNSUCCESS;
-						$rescode = ResponseConstant::SOCIAL_ID_NOT_BELONG_TO_DATABASE;
-						//$Message = ResponseConstant::message('REQUIRED_PARAMETER');
-						$Message = 'Phone Number Not Belong To Database';
-						$this->sendResponse($Code,$rescode,$Message);
-					}
-				}
+        $data = $this->api_model->login_mobile($mobile,$password);
+
+        if($data)
+        {
+          //print_r($data); die;
+          $Code = ResponseConstant::SUCCESS;
+          $rescode =1;
+          //$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+          $Message = 'Login Successfull';
+          $this->sendResponse($Code,$rescode,$Message,array($data));
+        }
+        else
+        {
+          $Code = ResponseConstant::UNSUCCESS;
+          $rescode = ResponseConstant::UNSUCCESS;
+          $Message = ResponseConstant::message('INVALID_CREDENTIALS');
+          $this->sendResponse($Code,$rescode,$Message);
+
+        }
+      }
 
 		}
 		else
@@ -968,9 +997,9 @@ class Api_v2 extends MY_Controller
 
 	public function forget_password($postDataArray)
 	{
-		ini_set('display_errors', 1);
-		ini_set('display_startup_errors', 1);
-		error_reporting(E_ALL);
+		// ini_set('display_errors', 1);
+		// ini_set('display_startup_errors', 1);
+		// error_reporting(E_ALL);
 		// echo"hello"; die;
 		$email = (isset($postDataArray->email) && !empty($postDataArray->email)) ? $postDataArray->email: '';
 		//$phone_number = 9034195001;
@@ -991,47 +1020,48 @@ class Api_v2 extends MY_Controller
 			{
 				//print_r($row_data); die;
 				$id = $row_data['id'];
-				$this->load->library('email');
-
-				$config['protocol']    = 'smtp';
-
-				$config['smtp_host']    = 'smtp.gmail.com';
-
-				$config['smtp_port']    = '567';
-
-				$config['smtp_timeout'] = '7';
-
-				$config['smtp_user']    = 'veee.kay258@gmail.com';
-				//$config['smtp_user']    = 'vinodthalwal87@gmail.com';
-
-				//$config['smtp_pass']    = '9760765114114';
-
-				$config['charset']    = 'utf-8';
-
-				$config['newline']    = "\r\n";
-
-				$config['mailtype'] = 'html'; // or html
-
-				$config['validation'] = TRUE; // bool whether to validate email or not
-				$this->load->library('email', $config);
-				$this->email->from('vicky@ripenapps.com');
-				$this->email->to($email);
-
-
-				$this->email->subject('Password Verification Link');
-				//echo "<a href = ". base_url()."admin/reset_user_password?id=$id>Link</a>"; die;
-				//$message = '<html><body>';
+				// $this->load->library('email');
+        //
+				// $config['protocol']    = 'smtp';
+        //
+				// $config['smtp_host']    = 'smtp.gmail.com';
+        //
+				// $config['smtp_port']    = '567';
+        //
+				// $config['smtp_timeout'] = '7';
+        //
+				// $config['smtp_user']    = 'veee.kay258@gmail.com';
+				// //$config['smtp_user']    = 'vinodthalwal87@gmail.com';
+        //
+				// //$config['smtp_pass']    = '9760765114114';
+        //
+				// $config['charset']    = 'utf-8';
+        //
+				// $config['newline']    = "\r\n";
+        //
+				// $config['mailtype'] = 'html'; // or html
+        //
+				// $config['validation'] = TRUE; // bool whether to validate email or not
+				// $this->load->library('email', $config);
+				// $this->email->from('vicky@ripenapps.com');
+				// $this->email->to($email);
+        //
+        //
+				// $this->email->subject('Password Verification Link');
+				// //echo "<a href = ". base_url()."admin/reset_user_password?id=$id>Link</a>"; die;
+				$message = '<html><body>';
 				$message = "click on the link below to reset your password";
-
 				$message .=  "<br>";
 				$message .="<a href = ".base_url()."admin/reset_user_password?id=$id>Link</a>";
-				//$message .= '</body></html>';
-				//echo $message;  die;
-				$this->email->message($message);
-
-
-				if($this->email->send())
+				$message .= '</body></html>';
+				// //echo $message;  die;
+				// $this->email->message($message);
+        //
+        //
+				// if($this->email->send())
+        $o = $this->send_mail_to_user($email, 'Password Verification Link', $message);
 				//if(mail('vinodthalwal87@gmail.com','test','hello','abc@gmail.com'))
+        if($o)
 				{
 					$Code = ResponseConstant::SUCCESS;
 					$response = ResponseConstant::SUCCESS;
@@ -1220,7 +1250,7 @@ class Api_v2 extends MY_Controller
            // print_r($data); die;
             if($data)
             {
-        		$response = send_sms($user->phone_number, $otp);
+        		$response = send_sms($user->phone_number, $otp, "OTP");
         		if($response)
                 {
                     $Code = ResponseConstant::SUCCESS;
@@ -1326,5 +1356,62 @@ class Api_v2 extends MY_Controller
   			$this->sendResponse($Code,$rescode,$Message,$result);
   		}
   	}
+
+    public function get_additional_services($postDataArray)
+  	{
+  		$locality = $postDataArray->locality_id;
+  		$additional = $this->api_model->get_additional_services($locality);
+
+  		if($additional)
+  		{
+  			$Code = ResponseConstant::SUCCESS;
+  			$rescode=ResponseConstant::SUCCESS;
+  			$Message = 'Successfull';
+  			$this->sendResponse($Code,$rescode,$Message,$additional);
+  		}
+  		else
+  		{
+  			$Code = ResponseConstant::UNSUCCESS;
+  			$rescode=ResponseConstant::UNSUCCESS;
+  			$Message = 'No Additional Service Found';
+  			$this->sendResponse($Code,$rescode,$Message);
+  		}
+  	}
+
+    public function send_sms($phone, $sms, $type="ARN"){
+      $phone = str_replace("+", "", $phone);
+      if(strlen($phone) <= 10){
+        $phone = '971'.$phone;
+      }
+
+      $curl = curl_init();
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://rest-api.telesign.com/v1/messaging",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => "message=".urlencode($sms)."&message_type=".$type."&phone_number=".$phone,
+        CURLOPT_HTTPHEADER => array(
+          "authorization: Basic NThEMkY1RDItM0QyQi00NTQ1LUIwRDEtOEFGNjBDMUMwNEU4OlF0V2FHTmdEbUY0azc5YkRyZGwvNmZMYlZCS3RIZUNKMksvMzRQRXRNdUdydXpiUjk4NEZZVm43Yk1pcWRoN2NXM203U2dqeWVYUkYycWg0N2t3U093PT0=",
+          "content-type: application/x-www-form-urlencoded"
+        ),
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+
+      if ($err) {
+        return false;
+      } else {
+        return $response;
+      }
+    }
+
 
 }  // class api extends ci controller closed here

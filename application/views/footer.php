@@ -13,11 +13,24 @@
 
 
     <script>
-        $(document).on('click', '.btn-danger', function () {
-        return confirm('Are you sure you want to delete?');
+        $(document).on('click', '.btn-danger', function (e) {
+          // e.preventDefault();
+          var attr = $(this).attr('disabled');
+          if(typeof attr !== typeof undefined && attr !== false){
+            return false;
+          }else{
+            return confirm('Are you sure you want to delete?');
+          }
+
+          // if($(this).is(":disabled")){
+          //   return false;
+          // }else{
+          //   return confirm('Are you sure you want to delete?');
+          // }
     });
     </script>
     <script src="<?php echo base_url_custom; ?>/vendors/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js" ></script>
     <!-- Bootstrap -->
     <script src="<?php echo base_url_custom; ?>/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- FastClick -->
@@ -78,5 +91,15 @@
     <script src="<?php echo base_url_custom; ?>/vendors/jszip/dist/jszip.min.js"></script>
     <script src="<?php echo base_url_custom; ?>/vendors/pdfmake/build/pdfmake.min.js"></script>
     <script src="<?php echo base_url_custom; ?>/vendors/pdfmake/build/vfs_fonts.js"></script>
+    <script type="text/javascript">
+      // $(document).ready(function(){
+      //   if ( $( ".fa-long-arrow-left" ).length ) {
+      //       console.log("exist");
+      //   }else{
+      //     $(".right_col").before('<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>');
+      //   }
+      //
+      // });
+    </script>
   </body>
 </html>

@@ -4,19 +4,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 
-class Push_api_v2 extends MX_Controller 
+class Push_api_v2 extends MX_Controller
 {
 
     function __construct()
     {
         parent::__construct();
         $this->load->model('push_api_model');
+        $this->load->helper('telesign');
+        $this->load->model('responseconstant');
+        $Code = ResponseConstant::UNSUCCESS;
+        $rescode = ResponseConstant::APPKEY_NOT_FOUND;
+        $Message = ResponseConstant::message('APPKEY_NOT_FOUND');
+        $this->sendResponse($Code,$rescode, $Message);
     }
 
  /*    public function get_7_days_ahead_renewals()
     {
-        
-        
+
+
         $add7days = date('Y-m-d', strtotime('+7 days'));
         $add2days = date('Y-m-d', strtotime('+2 days'));
 
@@ -71,7 +77,7 @@ class Push_api_v2 extends MX_Controller
                 $title = 'Go Green Amount Due..';//order_id
                $device_token = $value['device_token'];
                 //$device_token = 'cLCpW58wMF0:APA91bEGSLmYRQZq-X4XU4DAYUFivDBQjl5xKBhal1s61D47aYmQyIJJZ6nIyt9gmtT4EEmeey4qY3yGXZyIJjJLNuOLlrTsFhEmzcxAK7NVi2tJXxvE-DtiizdwOB-JG652CqxA8K3O';
-               
+
                 //$device_type="ios";
                 $body = $message;
 
@@ -80,7 +86,7 @@ class Push_api_v2 extends MX_Controller
                 $arrayToSend = array('to' => $device_token, 'notification' => $notification,'priority'=>'high');
                 $json = json_encode($arrayToSend);
                  if(!empty($device_token))
-                { 
+                {
                     $next_level = $this->push_api_model->sendPush($json,$device_token,$device_type,$body,$title,$api_code,$order_id);
                    // echo $device_token;
                     print_r($next_level);
@@ -91,9 +97,9 @@ class Push_api_v2 extends MX_Controller
                     echo "not working";
                 }
 
-                //die;// just for testing only for one person     
-            
-               
+                //die;// just for testing only for one person
+
+
             }
         }
         else
@@ -108,7 +114,7 @@ class Push_api_v2 extends MX_Controller
 
   /*   public function get_5_days_fraudster()
     {
-        
+
         $all_data = $this->push_api_model->get_fraudster();
         // echo $this->db->last_query();
          //echo "<pre>";print_r($all_data);die;
@@ -132,14 +138,14 @@ class Push_api_v2 extends MX_Controller
                 $arrayToSend = array('to' => $device_token, 'notification' => $notification,'priority'=>'high');
                 $json = json_encode($arrayToSend);
                  if(!empty($device_token))
-                { 
+                {
                     $next_level = $this->push_api_model->sendPush($json,$device_token,$device_type,$body,$title,$api_code,$order_id);
                     print_r($next_level);
                    // echo "hellllo";die;
                 }
                 else
                 {
-                    echo "not working"; 
+                    echo "not working";
                 }
              }
         }
@@ -258,7 +264,7 @@ class Push_api_v2 extends MX_Controller
                     $values['secret_key']        = "nCqyPKUQExNhDKiQqZpRF4Bp9dNFH875KyEzizqX7eeKYxBpw1gc5SCe5pUNx1TizxSS7iPew4ZvCAV8BbkH4WWamQYUSRcrp4kw";
                     $values['title']             ="Go Green Package Renew";
                     $values['cc_first_name']     =$name;
-                    $values['cc_last_name']      =$name; 
+                    $values['cc_last_name']      =$name;
                     $values['order_id']          =$order_id;
                     $values['product_name']      ="GO Green Renew";
                     $values['customer_email']    =$pt_email;
@@ -268,18 +274,18 @@ class Push_api_v2 extends MX_Controller
                     $values['address_billing']   ="Dubai JLT";
                     $values['state_billing']     ="Dubai JLT";
                     $values['city_billing']      ="Dubai";
-                    $values['postal_code_billing']="110025";  
-                    $values['country_billing']    ="ARE";   
-                    $values['address_shipping']   ="Dubai JLT" ;  
-                    $values['city_shipping']      = "Dubai JLT"; 
-                    $values['state_shipping']     = "Dubai JLT";   
+                    $values['postal_code_billing']="110025";
+                    $values['country_billing']    ="ARE";
+                    $values['address_shipping']   ="Dubai JLT" ;
+                    $values['city_shipping']      = "Dubai JLT";
+                    $values['state_shipping']     = "Dubai JLT";
                     $values['postal_code_shipping']="110025";
-                    $values['country_shipping']    ="ARE"; 
-                    $values['pt_token']  =    $pt_token; 
-                    $values['pt_customer_email']  = $pt_email; 
+                    $values['country_shipping']    ="ARE";
+                    $values['pt_token']  =    $pt_token;
+                    $values['pt_customer_email']  = $pt_email;
                     $values['pt_customer_password']  =$pt_password;
                   // echo"<pre>"; print_r($values); die;
-                    //$post_data = json_encode($values); 
+                    //$post_data = json_encode($values);
 
                     $ch = curl_init();
 
@@ -290,7 +296,7 @@ class Push_api_v2 extends MX_Controller
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
                     $server_output = curl_exec($ch);
-                    print_r($server_output); 
+                    print_r($server_output);
                     $output = json_decode($server_output);
                     //$output = (array) $output;
                     curl_close ($ch);
@@ -300,9 +306,9 @@ class Push_api_v2 extends MX_Controller
                     //print_r($output); die;
 
                     // echo $code; die;
-                    //when i get successfull response 
+                    //when i get successfull response
                     if($code==100)
-                    {   
+                    {
                         // payment is succesfully registered;
                         //status=2  in booked_packges model
                         $value['purchase_date'] = date('Y-m-d');
@@ -369,12 +375,12 @@ class Push_api_v2 extends MX_Controller
                             echo "Something Went Wrong For User Id";
                             echo $value['user_id'];
                         }
-                        // echo"<pre>";print_r($value); die;  
+                        // echo"<pre>";print_r($value); die;
                     }
                     else
                     {
                         echo "payment gaateway error occured";
-                        
+
                     }
                 }
             }
@@ -438,16 +444,16 @@ class Push_api_v2 extends MX_Controller
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html
-            $config['validation'] = TRUE; // bool whether to validate email or not      
+            $config['validation'] = TRUE; // bool whether to validate email or not
             $this->load->library('email', $config);
             $this->email->from('noreply@gogreen-uae.com','info@gogreen-uae.com');
             $this->email->to($email);
             $this->email->subject('Go Green-Order Confirmation Mail');
             // $message .="<a href = ".base_url()."admin/confirm_password?id=$id>Link</a>";
-            $this->email->message($message);  
+            $this->email->message($message);
             $this->email->set_mailtype("html");
             $this->email->send();
-            
+
     }
     public function send_push($insert_id)
     {
@@ -463,12 +469,12 @@ class Push_api_v2 extends MX_Controller
 
         $user_name = 'Go Green';
         $title = 'Go Green Greetings!';
-        $body = $message;  
+        $body = $message;
         $notification = array('title' =>$title , 'body' => $body, 'sound' => 'default', 'badge' => '1');
         $arrayToSend = array('to' => $device_token, 'notification' => $notification,'priority'=>'high');
         $json = json_encode($arrayToSend);
         if(!empty($device_token))
-        { 
+        {
         $next_level=  $this->push_api_model->sendPush_auto_renew($json);
         print_r($next_level);
         // echo "hellllo";die;
@@ -478,8 +484,9 @@ class Push_api_v2 extends MX_Controller
             echo "not working"; //die;
         }
     }
-}   
-  
 
-    
-
+    public function send_notification($insert_id)
+    {
+      echo "string";
+    }
+}

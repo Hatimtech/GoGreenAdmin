@@ -2,28 +2,41 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 
-
-
 class User extends MX_Controller {
-
+	public $ftres;
 	function __construct()
     {
 		parent::__construct();
 		$this->load->model('user_model');
-		$this->load->helper('telesign');
+		// $this->load->helper('telesign');
+		$this->load->helper('filter');
 		$bool = $this->session->userdata('authorized');
 		if($bool != 1)
 		{
-			//echo $bool; die;
 			redirect('admin');
 		}
+		$ft = $this->input->get("ft");
+		$from = $this->input->get("ftfr");
+		$to = $this->input->get("ftto");
+		$this->ftres = ftprocess($ft, $from, $to);
 	}
 	public function index()
 	{
-    $users = $this->user_model->get_all_users();
+		$this->session->set_userdata('history', 'user');
+    $users = $this->user_model->get_all_users($this->ftres);
 	//echo "<pre>";print_r($users);die;
     $data['users'] =$users;
     $data['page'] ='user_view';
+		//$this->template->load('template', 'user_view',$data);
+		_layout($data);
+	}
+	public function archived()
+	{
+		$this->session->set_userdata('history', 'user/archived');
+		$users = $this->user_model->get_archived_users($this->ftres);
+	//echo "<pre>";print_r($users);die;
+		$data['users'] =$users;
+		$data['page'] ='archived';
 		//$this->template->load('template', 'user_view',$data);
 		_layout($data);
 	}
@@ -60,6 +73,7 @@ class User extends MX_Controller {
 		echo "<pre>";print_r($brand_name);die; */
 		$data['user_id'] = $id;
 		$data['user_detail1'] = $arr;
+		$data['back']  = ($this->session->has_userdata('history')) ? $this->session->userdata('history') : 'user';
 		//echo "<pre>";print_r($data); die;
 		//$data['user_detail'] = $car_detail;
 		 $data['page'] ='user_car_view';
@@ -72,16 +86,17 @@ class User extends MX_Controller {
 
 	public function get_user_balance_details()
 	{
+
 		$id = $this->input->get('id');;
 		$user_personal_detail = $this->user_model->get_user_detai($id);
 		$data['personal_detail'] = $user_personal_detail;
 
 		//echo "<pre>";print_r($car_detail);die;
 
-		$orders_ledger = $this->user_model->get_orders_ledger($id);
+		$orders_ledger = $this->user_model->get_orders_ledger($id, $this->ftres);
 		//echo $this->db->last_query(); die;
 		$data['ledger'] = $orders_ledger;
-
+		$data['back']  = ($this->session->has_userdata('history')) ? $this->session->userdata('history') : 'user';
 		$data['user_id'] = $id;
 		 $data['page'] ='account_detail';
 		//$this->template->load('template', 'user_view',$data);
@@ -95,6 +110,7 @@ class User extends MX_Controller {
 		$user_id= $this->input->get('u_id');
 		$row = $this->user_model->get_purchase_history($id,$user_id);
 		$data['purchase_history'] = $row;
+		$data['back']  = ($this->session->has_userdata('history')) ? $this->session->userdata('history') : 'user';
 		$data['page'] ='purchase_history';
 		_layout($data);
 
@@ -102,10 +118,16 @@ class User extends MX_Controller {
 	}
 	public function update(){
 		$phone = $_POST['phone'];
+		$email = $_POST['email'];
 		$id = $_POST['id'];
 		$tableName = 'users';
 		$where = array('id'=> $id);
-		$column = array('phone_number'=> $phone);
+		if($phone != -1){
+			$column = array('phone_number'=> $phone);
+		}
+		else if($email != -1){
+			$column = array('email'=> $email);
+		}
 		$row = $this->user_model->update($where,$column,$tableName);
 		echo $row;
 	}
@@ -242,7 +264,13 @@ class User extends MX_Controller {
 		}
 		else
 		{
-			$users = $this->user_model->get_filtered_user($flag);
+			$getdata = array();
+			foreach ($_GET as $key => $value) {
+				$getdata[] = $key."=".$value;
+			}
+			$getdata = implode("&", $getdata);
+			$this->session->set_userdata('history', 'user/filter_function?'.$getdata);
+			$users = $this->user_model->get_filtered_user($flag, $this->ftres);
 			$data['users'] =$users;
 			$data['page'] ='user_view';
 			//$this->template->load('template', 'user_view',$data);
@@ -335,20 +363,84 @@ class User extends MX_Controller {
 		$row = $this->user_model->get_user_detail($user_id);
 		// $phone_number = "+91790903068";
 		$phone_number = $row['phone_number'];
+		$email = $row['email'];
 
-		$app_link = "http://13.126.37.218/gogreen/index.php/pay/topaytab?id=".$user_id."&amount=".$link_amount."";
+		$app_link = base_url()."pay/topaytab?id=".$user_id."&amount=".$link_amount."";
+		//echo $app_link;
 		//$app_link = "https://gogreen.com/url/?id=".$user_id."&amount=".$link_amount."";
-
-		$response = send_payment_link_sms($phone_number, $app_link);
-		if($response)
+		$response1 = $this->send_mail_to_user($email, $app_link);
+		 $response = $this->send_sms($phone_number, $app_link);
+		if($response1 || $response)
         {
         	$this->session->set_flashdata('link_send','Payment link Succesfully Send to customers registerd mobile number');
         	$this->session->set_flashdata('alert_class','alert-success');
-            return redirect(base_url('user/get_user_balance_details?id='.$user_id.''));
+          redirect(base_url('user/get_user_balance_details?id='.$user_id.''));
         }
         $this->session->set_flashdata('link_send','Failed to send!');
         $this->session->set_flashdata('alert_class','alert-danger');
-        return redirect(base_url('user/get_user_balance_details?id='.$user_id.''));
+        redirect(base_url('user/get_user_balance_details?id='.$user_id.''));
+	}
+	public function send_mail_to_user($email, $message = '', $subject = 'Go Green Payment Link')
+	{
+		if(!empty($email))
+		{
+			$this->load->library('email');
+            $config['protocol']    = 'smtp';
+            $config['smtp_host']    = 'smtp.sendgrid.net';
+            $config['smtp_port']    = 587;
+            $config['smtp_timeout'] = '10';
+            $config['smtp_user']    = 'gogreen4app@gmail.com';
+            $config['smtp_pass']    = 'Gogreen@1234';
+            $config['charset']    = 'utf-8';
+            $config['newline']    = "\r\n";
+            $config['mailtype'] = 'html'; // or html
+            $config['validation'] = TRUE; // bool whether to validate email or not
+            $this->load->library('email', $config);
+            $this->email->from("gogreen4app@gmail.com", 'Go Green');
+            $this->email->to($email);
+            $this->email->subject($subject);
+            $this->email->message($message);
+            $o = $this->email->send();
+           return $o;
+		}else{
+      return false;
+    }
+
+	}
+
+	public function send_sms($phone, $sms, $type="ARN"){
+		$phone = str_replace("+", "", $phone);
+		if(strlen($phone) <= 10){
+			$phone = '971'.$phone;
+		}
+
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => "https://rest-api.telesign.com/v1/messaging",
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => "",
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => "POST",
+			CURLOPT_POSTFIELDS => "message=".urlencode($sms)."&message_type=".$type."&phone_number=".$phone,
+			CURLOPT_HTTPHEADER => array(
+				"authorization: Basic NThEMkY1RDItM0QyQi00NTQ1LUIwRDEtOEFGNjBDMUMwNEU4OlF0V2FHTmdEbUY0azc5YkRyZGwvNmZMYlZCS3RIZUNKMksvMzRQRXRNdUdydXpiUjk4NEZZVm43Yk1pcWRoN2NXM203U2dqeWVYUkYycWg0N2t3U093PT0=",
+				"content-type: application/x-www-form-urlencoded"
+			),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+			return false;
+		} else {
+			return $response;
+		}
 	}
 
 	public function stop_package()
@@ -453,5 +545,36 @@ class User extends MX_Controller {
 		}
 
 		redirect('user');
+	}
+	function archive()
+	{
+		$id = $this->input->get('id');
+
+		$bool = $this->user_model->archive_user($id);
+		if($bool)
+		{
+			$this->session->set_flashdata('user_archive','User archived');
+		}
+		else
+		{
+			$this->session->set_flashdata('user_archive','Error in archiving user');
+		}
+		redirect('user');
+	}
+
+	function unarchive()
+	{
+		$id = $this->input->get('id');
+
+		$bool = $this->user_model->unarchive_user($id);
+		if($bool)
+		{
+			$this->session->set_flashdata('user_archive','User un-archived');
+		}
+		else
+		{
+			$this->session->set_flashdata('user_archive','Error in un-archiving user');
+		}
+		redirect('user/archived');
 	}
 }

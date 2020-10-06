@@ -16,7 +16,7 @@ class Car_packages_v2 extends MY_Controller {
         $postDataArray = json_decode($postData); //print_r($postDataArray); die;
         if (!empty($postDataArray->method)) {
             $method = $postDataArray->method;
-            //echo $method; die; 
+            //echo $method; die;
             if (!empty($postDataArray->app_key)) {
                 //Verify AppKey
                 $checkAppKey = $this->checkAppKey($postDataArray->app_key);
@@ -24,13 +24,13 @@ class Car_packages_v2 extends MY_Controller {
                     $Code = ResponseConstant::UNSUCESS;
                     $rescode = ResponseConstant::HEADER_UNAUTHORIZED;
                     $Message = ResponseConstant::message('HEADER_UNAUTHORIZED');
-                    $this->sendResponse($Code, $rescode, $Message); // return data                                 
+                    $this->sendResponse($Code, $rescode, $Message); // return data
                 }
             } else {
                 $Code = ResponseConstant::UNSUCCESS;
                 $rescode = ResponseConstant::APPKEY_NOT_FOUND;
                 $Message = ResponseConstant::message('APPKEY_NOT_FOUND');
-                $this->sendResponse($Code, $Message); // return data    
+                $this->sendResponse($Code, $Message); // return data
             }
         } else {
 
@@ -38,7 +38,7 @@ class Car_packages_v2 extends MY_Controller {
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::METHOD_NOT_FOUND;
             $Message = ResponseConstant::message('METHOD_NOT_FOUND');
-            $this->sendResponse($Code, $Message); // return data      
+            $this->sendResponse($Code, $Message); // return data
         }
         switch ($method) {
 
@@ -77,6 +77,9 @@ class Car_packages_v2 extends MY_Controller {
                 break;
             case 'get_coupans':
                 $this->get_coupans($postDataArray);
+                break;
+            case 'get_additional_coupans':
+                $this->get_additional_coupans($postDataArray);
                 break;
             case 'is_valid_coupan':
                 $this->is_valid_coupan($postDataArray);
@@ -423,10 +426,14 @@ class Car_packages_v2 extends MY_Controller {
         $locality_id = (isset($postDataArray->locality_id) && !empty($postDataArray->locality_id)) ? $postDataArray->locality_id : '';
         $street_id = (isset($postDataArray->street_id) && !empty($postDataArray->street_id)) ? $postDataArray->street_id : '';
         $pt_token = (isset($postDataArray->pt_token) && !empty($postDataArray->pt_token)) ? $postDataArray->pt_token : '';
+        $pt_order_id = (isset($postDataArray->pt_order_id) && !empty($postDataArray->pt_order_id)) ? $postDataArray->pt_order_id : '';
         $pt_email = (isset($postDataArray->pt_email) && !empty($postDataArray->pt_email)) ? $postDataArray->pt_email : '';
         $pt_password = (isset($postDataArray->pt_password) && !empty($postDataArray->pt_password)) ? $postDataArray->pt_password : '';
         $auto_renewal = (isset($postDataArray->auto_renewal) && !empty($postDataArray->auto_renewal)) ? $postDataArray->auto_renewal : '';
-        if (empty($user_id) || empty($transaction_id) || empty($net_paid) || empty($actual_payment) || empty($payment_type) || empty($coupan_applied)) {
+
+        $additional_services = (isset($postDataArray->additional_services) && !empty($postDataArray->additional_services)) ? $postDataArray->additional_services : [];
+
+        if (empty($pt_order_id) || empty($user_id) || empty($transaction_id) || empty($net_paid) || empty($actual_payment) || empty($payment_type) || empty($coupan_applied)) {
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::UNSUCCESS;
             $Message = ResponseConstant::message('REQUIRED_PARAMETER');
@@ -444,6 +451,7 @@ class Car_packages_v2 extends MY_Controller {
                 'created_at'=>date('Y-m-d'),
                 'payment_type' => $payment_type,
                 'pt_token'=>$pt_token,
+                'pt_order_id'=>$pt_order_id,
                 'pt_email'=>$pt_email,
                 'pt_password'=>$pt_password
             );
@@ -457,13 +465,13 @@ class Car_packages_v2 extends MY_Controller {
                 //update  order id on user_payment tabel
                 $order_id = 100000 + $insert_id;
                 $this->car_packages_model->update_order_id($insert_id, $order_id);
-                // foreach loop to insert details in booked_package tabel start from here 
+                // foreach loop to insert details in booked_package tabel start from here
                 // echo $this->db->last_query(); die;
                 $this->assiagn_team($postDataArray, $insert_id);
                 $book_package_insertion = 0;
                 foreach ($postDataArray->cars as $key => $value)
                 {
-                    
+
                     $no_of_months = $value->no_of_months;
                     $car_id = $value->car_id;
                     $package_type = $value->package_type;
@@ -494,7 +502,7 @@ class Car_packages_v2 extends MY_Controller {
                     $services = $value->services;
                     $days = $value->days;
                     $frequency = $value->frequency;
-                    $amount = $value->amount; 
+                    $amount = $value->amount;
                     $data = array(
                         'user_id' => $user_id,
                         'payment_key' => $insert_id,
@@ -550,7 +558,7 @@ class Car_packages_v2 extends MY_Controller {
                     $package_activated = $this->car_packages_model->update_is_packege_car_key($car_id);
                     $insert_id_of_booked_package = $this->car_packages_model->insert_book_package($data);
 
-                   
+
                     if ($insert_id_of_booked_package) {
                         $book_package_insertion = 1;
                     }
@@ -559,6 +567,21 @@ class Car_packages_v2 extends MY_Controller {
                 // to check weather the data in booked_package is inserted properly or not we take $book_package_insertion
 
                 if ($book_package_insertion == 1) {
+                  $da = date('Y-m-d H:i:s');
+                  foreach ($additional_services as $key => $value) {
+                    $data2 = array(
+                        'user_id' => $user_id,
+                        'additional_services_id' => $value->id,
+                        'amount' => $value->amount,
+                        'transaction_id' => $transaction_id,
+                        'payment_key' => $insert_id,
+                        'purchase_date' => $purchase_date,
+                        'created_at' => $da,
+                        'status'=> 0,
+                        'status_reason' => ''
+                    );
+                    $i = $this->car_packages_model->insert_additional_services($data2);
+                  }
 
                     $Code = ResponseConstant::SUCCESS;
                     $rescode = ResponseConstant::SUCCESS;
@@ -594,7 +617,7 @@ class Car_packages_v2 extends MY_Controller {
         // either team id found or not on that street
         //echo $row['street_id']; die;
         $team = $this->car_packages_model->get_team_id_by_street_id($street_id_to_assiagn_team);
-        
+
         $team_id = $team['id'];
         //echo $team_id; die;
         if (!empty($team_id)) {
@@ -641,16 +664,16 @@ class Car_packages_v2 extends MY_Controller {
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html
-            $config['validation'] = TRUE; // bool whether to validate email or not      
+            $config['validation'] = TRUE; // bool whether to validate email or not
             $this->load->library('email', $config);
             $this->email->from('noreply@gogreen-uae.com','info@gogreen-uae.com');
             $this->email->to($email);
             $this->email->subject('Go Green-Order Confirmation Mail');
             // $message .="<a href = ".base_url()."admin/confirm_password?id=$id>Link</a>";
-            $this->email->message($message);  
+            $this->email->message($message);
             $this->email->set_mailtype("html");
             $this->email->send();
-            
+
     }
 
     public function send_push($insert_id)
@@ -673,16 +696,16 @@ class Car_packages_v2 extends MY_Controller {
             $message = "Dear Customer, Thank you for your payment of amount  ".$net_paid." Enjoy our services!";
         }
 
-        
+
 
         $user_name = 'Go Green';
         $title = 'Go Green Greetings!';
-        $body = $message;  
+        $body = $message;
         $notification = array('title' =>$title , 'body' => $body, 'sound' => 'default', 'badge' => '1');
         $arrayToSend = array('to' => $device_token, 'notification' => $notification,'priority'=>'high');
         $json = json_encode($arrayToSend);
         if(!empty($device_token))
-        { 
+        {
 
         //echo $device_token; die;
         $next_level=  $this->car_packages_model->sendPush($json);
@@ -692,7 +715,7 @@ class Car_packages_v2 extends MY_Controller {
         else
         {
         	//die('else');
-            //echo "not working"; 
+            //echo "not working";
         }
     }
 
@@ -708,9 +731,19 @@ class Car_packages_v2 extends MY_Controller {
             if ($row) {
                 $today = date('Y-m-d');
                 $next_week = date('Y-m-d', strtotime("+7 days"));
-                $expired_packages_detail['upcoming_renewals'] = $this->car_packages_model->get_expired_packages_detail($user_id);
-                //print_r($expired_packages_detail); die;	
-                $expired_packages_detail['services'] = $this->car_packages_model->get_week_before_data($user_id, $today, $next_week);
+                $rows1 = $this->car_packages_model->get_expired_packages_detail($user_id);
+
+                foreach ($rows1 as $key => $value) {
+                  $rows1[$key]['additional_services'] = $this->car_packages_model->get_additional_services($value['payment_key']);
+                }
+                $expired_packages_detail['upcoming_renewals'] = $rows1;
+                //print_r($expired_packages_detail); die;
+                $rows2 = $this->car_packages_model->get_week_before_data($user_id, $today, $next_week);
+
+                foreach ($rows2 as $key => $value) {
+                  $rows2[$key]['additional_services'] = $this->car_packages_model->get_additional_services($value['payment_key']);
+                }
+                $expired_packages_detail['services'] = $rows2;
 
                 //print_r($expired_packages_detail['services']); die;
                 // foreach ($expired_packages_detail['services'] as $key => $value)
@@ -723,7 +756,7 @@ class Car_packages_v2 extends MY_Controller {
                 // 					//print_r($days_array);die;
                 // 					//$aa = array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
                 // 					//echo "<pre>"; print_r($days_array); //die;
-                // 					$current_day =  date('D');									
+                // 					$current_day =  date('D');
                 // 					$k=array(); //die;
                 // 					foreach ($days_array as $keys=>$val)
                 // 					{
@@ -755,7 +788,7 @@ class Car_packages_v2 extends MY_Controller {
                 // 					//echo "<pre>"; print_r($b); die;
                 // 					 $new = implode(',',$b);
                 // 					 //print_r($new); die;
-                // 					// 
+                // 					//
                 // 					$expired_packages_detail['services'][$key]['days']=$new;
                 // 					//
                 // 		}
@@ -925,7 +958,7 @@ class Car_packages_v2 extends MY_Controller {
             //echo "hello";die;
             //$coupans[$key]['img_path'] = base_url() . 'uploads/' . $value['img_name'];
             $coupans[$key]['img_path'] = 'http://13.126.37.218/gogreen/uploads/'.$value['img_name'];
-            
+
             //print_r($coupans); die;
         }
         if ($coupans) {
@@ -941,14 +974,46 @@ class Car_packages_v2 extends MY_Controller {
         }
     }
 
+    public function get_additional_coupans($postDataArray) {
+
+        $additional_id = $postDataArray->additional_service_id;
+        if (empty($additional_id)) {
+
+            $Code = ResponseConstant::UNSUCCESS;
+            $rescode = ResponseConstant::UNSUCCESS;
+            $Message = ResponseConstant::message('REQUIRED_PARAMETER');
+            $this->sendResponse($Code, $rescode, $Message);
+        } else {
+        $coupans = $this->car_packages_model->get_additional_coupans($additional_id);
+        //print_r($coupans); die;
+        foreach ($coupans as $key => $value) {
+            //echo "hello";die;
+            //$coupans[$key]['img_path'] = base_url() . 'uploads/' . $value['img_name'];
+            $coupans[$key]['img_path'] = 'http://13.126.37.218/gogreen/uploads/'.$value['img_name'];
+
+            //print_r($coupans); die;
+        }
+        if ($coupans) {
+            $Code = ResponseConstant::SUCCESS;
+            $rescode = ResponseConstant::SUCCESS;
+            $Message = "SUCCESS";
+            $this->sendResponse($Code, $rescode, $Message, $coupans);
+        } else {
+            $Code = ResponseConstant::UNSUCCESS;
+            $rescode = ResponseConstant::UNSUCCESS;
+            $Message = "COUPAN DOES NOT EXIST";
+            $this->sendResponse($Code, $rescode, $Message);
+        }
+      }
+    }
+
     public function is_valid_coupan($postDataArray) {
         $user_id = (isset($postDataArray->user_id) && !empty($postDataArray->user_id)) ? $postDataArray->user_id : '';
         $coupan_code = (isset($postDataArray->coupan_code) && !empty($postDataArray->coupan_code)) ? $postDataArray->coupan_code : '';
         $amount = (isset($postDataArray->amount) && !empty($postDataArray->amount)) ? $postDataArray->amount : '';
-
+        $additional = (isset($postDataArray->additional_service_ids) && !empty($postDataArray->additional_service_ids)) ? $postDataArray->additional_service_ids : [];
         //$this->car_packages_model->is_new_or_existed_user($user_id)
         if (empty($user_id) || empty($coupan_code)) {
-
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::UNSUCCESS;
             $Message = ResponseConstant::message('REQUIRED_PARAMETER');
@@ -960,7 +1025,7 @@ class Car_packages_v2 extends MY_Controller {
                 if ($active_user_row) {
                     //echo"user is active";die;
                     $data = array('coupan_code' => $coupan_code, 'user_type' => 2);
-                    $coupan_row = $this->car_packages_model->get_coupan_code_detail($data);
+                    $coupan_row = $this->car_packages_model->get_coupan_code_detail($data, $additional);
                    // echo $this->db->last_query(); die;
                     if ($coupan_row) {
                         //print_r($coupan_row); die;
@@ -995,8 +1060,8 @@ class Car_packages_v2 extends MY_Controller {
                         // $rescode = ResponseConstant::SUCCESS;
                         // $Message = 'SUCCESS';
                         // $this->sendResponse($Code,$rescode,$Message,array($coupan_row));
-                    } 
-                    else 
+                    }
+                    else
                     {
                         $Code = ResponseConstant::UNSUCCESS;
                         $rescode = ResponseConstant::UNSUCCESS;
@@ -1005,7 +1070,7 @@ class Car_packages_v2 extends MY_Controller {
                     }
                 } else {
                     $data = array('coupan_code' => $coupan_code, 'user_type' => 1);
-                    $coupan_row = $this->car_packages_model->get_coupan_code_detail($data);
+                    $coupan_row = $this->car_packages_model->get_coupan_code_detail($data, $additional);
                     if ($coupan_row) {
                         if ($amount < $coupan_row['minimum_order']) {
                             $Code = ResponseConstant::UNSUCCESS;
@@ -1051,14 +1116,14 @@ class Car_packages_v2 extends MY_Controller {
         $d_type = (isset($postDataArray->d_type) && !empty($postDataArray->d_type)) ? $postDataArray->d_type : '';
 
         //$this->car_packages_model->is_new_or_existed_user($user_id)
-        if (empty($user_id) || empty($d_type)) 
+        if (empty($user_id) || empty($d_type))
         {
 
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::UNSUCCESS;
             $Message = ResponseConstant::message('REQUIRED_PARAMETER');
             $this->sendResponse($Code, $rescode, $Message);
-        } 
+        }
         else
         {
             $data = array
@@ -1094,14 +1159,14 @@ class Car_packages_v2 extends MY_Controller {
     {
         $order_id = (isset($postDataArray->order_id) && !empty($postDataArray->order_id)) ? $postDataArray->order_id : '';
         //$this->car_packages_model->is_new_or_existed_user($user_id)
-        if (empty($order_id)) 
+        if (empty($order_id))
         {
 
             $Code = ResponseConstant::UNSUCCESS;
             $rescode = ResponseConstant::UNSUCCESS;
             $Message = ResponseConstant::message('REQUIRED_PARAMETER');
             $this->sendResponse($Code, $rescode, $Message);
-        } 
+        }
         else
         {
 
@@ -1109,7 +1174,7 @@ class Car_packages_v2 extends MY_Controller {
 
            // print_r($response); die;
 
-            
+
 
            if($response)
            {

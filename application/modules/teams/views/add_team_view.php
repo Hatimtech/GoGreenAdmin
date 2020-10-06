@@ -16,6 +16,9 @@
     width: 100%;
     float: left;
 }
+#searched_item span, #searched_cleaner span{
+  display: block;
+}
 #searched_cleaner {
     overflow: scroll;
     height: 150px;
@@ -30,7 +33,7 @@ select
 }
 .span_ajax_class
 {
- cursor: pointer; 
+ cursor: pointer;
 }
 
 .btn-save
@@ -45,7 +48,7 @@ select
 }
 </style>
 <link href="<?php echo base_url(); ?>/build/css/example-styles.css" rel="stylesheet">
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url('teams'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
   <div>
     <div class="title_left">
@@ -70,9 +73,9 @@ select
           <form class="form-horizontal form-label-left" method="post" action="<?php echo base_url()?>teams/insert_team">
             <div class="form-group">
               <div class="control-label col-md-3 col-sm-3 col-xs-12">
-                <label>Team Name</label>           
+                <label>Team Name</label>
               </div>
-              <div class="col-md-6 col-sm-6 col-xs-12">           
+              <div class="col-md-6 col-sm-6 col-xs-12">
                 <input type="text" required class="form-control" name="tname" placeholder="Enter Team Name">
               </div>
             </div>
@@ -84,11 +87,11 @@ select
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <select required name="city" onchange="get_city_wise_locality(this.value)">
                   <option disabled selected required>Select City</option>
-                  <?php 
+                  <?php
                     if(!empty($city))
                     {
                       foreach ($city as $key => $value)
-                      {  
+                      {
                         echo"<option value = '".$value['id']."'>".$value['name']."</option>";
                       }
                     }
@@ -102,7 +105,7 @@ select
               <label>Select Locality</label>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <select name="locality" onchange="clearstreet_field()" id="locality_row" required>
+                <select name="locality" onchange="clearstreet_field(), get_cleaners()" id="locality_row" required>
                   <option value="" disabled selected>Select locality</option>
                 </select>
             </div>
@@ -126,7 +129,7 @@ select
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <div id="textspan_locality" style="min-height:100px; overflow:scroll; border:1px solid #ccc;padding:4px;">
-                
+
 
               </div>
             </div>
@@ -155,10 +158,10 @@ select
           <br>
           <!-- <button class="btn btn-primary btn-md btn-save">Save</button> -->
           <input type="submit" class="btn btn-primary btn-md btn-save" value="Save">
-       
+
       <!-- </div> -->
     <!-- </div> -->
-    <div class="col-md-3"></div>   
+    <div class="col-md-3"></div>
      </form>
   </div><!--x panel-->
 </div>
@@ -203,10 +206,10 @@ select
      //alert(alphabets);
       //console.log(city_id);
       // alert('inside function');
-      // var url = "<?php echo base_url(); ?>location/get_city_wise_locality";
+      // var url = "<?php //echo base_url(); ?>location/get_city_wise_locality";
       // console.log(url);
-      if(alphabets)
-      {
+      // if(alphabets)
+      // {
 
         $.ajax
         ({
@@ -224,13 +227,13 @@ select
               console.log('Something went wrong');
             }
           });
-      }
-      else
-      {
-        $("#searched_item").html('');
-      }
+      // }
+      // else
+      // {
+      //   $("#searched_item").html('');
+      // }
 
-    
+
 
 
  }
@@ -258,8 +261,8 @@ function get_verified_streets(val)
             console.log('Something went wrong');
           }
         });
-  
-  
+
+
 }
 
 </script>
@@ -285,40 +288,40 @@ function get_verified_streets(val)
 
 <script>
 
-  function get_cleaners(val)
+  function get_cleaners(val = '')
   {
      var  cleaner_string = val;
       var locality_id = $('#locality_row').val();
       // alert(locality_id);
       // alert(cleaner_string);
-      if(cleaner_string)
-      {
+      // if(cleaner_string)
+      // {
 
         $.ajax
         ({
           type : "POST",
           url : "<?php echo base_url(); ?>teams/get_cleaners",
           dataType : "json",
-          data : {"locality_id" : locality_id,"string" : cleaner_string},
+          data : {"locality_id" : locality_id, "string" : cleaner_string},
           success : function(data) {
            $("#searched_cleaner").html(data.cleaners);
                //alert('hello');
                $('#searched_cleaner').show();
-               console.log(data);
+               // console.log(data);
              },
              error : function(data) {
               console.log('Something went wrong');
             }
           });
-      }
-      else
-      {
-         $("#searched_cleaner").html('');
-      }
+      // }
+      // else
+      // {
+      //    $("#searched_cleaner").html('');
+      // }
   }
 
 
-// to add cleaners in textarea 
+// to add cleaners in textarea
 function get_verified_cleaners(val)
 {
   cleaner_id = val;
@@ -339,14 +342,16 @@ function get_verified_cleaners(val)
             console.log('Something went wrong');
           }
         });
-  
-  
+
+
 }
 
 function clearstreet_field()
 {
   $('#street').val('');
   $('#textspan_locality').html('');
+  get_cleaners('');
+  get_streets('');
 }
 </script>
 <script>
@@ -360,7 +365,7 @@ function add_street(id)
               }).get();
 
     console.log(values);
-    if(jQuery.inArray(id, values)== -1)
+    if(jQuery.inArray(id, values) == -1)
     {
       get_verified_streets(id);
 

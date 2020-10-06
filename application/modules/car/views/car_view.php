@@ -42,7 +42,8 @@
 
 </style>
 
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a id="normal" href="<?php echo base_url('car'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+
 <div class="right_col" id="cool" role="main">
 
   <div class="row">
@@ -51,13 +52,13 @@
       <div class="x_panel">
         <div class="x_title">
           <h2>Add Models </h2>
-          
+
           <div class="clearfix"></div>
           <?php
           if($this->session->flashdata('added'))
           {
             echo"<div style='margin-left: 150px;'>";
-            echo"<font color='green'>Brand Added Succesfully</font>";
+            echo"<font color='green'>Brand Added Successfully</font>";
             echo"</div>";
           }
           ?>
@@ -81,13 +82,13 @@
               ?>
             </select>
             <br>
-            <div id="varientdiv1"> 
+            <div id="varientdiv1">
               <div id="cross1" onclick='closevarient(this.id)' style="float:right; color:red; text-decoration:underline;cursor:pointer;"><span  class="fa fa-close"></span></div>
               <input required type="text" id="field" placeholder="Model Name" name="model[]" style="" class="form-control
               ">
               <br>
             </div>
-            
+
             <div class="clonediv"></div>
             <button class="btn btn-primary btn-md btn-save">Save</button>
           </div>
@@ -97,7 +98,7 @@
               <button onclick="modalfunction()" data-toggle="modal" data-target="#myModal" id="expand_btn" class="glyphicon glyphicon-plus-sign"></button>
             </div>
 
-          
+
           </div><!--x panel-->
         </div>
       </div>
@@ -109,7 +110,7 @@
 
     <div style="" class="modal fade" id="myModal" role="dialog">
         <div class="modal-dialog">
-          
+
           <!-- Modal content-->
           <div class="modal-content">
             <div class="modal-header">
@@ -119,7 +120,7 @@
             <div class="modal-body" style="">
              <form method="post" action="<?php base_url();?>car/addbrand">
               <input required type="text" class="form-control" name="add_brand" placeholder="Brand Name">
-              
+
             </div>
             <div class="modal-footer">
               <input type="submit" class="btn btn-default" value="Add">
@@ -137,7 +138,7 @@
     <script>
       var counter = 2;
       function myfunction()
-      { 
+      {
         var $div =  $("#varientdiv1").clone();
         var $klon = $div.clone().prop('id', 'varientdiv'+counter );
         $klon.find("#cross1").attr("id","varientdiv"+counter);
@@ -162,6 +163,6 @@
 
 </script>
 <script type="text/javascript">
-  
+
 
 </script>

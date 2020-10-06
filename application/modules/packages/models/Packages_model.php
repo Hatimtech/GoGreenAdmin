@@ -4,10 +4,12 @@
 
   	public function get_city()
     {
-
-      $this->db->select('*');
+      // $this->db->select('*');
+      // $this->db->where('status',1);
+      // $this->db->group_by('name');
+      // $query = $this->db->get('city');
+      // return $query->result_array();
       $this->db->where('status',1);
-      $this->db->group_by('name');
       $query = $this->db->get('city');
       return $query->result_array();
     }
@@ -28,7 +30,7 @@
         $this->db->select('locality.*,city.id as city_id,city.name as city');
         $this->db->join('city','city.id = locality.city_id');
         $this->db->where_in('city_id',$city_id);
-        $this->db->where('locality.is_suv',1);
+        $this->db->where('locality.is_suv',2);
         $this->db->where('locality.status',1);
         $this->db->where('city.status',1);
         //$this->db->where('locality.is_package',1);
@@ -42,7 +44,7 @@
         $this->db->select('locality.*,city.id as city_id,city.name as city');
         $this->db->join('city','city.id = locality.city_id');
         $this->db->where_in('city_id',$city_id);
-        $this->db->where('locality.is_saloon',1);
+        $this->db->where('locality.is_saloon',2);
         $this->db->where('locality.status',1);
         //$this->db->where('locality.is_package',1);
         $this->db->order_by('city.name');
@@ -50,7 +52,7 @@
         $result = $query->result_array();
         return $result;
       }
-      
+
     }
  public function get_locality_and_city_edit($city_id,$car_type,$package_locality)
     {
@@ -96,7 +98,7 @@
         $result = $query->result_array();
         return $result;
       }
-  		
+
     }
 
     public function get_city_via_ajax($city_id)
@@ -110,8 +112,8 @@
       $result = $query->result_array();
       return $result;
     }
-    
-   
+
+
    public function insert_package_details($data)
    {
       $query = $this->db->insert('packages',$data);

@@ -18,6 +18,7 @@
     display: block;
 }
 </style>
+<a href="<?php echo base_url('dashboard'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" role="main">
   <div class="page-title">
     <div class="title_left">
@@ -25,7 +26,7 @@
     </div>
 
     <div class="title_right">
-     
+
     </div>
   </div>
   <div class="row">
@@ -91,16 +92,12 @@
   </div>
 
 
- 
+
 
 
   <div class="row">
-   
-    
+
+
 
   </div>
 </div>
-    
-
-
-

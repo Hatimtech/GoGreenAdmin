@@ -205,7 +205,9 @@ class Admin extends MX_Controller {
 				//$this->load->view('go_to_app');
 
 				//die;
-				echo"Your Password Is Updated Successfully. Please Go To App To Login With A New Password"; die;
+				echo "<div style='text-align:center;'><p>Your Password Is Updated Successfully. Please Go To App To Login With A New Password</p>";
+				echo "<p>Go <a href='".base_url()."'>Home</a></p></div>";
+				 die;
 			}
 			else
 			{

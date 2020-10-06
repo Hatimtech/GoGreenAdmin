@@ -9,11 +9,11 @@
  * UPDATED: --/--/----.
  * codeigniter framework
  * *** *********************/
-?> 
- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+?>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
  <!-- <link href="<?php echo base_url_custom;?>build/css/datepicker.css" rel="stylesheet"> -->
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a> 
+<a href="<?php echo base_url()."manual/add_cars?id=".$_GET['id']; ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
   <div class="page-title">
     <div class="title_left">
@@ -27,12 +27,12 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="x_panel">
        <div class="x_title">
-        <h2>Add Package To Inactive Cars</h2>
+        <h2>Add Package To <?php echo $title; ?> Cars</h2>
 
         <?php
         ?>
         <?php if($this->session->flashdata('phone_exist'))
-        { 
+        {
             //echo"alresdy exist";die;
           echo"<div style='margin-left: 150px;'>";
           echo"<font color='red'>Email Already Exist</font>";
@@ -54,7 +54,11 @@
       </div>
       <div class="x_content">
         <form method="post" action="<?php echo base_url()?>manual/book_packaage" id="car_data" data-parsley-validate class="form-horizontal form-label-left">
-
+          <?php if(isset($_GET['edit']) && $_GET['edit'] == 'true'){ ?>
+          <input type="hidden" name="edit" value="1">
+        <?php } else { ?>
+          <input type="hidden" name="edit" value="0">
+        <?php } ?>
           <input type="hidden" name="hidden_user_id" id="hidden_user_id" value="<?php echo $user_id?>">
 
           <div class="form-group">
@@ -68,12 +72,12 @@
                 {
                   //echo $car_id; die;
                        // print_r($cars); die;
-                  foreach ($cars as $key => $value) 
+                  foreach ($cars as $key => $value)
                   {
                     if($value['id']==$car_id)
                     {
                       echo"<option  selected value='".$value['id']."'>".$value['reg_no']."";
-                      
+
                     }
                   }
                 }
@@ -90,7 +94,7 @@
                 if(!empty($cities))
                 {
                        // print_r($cars); die;
-                  foreach ($cities as $key => $value) 
+                  foreach ($cities as $key => $value)
                   {
 
                     echo"<option  value='".$value['id']."'>".$value['name']."";
@@ -100,7 +104,7 @@
                 ?>
               </select>
             </div>
-          </div>    
+          </div>
           <div class="form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Locality
             </label>
@@ -121,9 +125,9 @@
 
                 // if(!empty($all_brands))
                 // {
-                //   foreach ($all_brands as $key => $value) 
+                //   foreach ($all_brands as $key => $value)
                 //   {
-                //     echo"<option  value='".$value['id']."'>".$value['name'].""; 
+                //     echo"<option  value='".$value['id']."'>".$value['name']."";
                 //   }
                 // }
                 ?>
@@ -138,7 +142,7 @@
               <select required name="services" id="services" onchange=""   class="form-control" >
                <option value="2" selected>Exterior</option>
                <option value="3">Both(Interior + Exterior)</option>
-              
+
               </select>
             </div>
           </div>
@@ -159,7 +163,7 @@
             </label>
             <div class="col-md-6 col-sm-6 col-xs-12">
            <!--  <input type="text" name="date" id="date" class="form-control" autocomplete="off" required placeholder="DD / MM / YY" data-select="datepicker"> -->
-           <input type="text" name="date" class="form-control has-feedback-left" id="custom_calender" placeholder="First Name" aria-describedby="inputSuccess2Status2">
+           <input type="text" name="date" class="form-control has-feedback-left" id="custom_calender" placeholder="First Name" aria-describedby="inputSuccess2Status2" required>
             <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
             </div>
           </div>
@@ -207,6 +211,7 @@
                  <option value="Tue">Tuesday</option>
                  <option value="Wed">Wednesday</option>
                  <option value="Thu">Thrusday</option>
+                 <option value="Fri">Friday</option>
                  <option value="Sat">Saturday</option>
                 </select>
               </div>
@@ -223,6 +228,37 @@
 </div>
 <!-- <script src="<?php echo base_url_custom; ?>build/js/datepicker.js"></script> -->
 <script>
+$(document).ready(function(){
+  $('#days').multiselect({
+    nonSelectedText: 'Choose Days',
+    enableFiltering: false,
+    enableCaseInsensitiveFiltering: true,
+    buttonWidth:'570px'
+   });
+  $("#custom_calender").on("change", function(){
+    var from = $(this).val();
+    if(from != ''){
+    $.ajax
+    ({
+      type : "GET",
+      url : "<?php echo base_url(); ?>dashboard/validate_from",
+      data : {from},
+      success : function(data)
+      {
+        console.log(data);
+       if(data == -1){
+         alert("From date should be greater than or equal to current date");
+         $("#custom_calender").val('');
+
+       }
+     },
+     error : function(data) {
+      alert('Something went wrong');
+      }
+    });
+    }
+  });
+});
  function get_city(val)
  {
   var city_id = val;
@@ -232,7 +268,7 @@
     url : "<?php echo base_url(); ?>cleaner/get_locality",
     dataType : "json",
     data : {"city_id" : city_id},
-    success : function(data) 
+    success : function(data)
     {
      $("#locality_select").html(data);
      console.log(data);
@@ -263,12 +299,12 @@
       alert('Something went wrong');
     }
   });
-   
+
  }
 
  function save_data(e)
  {
-  var post_array = $('#car_data').serialize(); 
+  var post_array = $('#car_data').serialize();
   console.log(post_array);
   event.preventDefault();
 }
@@ -313,7 +349,7 @@ function is_exist(number)
     url : "<?php echo base_url(); ?>manual/check_reg_no_existence",
     dataType : "json",
     data : {"reg_no" : reg_no,"car_id":car_id},
-    success : function(data) 
+    success : function(data)
     {
      if(data==2)
      {
@@ -345,7 +381,7 @@ function get_city(val)
     url : "<?php echo base_url(); ?>manual/get_locality",
     dataType : "json",
     data : {"city_id" : city_id},
-    success : function(data) 
+    success : function(data)
     {
        $("#locality_select").html(data);
        console.log(data);
@@ -365,7 +401,7 @@ function get_city(val)
     url : "<?php echo base_url(); ?>manual/get_streets",
     dataType : "json",
     data : {"locality_id" : locality_id},
-    success : function(data) 
+    success : function(data)
     {
        $("#street_select").html(data);
        console.log(data);
@@ -420,12 +456,7 @@ function hide_show_div(val)
 //   buttonWidth:'570px'
 //  });
 
-$('#days').multiselect({
-  nonSelectedText: 'Choose Days',
-  enableFiltering: false,
-  enableCaseInsensitiveFiltering: true,
-  buttonWidth:'570px'
- });
+
 
 
 
@@ -440,7 +471,7 @@ $('#days').multiselect({
 //  //  alert('Please Choose Frequency First');
 //  //  event.preventDefault();
 //  // }
- 
+
 
 //   var days = $('#days').val();
 //   console.log(days);

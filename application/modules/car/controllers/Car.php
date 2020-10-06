@@ -20,13 +20,13 @@ class Car extends MX_Controller {
 	}
 	public function index()
 	 {
- 
+
 	 	$brand_model_array = $this->car_model->get_brand_with_models();
 	 	$all_brands = $this->car_model->get_all_brands();
 	 	$data['all_brands'] = $all_brands;
 	 	$all_models = $this->car_model->get_all_models();
 	 	$data['all_models'] = $all_models;
-	 	$data['brand_model'] =$brand_model_array; 
+	 	$data['brand_model'] =$brand_model_array;
 	 	$data['page'] = 'car_brand_model_list';
 	 	_layout($data);
 		//$this->template->load('template', 'car_brand_model_list',$data);
@@ -55,16 +55,16 @@ class Car extends MX_Controller {
 				'type'=>'admin'
 			);
 			$bool = $this->car_model->insert_model($data);
-			
+
 		}
 		if($bool)
-			{
-				$this->session->set_flashdata('added_model','model added');
-			}
-			else
-			{
-				$this->session->set_flashdata('failure_model','model added');
-			}
+		{
+			$this->session->set_flashdata('added_model','model added');
+		}
+		else
+		{
+			$this->session->set_flashdata('exist','model already exist');
+		}
 
 		redirect('car');
 	}
@@ -177,8 +177,4 @@ class Car extends MX_Controller {
 		}
 		echo json_encode($output);
 	}
-}   
-  
-
-	
-
+}

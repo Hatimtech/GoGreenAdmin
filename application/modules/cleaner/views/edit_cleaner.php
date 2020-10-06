@@ -9,7 +9,7 @@
  * codeigniter framework
  * *** *********************/
 ?>
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url('cleaner'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
   <div class="page-title">
     <div class="title_left">
@@ -25,7 +25,7 @@
        <div class="x_title">
         <h2>Edit Clener </h2>
         <?php if($this->session->flashdata('phone_exist'))
-          { 
+          {
             //echo"alresdy exist";die;
             echo"<div style='margin-left: 150px;'>";
             echo"<font color='red'>Email Already Exist</font>";
@@ -58,12 +58,12 @@
               <input  required id="middle-name" value="<?php echo $cleaner['phone_number']?>" class="form-control col-md-7 col-xs-12" type="number" name="phone_number">
             </div>
           </div>
-          
+
           <div class="form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12">Select City <!-- <span class="required">*</span> -->
             </label>
             <div class="col-md-6 col-sm-6 col-xs-12">
-             
+
               <select name="city" onchange="get_city(this.value)"  class="form-control">
                  <?php if($cleaner['cleaner_status']==2)// cleaner is not free or assiagned in another team
               {?>
@@ -79,9 +79,9 @@
 
                       if($value['id']==$cleaner['city_id'])
                       {
-                      
+
                         $selected = 'selected';
-                        
+
                       }
                       else{
 
@@ -92,7 +92,7 @@
                     }
               }
                ?>
-              
+
 
               </select>
             </div>
@@ -131,7 +131,7 @@
               <button type="submit" class="btn btn-success">Submit</button>
             </div>
           </div>
-        </form>  
+        </form>
       </div>
     </div><!--x panel-->
   </div>
@@ -150,7 +150,7 @@
     url : "<?php echo base_url(); ?>cleaner/get_locality",
     dataType : "json",
     data : {"city_id" : city_id},
-    success : function(data) 
+    success : function(data)
     {
        $("#locality_select").html(data);
        console.log(data);

@@ -5,12 +5,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 class Orders extends MX_Controller {
-
+	public $ftres;
 	function __construct()
     {
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->load->model('orders_model');
+		$this->load->helper('filter');
 		$bool = $this->session->userdata('authorized');
 		//echo $bool; die;
 		if($bool != 1)
@@ -18,22 +19,27 @@ class Orders extends MX_Controller {
 			//echo $bool; die;
 			redirect('admin');
 		}
+		$ft = $this->input->get("ft");
+		$from = $this->input->get("ftfr");
+		$to = $this->input->get("ftto");
+		$this->ftres = ftprocess($ft, $from, $to);
 	}
 	public function index()
 	{
 		//echo"here";die;
 		$localities_id = $this->input->post('locality_id');
+
 		$bool = $this->input->get('cashtab');
 		if(empty($bool))
 		{
-			$online_orders = $this->orders_model->get_all_orders(2,$localities_id);
+			$online_orders = $this->orders_model->get_all_orders($this->ftres,2,$localities_id);
 			//echo "<pre>";print_r($online_orders); die;
 			$data['orders'] = $online_orders;
 			// echo"<pre>";print_r($data['orders']); die;
 		}
 		else
 		{
-			$cod_orders = $this->orders_model->get_all_orders(1,$localities_id);
+			$cod_orders = $this->orders_model->get_all_orders($this->ftres,1,$localities_id);
 			$data['orders'] = $cod_orders;
 			// echo"<pre>";print_r($data['orders']); die;
 		}
@@ -48,7 +54,7 @@ class Orders extends MX_Controller {
 		$user_id = $this->input->get('id');
 		$primary_id = $this->input->get('primary_id');
 		if(!empty($primary_id))
-		{	
+		{
 			$this->session->set_userdata('primary_id',$primary_id);
 		}
 		$row = $this->orders_model->get_user_detail_by_id($user_id);
@@ -100,6 +106,24 @@ class Orders extends MX_Controller {
 		$data['page'] = 'history';
 		_layout($data);
 	}
+	public function activity()
+	{
+		$orders_id = $this->input->get('id');
+		$data['orders_id'] = $orders_id;
+		$activity = $this->orders_model->get_activity($this->ftres,$orders_id);
+		$data['activity'] = $activity;
+		$data['page'] = 'activity';
+		_layout($data);
+	}
+	public function additional()
+	{
+		$orders_id = $this->input->get('id');
+		$data['orders_id'] = $orders_id;
+		$activity = $this->orders_model->get_additional($this->ftres,$orders_id);
+		$data['activity'] = $activity;
+		$data['page'] = 'additional';
+		_layout($data);
+	}
 	public function cash()
 	{
 		$user_id = $this->input->get('id');
@@ -109,7 +133,7 @@ class Orders extends MX_Controller {
 	}
 	public function pending()
 	{
-		$pending_orders = $this->orders_model->get_pending_payment_order();
+		$pending_orders = $this->orders_model->get_pending_payment_order($this->ftres);
 		$data['pending_orders'] = $pending_orders;
 		$data['page']='pending_view';
 		_layout($data);
@@ -127,7 +151,7 @@ class Orders extends MX_Controller {
 				$output.=
 				'
 				<option value="'.$value['team_id'].'"">'.$value['team_name'].'</option>
-				';		
+				';
 			}
 		}
 		else
@@ -208,7 +232,7 @@ class Orders extends MX_Controller {
 		 {
 		 	$output .='<label for="one">
         <input name="locality_id[]" type="checkbox" value="'.$value['id'].'" id="'.$value['id'].'" />'.$value['name'].'</label>';
-		 } 
+		 }
 		 $data = array(
 			'option'=>$output,
 		 );
@@ -216,8 +240,3 @@ class Orders extends MX_Controller {
 		 echo json_encode($data);
 	}
 }
-
-  
-
-	
-

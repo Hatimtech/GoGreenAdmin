@@ -13,6 +13,12 @@
     $this->db->insert('users',$data);
     return $this->db->insert_id();
    }
+   public function get_users($id)
+   {
+    //  $this->db->where("id", $id);
+    // return $this->db->get('users')->result_array();
+    return $id;
+   }
     public function get_all_brands()
     {
       $this->db->select('*');
@@ -38,6 +44,12 @@
     {
       $this->db->where('user_id',$user_id);
       $this->db->where('is_package',1);
+      return $this->db->get('car_detail')->result_array();
+    }
+    public function get_active_cars($user_id)
+    {
+      $this->db->where('user_id',$user_id);
+      $this->db->where('is_package',2);
       return $this->db->get('car_detail')->result_array();
     }
     public function update_car_detail($data,$car_id)
@@ -76,7 +88,7 @@
       $this->db->where('reg_no',$reg_no);
       if(!empty($car_id))
       {
-        $this->db->where('id!=',$car_id);
+        $this->db->where('id !=',$car_id);
       }
       $query = $this->db->get('car_detail');
       return $query->row_array();
@@ -119,6 +131,12 @@
       $query = $this->db->insert('user_payment',$user_payment_data);
       $insert_id = $this->db->insert_id();
       return  $insert_id;
+    }
+    public function delete_user_payment_data($oid)
+    {
+      $this->db->where("id", $oid);
+      $query = $this->db->delete('user_payment');
+      return  $query;
     }
     public function update_is_payment($user_id)
     {
@@ -173,6 +191,22 @@
     $insert_id = $this->db->insert_id();
     return  $insert_id;
   }
+  public function delete_book_package($user_id, $car_id)
+  {
+    $this->db->where('user_id',$user_id);
+    $this->db->where('car_id',$car_id);
+    $query = $this->db->delete('booked_packages');
+    return  $query;
+  }
+  public function get_book_package($user_id, $car_id)
+  {
+    $this->db->select('payment_key');
+    $this->db->where('user_id',$user_id);
+    $this->db->where('car_id',$car_id);
+    $query = $this->db->get('booked_packages');
+    return $query->row_array();
+
+  }
   public function get_team_id_by_street_id($street_id)
   {
     // $this->db->select('team_id');
@@ -196,6 +230,14 @@
     $insert_id = $this->db->insert_id();
 
     return  $insert_id;
+
+  }
+  public function delete_data_to_assiagned_team($data)
+  {
+    $this->db->where("payment_key", $data);
+    $q = $this->db->delete('assiagned_team');
+
+    return  $q;
 
   }
   public function increment_job_by_one_in_teams_tabel($team_id)

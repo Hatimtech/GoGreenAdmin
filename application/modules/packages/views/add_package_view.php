@@ -16,17 +16,20 @@ if($this->session->flashdata('frequency'))
 }
 ?>
 <style>
+#checkboxes{
+  position: relative;
+}
 .span_ajax_class
 {
- cursor: pointer; 
+ cursor: pointer;
 }
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     -moz-appearance: none;
     -ms-appearance: none;
     appearance: none;
-    margin: 0; 
+    margin: 0;
 }
 </style>
 <style>
@@ -98,7 +101,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 </style>
 <link href="<?php echo base_url_custom;?>build/css/example-styles.css" rel="stylesheet">
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url('packages'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
 
   <div class="row">
@@ -113,9 +116,9 @@ input[type=number]::-webkit-outer-spin-button {
           <form id="form_id" class="form-horizontal form-label-left" method="post" action="<?php echo base_url()?>packages/insert_package">
             <div class="form-group">
               <div class="control-label col-md-3 col-sm-3 col-xs-12">
-                <label>Package Name</label>           
+                <label>Package Name</label>
               </div>
-              <div class="col-md-6 col-sm-6 col-xs-12">           
+              <div class="col-md-6 col-sm-6 col-xs-12">
                 <input type="text" required class="form-control" name="pname" placeholder="Enter Package Name">
               </div>
             </div>
@@ -149,7 +152,7 @@ input[type=number]::-webkit-outer-spin-button {
                 }
 
                 ?>
-                
+
               </select>
             </div>
           </div>
@@ -168,11 +171,11 @@ input[type=number]::-webkit-outer-spin-button {
               </div>
               <div id="checkboxes_city">
 
-                <?php 
+                <?php
                 if(!empty($city))
                 {
                   foreach ($city as $key => $value)
-                  {  
+                  {
 
                     echo"<label for='one'>
                     <input onclick='demo(this.value)' name='to_get_checked' value='".$value['id']."' type='checkbox' id='city_".$value['id']."']'/>".$value['name']."</label>";
@@ -183,7 +186,7 @@ input[type=number]::-webkit-outer-spin-button {
               </div>
             </div>
           </div>
-          
+
           <div class="form-group">
             <div class="control-label col-md-3 col-sm-3 col-xs-12">
               <label>Selected Cities</label>
@@ -200,7 +203,7 @@ input[type=number]::-webkit-outer-spin-button {
               <label>Select Locality</label>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
-              <div  required class="selectBox" onclick="showCheckboxes()"> 
+              <div  required class="selectBox" onclick="showCheckboxes()">
                 <select>
                   <option>Select locality</option>
                 </select>
@@ -235,20 +238,20 @@ input[type=number]::-webkit-outer-spin-button {
             <div class="col-md-6 col-sm-6 col-xs-12">
               <div class="" role="tabpanel" data-example-id="togglable-tabs">
                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                  <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Monthly</a>
+                  <li role="presentation" class="active"><a href="#tab_content1" id="monthly-tab" role="tab" data-toggle="tab" aria-expanded="true">Monthly</a>
                   </li>
-                  <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Once</a>
+                  <li role="presentation" class=""><a href="#tab_content2" role="tab" id="once-tab" data-toggle="tab" aria-expanded="false">Once</a>
                   </li>
                 </ul>
                 <div id="myTabContent" class="tab-content">
-                  <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+                  <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="monthly-tab">
                     <div id="whenmonthly" style="">
                       <div class="form-group">
                         <div class="control-label col-md-4 col-sm-3 col-xs-12">
                          <label>Interior Cost(twice)</label>
                        </div>
                        <div class="col-md-8 col-sm-6 col-xs-12">
-                        <input name="interior_once" id="interior_once" onblur="do_require(this.value)"  type="number" class="form-control"  placeholder="Enter Cost">
+                        <input name="interior_once" id="interior_once" onblur="do_require(this.value)"  type="number" class="form-control"  placeholder="Enter Cost" required>
                       </div>
                     </div>
                     <div class="form-group">
@@ -256,15 +259,15 @@ input[type=number]::-webkit-outer-spin-button {
                        <label>Exterior Cost(twice)</label>
                      </div>
                      <div class="col-md-8 col-sm-6 col-xs-12">
-                      <input  type="number" class="form-control" name="exterior_once" id="exterior_once" placeholder="Enter Cost">
+                      <input  type="number" class="form-control" name="exterior_once" id="exterior_once" placeholder="Enter Cost" required>
                     </div>
-                  </div> 
+                  </div>
                   <div class="form-group">
                     <div class="control-label col-md-4 col-sm-3 col-xs-12">
                      <label>Interior Cost(thrice)</label>
                    </div>
                    <div class="col-md-8 col-sm-6 col-xs-12">
-                    <input  type="number" class="form-control" id="interior_thrice" name="interior_thrice" onblur="ext_three_require(this.value)" placeholder="Enter Cost">
+                    <input  type="number" class="form-control" id="interior_thrice" name="interior_thrice" onblur="ext_three_require(this.value)" placeholder="Enter Cost" required>
                   </div>
                 </div>
                 <div class="form-group">
@@ -272,15 +275,15 @@ input[type=number]::-webkit-outer-spin-button {
                    <label>Exterior Cost(thrice)</label>
                  </div>
                  <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input  type="number" class="form-control" name="exterior_thrice" id="exterior_thrice" placeholder="Enter Cost">
+                  <input  type="number" class="form-control" name="exterior_thrice" id="exterior_thrice" placeholder="Enter Cost" required>
                 </div>
-              </div> 
+              </div>
               <div class="form-group">
                 <div class="control-label col-md-4 col-sm-3 col-xs-12">
                  <label>Interior Cost(six)</label>
                </div>
                <div class="col-md-8 col-sm-6 col-xs-12">
-                <input  type="number" class="form-control" name="interior_five" id="interior_five" onblur="ext_five_require(this.value)" placeholder="Enter Cost">
+                <input  type="number" class="form-control" name="interior_five" id="interior_five" onblur="ext_five_require(this.value)" placeholder="Enter Cost" required>
               </div>
             </div>
             <div class="form-group">
@@ -288,13 +291,13 @@ input[type=number]::-webkit-outer-spin-button {
                <label>Exterior Cost(six)</label>
              </div>
              <div class="col-md-8 col-sm-6 col-xs-12">
-              <input  type="number" class="form-control" name="exterior_five" id="exterior_five" placeholder="Enter Cost">
+              <input  type="number" class="form-control" name="exterior_five" id="exterior_five" placeholder="Enter Cost" required>
             </div>
           </div>
 
-        </div><!--/when monthly close-->  
+        </div><!--/when monthly close-->
       </div>
-      <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+      <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="once-tab">
         <div id="whenonce" style="">
           <div class="form-group">
             <div class="control-label col-md-4 col-sm-3 col-xs-12">
@@ -322,7 +325,7 @@ input[type=number]::-webkit-outer-spin-button {
                 <option value="monthly">Monthly</option> <option value="once">Once</option>
               </select> -->
             </div>
-          </div> 
+          </div>
 
           <div id="for_months"><!-- months percentage div -->
           <div class="form-group">
@@ -405,7 +408,7 @@ input[type=number]::-webkit-outer-spin-button {
                <label>11 Month (%)</label>
              </div>
              <div class="col-md-4 col-sm-6 col-xs-12">
-              <input name="month_11" id="month_11" required value="19"  type="number" class="form-control"  placeholder="Enter percentage"> 
+              <input name="month_11" id="month_11" required value="19"  type="number" class="form-control"  placeholder="Enter percentage">
             </div>
 
              <div class="control-label col-md-2 col-sm-3 col-xs-12">
@@ -428,16 +431,16 @@ input[type=number]::-webkit-outer-spin-button {
                 <option value="1">Once A Week</option>
                 <option value="2">Thrice A Week</option>
                 <option value="3">Five Times A Week</option>
-              </select>    
+              </select>
             </div>
           </div>   -->
-          
+
 
 
           <!-- when user choose monthy package-->
 
 
-          
+
           <!--/ when user choose monthy package-->
 
 
@@ -447,7 +450,7 @@ input[type=number]::-webkit-outer-spin-button {
         </form>
       </div>
     </div>
-    <div class="col-md-3"></div>   
+    <div class="col-md-3"></div>
   </div><!--x panel-->
 </div>
 </div>
@@ -483,7 +486,7 @@ function get_locality_and_city(val)
              error : function(data)
              {
               alert('Something went wrong');
-            } 
+            }
           });
   //}
   // else
@@ -523,8 +526,20 @@ function get_city_for_textarea(val)
 <!-- jquery multi select -->
 <script type="text/javascript">
  $(function(){
-     // $('.forplugin').multiSelect();     
-     $('#cityid').multiSelect();     
+   $("#monthly-tab").on("click", function(){
+
+       $("#whenmonthly input").prop("required", true);
+       $("#whenonce input").prop("required", false);
+
+   });
+   $("#once-tab").on("click", function(){
+
+       $("#whenmonthly input").prop("required", false);
+       $("#whenonce input").prop("required", true);
+
+   });
+     // $('.forplugin').multiSelect();
+     // $('#cityid').multiSelect();
    });
 
  </script>
@@ -536,7 +551,7 @@ function get_city_for_textarea(val)
   {
     // var car_type = document.getElementById('car_type').value;
     // if(car_type)
-    // {  
+    // {
      var myArray = [];
      var to_get_city = [];
 
@@ -572,7 +587,7 @@ function get_city_for_textarea(val)
     // else
     // {
     //   alert('Select Car Type First');
-    // }     
+    // }
     //alert("Checked: " + myArray.join(","));
   }
 </script>
@@ -627,7 +642,7 @@ function get_city_for_textarea(val)
     //$("."+to_delete_locality).remove();
      //document.getElementsByClassName("to_delete_locality_7").remove();
      $('.to_delete_locality_'+id).remove();
-    // 
+    //
     // document.getElementById(id).remove();
   }
 </script>
@@ -750,10 +765,14 @@ function get_city_for_textarea(val)
     {
       document.getElementById( 'whenmonthly' ).style.display = 'block';
       document.getElementById( 'whenonce' ).style.display = 'none';
+      $("#whenmonthly input").prop("required", true);
+      $("#whenonce input").prop("required", false);
     }
     else{
       document.getElementById( 'whenonce' ).style.display = 'block';
       document.getElementById( 'whenmonthly' ).style.display = 'none';
+      $("#whenmonthly input").prop("required", false);
+      $("#whenonce input").prop("required", true);
     }
 
   }
@@ -875,24 +894,24 @@ function require_all(val)
 <script>
 $('#button').on('click',function(e)
 {
-    var exterior_cost = $("#exterior_cost").val();
-    var interior_cost = $("#interior_cost").val();
-
-    // var interior_once = $("#interior_once").val();
-    var exterior_once = $("#exterior_once").val();
-
-
-    // var interior_thrice = $("#interior_thrice").val();
-    var exterior_thrice = $("#exterior_thrice").val();
-
-    // var interior_five = $("#interior_five").val();
-    var exterior_five = $("#exterior_five").val();
-
-    if((!exterior_cost || exterior_cost==0) || (!exterior_once || exterior_once==0) || (!exterior_thrice || exterior_thrice==0) || (!exterior_five || exterior_five==0))
-    {
-      alert('Please Fill Up The All Exterior Amount Field');
-       e.preventDefault();
-    }
+    // var exterior_cost = $("#exterior_cost").val();
+    // var interior_cost = $("#interior_cost").val();
+    //
+    // // var interior_once = $("#interior_once").val();
+    // var exterior_once = $("#exterior_once").val();
+    //
+    //
+    // // var interior_thrice = $("#interior_thrice").val();
+    // var exterior_thrice = $("#exterior_thrice").val();
+    //
+    // // var interior_five = $("#interior_five").val();
+    // var exterior_five = $("#exterior_five").val();
+    //
+    // if((!exterior_cost || exterior_cost==0) || (!exterior_once || exterior_once==0) || (!exterior_thrice || exterior_thrice==0) || (!exterior_five || exterior_five==0))
+    // {
+    //   alert('Please Fill Up The All Exterior Amount Field');
+    //    e.preventDefault();
+    // }
 
 });
 

@@ -233,8 +233,8 @@ switch (ENVIRONMENT)
 		define('base_url_custom','http://localhost/gogreen/');
 		define('HOME', "http://localhost/gogreen/" );
 	}else{
-		define('base_url_custom','http://13.126.37.218/gogreen/');
-		define('HOME', "http://13.126.37.218/gogreen/" );
+		define('base_url_custom','http://13.126.37.218/gogreenstaging/');
+		define('HOME', "http://13.126.37.218/gogreenstaging/" );
 	}
 
 	//echo base_url_custom; die;
@@ -248,6 +248,7 @@ switch (ENVIRONMENT)
 	// Name of the "system folder"
 	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
 	define('UPLOADS',getcwd().'/uploads/' );
+	define('UPLOAD_URL',HOME.'/uploads/' );
 	// The path to the "application" folder
 	if (is_dir($application_folder))
 	{

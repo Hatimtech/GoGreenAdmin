@@ -26,7 +26,7 @@
   border: 1px solid #ccc;
   padding-top: 7px;
   background-color: white;
-  
+
 }
 
 .select
@@ -46,16 +46,16 @@
 {
   color: white;
 }
-.modal-header .close 
+.modal-header .close
 {
   color: #fff;
   opacity: 1;
 }
 .forcross
 {
-  
+
   margin-left: 20%;
-  
+
 }
 .foredit
 {
@@ -75,7 +75,7 @@
   margin-right: 5%;
 }
 </style>
-
+<a href="<?php echo base_url('dashboard'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" role="main">
   <div class="page-title">
     <div class="title_left">
@@ -113,7 +113,7 @@
       <div class="col-md-4 col-sm-4 col-xs-12">
       <div class="row">
       <div class="col-md-5"><font size="4px"> Street</font></div>
-      <div class="col-md-7 text-right">        
+      <div class="col-md-7 text-right">
         <button type="button" data-toggle="modal" data-target="#streetmodal" value="">Add Street</button>
       </div>
     </div>
@@ -132,7 +132,7 @@
               </tr>
             </thead>
             <tbody>
-              <?php 
+              <?php
               if(!empty($city))
               {
                 foreach ($city as $key => $value)
@@ -158,7 +158,7 @@
             </tbody>
           </table>
           <?php
-          
+
           if($this->session->flashdata('SUCC_INACTIVE'))
           {
             echo"<font color = 'green'>";
@@ -175,7 +175,7 @@
         </div>
       </div>
 
-      
+
       <div class="col-md-4" >
         <div class="citydiv">
           <select class="select" onchange="get_city_wise_locality(this.value)"><option value="" disabled selected>Select City</option>
@@ -280,7 +280,7 @@
         </div>
       </div>
 
-    </div> 
+    </div>
 
 
     <!-- modal for edit city -->
@@ -353,7 +353,7 @@
           <select  name="city_select" class="form-control">
             <!-- <option value="NULL">City</option> -->
             <option value="" id="city_locked" disabled selected>Select City</option>
-            
+
             </select>
             <br>
             <label>Locality Name</label>
@@ -451,7 +451,7 @@
             <select id="paymnet_type"   name="payment_type" class="form-control">
               <option value="1">Go Green</option>
               <option value="2">Quickshine</option>
-            </select>   
+            </select>
           </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-default" value="Update">
@@ -502,7 +502,7 @@
             </select>
             <br>
             <label>Enter Street/Tower</label>
-            <input type="text" name="street" placeholder="Enter Street/Tower" class="form-control"> 
+            <input type="text" name="street" placeholder="Enter Street/Tower" class="form-control">
              <br>
             <label>Payment Type</label>
             <select id="paymnet_type"   name="payment_type" class="form-control">
@@ -704,7 +704,7 @@
 
 </script>
 <?php
-$last_inserted_city_id =''; 
+$last_inserted_city_id ='';
 if($this->session->flashdata('last_insert_id_to_call_ajax'))
 {
   $last_inserted_city_id =  $this->session->flashdata('last_insert_id_to_call_ajax');
@@ -712,7 +712,7 @@ if($this->session->flashdata('last_insert_id_to_call_ajax'))
   echo "<script type='text/javascript'>get_city_wise_locality('$last_inserted_city_id');</script>";
 }?>
 <?php
-$last_inserted_locality_id =''; 
+$last_inserted_locality_id ='';
 if($this->session->flashdata('last_insert_street_id_to_call_ajax'))
 {
   $last_inserted_locality_id =  $this->session->flashdata('last_insert_street_id_to_call_ajax');
@@ -767,7 +767,7 @@ if($this->session->flashdata('last_insert_street_id_to_call_ajax'))
 //         console.log(rowid); return false;
 //         $.ajax({
 //             type : 'post',
-//             url : 'fetch_record.php', //Here you will fetch records 
+//             url : 'fetch_record.php', //Here you will fetch records
 //             data :  'rowid='+ rowid, //Pass $id
 //             success : function(data){
 //             $('.fetched-data').html(data);//Show fetched data from database

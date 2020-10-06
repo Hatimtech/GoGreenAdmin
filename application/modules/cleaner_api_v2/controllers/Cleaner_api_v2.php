@@ -15,6 +15,7 @@ class Cleaner_api_v2 extends MY_Controller
 
 		parent::__construct();
 		$this->load->model('cleaner_api_model');
+		$this->load->model('api_v2/api_model');
 		//$this->load->model('standard_model');
 		//responseconstant
 		$this->load->model('responseconstant');
@@ -39,7 +40,7 @@ class Cleaner_api_v2 extends MY_Controller
 				$Code = ResponseConstant::UNSUCCESS;
 				$rescode = ResponseConstant::UNSUCCESS;
 				$Message = ResponseConstant::message('REQUIRED_PARAMETER');
-				$this->sendResponse($Code,$rescode,$Message);
+				$this->sendResponse($Code,$rescode,'$Message');
 			}
 		}else{
 		$postData =  file_get_contents('php://input');
@@ -99,10 +100,29 @@ class Cleaner_api_v2 extends MY_Controller
 						case 'update_report':
             $this->update_report($postDataArray);
             break;
-
 						case 'report_url':
             $this->report_url($postDataArray);
             break;
+						case 'create_user':
+            $this->create_user($postDataArray);
+            break;
+
+						case 'get_complaints':
+            $this->get_complaints($postDataArray);
+            break;
+
+						case 'get_complaint_replies':
+            $this->get_complaint_replies($postDataArray);
+            break;
+
+						case 'reply_to_complaint':
+            $this->reply_to_complaint($postDataArray);
+            break;
+
+						case 'update_device_token':
+            $this->update_device_token($postDataArray);
+            break;
+
 
         }
 			}
@@ -396,8 +416,13 @@ class Cleaner_api_v2 extends MY_Controller
 
 								);
 								$bool = $this->cleaner_api_model->update_user_info($data,$user_id);
-
-
+								$da = date("Y-m-d H:i:s");
+								$data = array(
+									'collection_file' => $path,
+									'cleaner_id' => $user_id,
+									'created_at' => $da
+								);
+								$this->cleaner_api_model->insert_collection_file($data);
 					 }
 
 
@@ -460,4 +485,216 @@ class Cleaner_api_v2 extends MY_Controller
 
 
     }
+
+		public function create_user($postDataArray)
+		{
+			//$this->sendResponse(0,0, $postDataArray);
+		$date = date("Y-m-d");
+		$name = (isset($postDataArray->name) && !empty($postDataArray->name)) ? $postDataArray->name: '';
+		$email =  (isset($postDataArray->email) && !empty($postDataArray->email)) ? $postDataArray->email: '';
+		$phone_number = (isset($postDataArray->phone_number) && !empty($postDataArray->phone_number)) ? $postDataArray->phone_number: '';
+		$cleaner_id = (isset($postDataArray->cleaner_id) && !empty($postDataArray->cleaner_id)) ? $postDataArray->cleaner_id: '';
+		if($postDataArray->phone_number){$phone_number = $postDataArray->phone_number;}
+		// echo  $social_id; die;
+		// 	Check For Common Parameters
+
+		if(empty($name) || empty($email) || empty($phone_number)  || empty($cleaner_id))
+		{
+			$Code = ResponseConstant::UNSUCCESS;
+			$rescode = 0; // Common Parameter is missing
+			$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+			//$Message = "sign up api missing parameter";
+
+			$this->sendResponse($Code,$rescode, $Message);
+		}
+		else
+		{
+
+				$row_data = $this->api_model->phone_or_email_existence($phone_number,$email);
+				if(count($row_data) == 0)
+				{
+
+					$data = array(
+					'name'=>$name,
+					'email'=>$email,
+					'phone_number'=>$phone_number,
+					'cleaner_id'=>$cleaner_id,
+					'created_at'=>$date
+					);
+
+					$result = $this->api_model->insert_data($data);
+					if($result)
+					{
+					$Code = ResponseConstant::SUCCESS;
+					$rescode = ResponseConstant::SUCCESS;// Email is already exist
+					$Message = "USER INSERTED";
+					$this->sendResponse($Code,$rescode, $Message,$Message);
+				}else{
+					$Code = ResponseConstant::UNSUCCESS;
+					$rescode = ResponseConstant::UNSUCCESS;
+					$Message = "SOMETHING WENT WRONG";
+					$this->sendResponse($Code,$rescode, $Message);
+				}
+
+				}
+				else
+				{
+					$Code = ResponseConstant::UNSUCCESS;
+					$rescode = ResponseConstant::UNSUCCESS;// Email is already exist
+					$Message = "Phone Number / Email Linked To Another Account";
+					$this->sendResponse($Code,$rescode, $Message);
+				}
+
+		}
+	}
+
+	public function get_complaints($postDataArray)
+	{
+		$cleaner_id = $postDataArray->cleaner_id;
+		//echo "hello";die;
+		if(empty($cleaner_id))
+		{
+			$Code = ResponseConstant::UNSUCCESS;
+			$rescode = 0; // Common Parameter is missing
+			$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+			//$Message = "sign up api missing parameter";
+
+			$this->sendResponse($Code,$rescode, $Message);
+		}
+		else
+		{
+		$result = $this->cleaner_api_model->get_complaints($cleaner_id);
+		if($result)
+		{
+			$Code = ResponseConstant::SUCCESS;
+			$rescode=ResponseConstant::SUCCESS;
+			$Message = 'Successfully Got Compalints';
+			$this->sendResponse($Code,$rescode,$Message,$result);
+		}
+		else
+		{
+			$Code = ResponseConstant::UNSUCCESS;
+			$rescode=ResponseConstant::UNSUCCESS;
+			$Message = 'No Complaints Found';
+			$this->sendResponse($Code,$rescode,$Message,$result);
+		}
+	}
+	}
+
+	public function get_complaint_replies($postDataArray)
+	{
+		$cleaner_id = $postDataArray->cleaner_id;
+		$complaint_id = $postDataArray->complaint_id;
+		//echo "hello";die;
+		if(empty($cleaner_id) || empty($complaint_id))
+		{
+			$Code = ResponseConstant::UNSUCCESS;
+			$rescode = 0; // Common Parameter is missing
+			$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+			//$Message = "sign up api missing parameter";
+
+			$this->sendResponse($Code,$rescode, $Message);
+		}
+		else
+		{
+		$result = $this->cleaner_api_model->get_complaint_replies($cleaner_id, $complaint_id);
+		if($result)
+		{
+			$Code = ResponseConstant::SUCCESS;
+			$rescode=ResponseConstant::SUCCESS;
+			$Message = 'Successfully Got Compalints';
+			$this->sendResponse($Code,$rescode,$Message,$result);
+		}
+		else
+		{
+			$Code = ResponseConstant::UNSUCCESS;
+			$rescode=ResponseConstant::UNSUCCESS;
+			$Message = 'No Complaints Found';
+			$this->sendResponse($Code,$rescode,$Message,$result);
+		}
+	}
+	}
+
+	public function reply_to_complaint($postDataArray)
+	{
+		$cleaner_id = $postDataArray->cleaner_id;
+		$complaint_id = $postDataArray->complaint_id;
+		$content = $postDataArray->content;
+
+
+		if(empty($cleaner_id) || empty($complaint_id) || empty($content))
+		{
+			$Code = ResponseConstant::UNSUCCESS;
+			$rescode = 0; // Common Parameter is missing
+			$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+			$this->sendResponse($Code,$rescode, $Message);
+		}
+
+		else
+		{
+			$date = date("Y-m-d H:i:s");
+			$data = array(
+				"complaint_id" => $complaint_id,
+				"content" => $content,
+				"created_by" => $cleaner_id,
+				"created_at" => $date
+			);
+		//
+		$result = $this->cleaner_api_model->reply_to_complaint($data);
+		if($result)
+		{
+			$Code = ResponseConstant::SUCCESS;
+			$rescode=ResponseConstant::SUCCESS;
+			$Message = 'Successfully Inserted';
+			$this->sendResponse($Code,$rescode,$Message,$result);
+		}
+		else
+		{
+			$Code = ResponseConstant::UNSUCCESS;
+			$rescode=ResponseConstant::UNSUCCESS;
+			$Message = 'Something Went Wrong';
+			$this->sendResponse($Code,$rescode,$Message,$result);
+		}
+	}
+	}
+
+	public function update_device_token($postDataArray)
+	{
+	$cleaner_id = (isset($postDataArray->cleaner_id) && !empty($postDataArray->cleaner_id)) ? $postDataArray->cleaner_id: '';
+	$device_type =  (isset($postDataArray->device_type) && !empty($postDataArray->device_type)) ? $postDataArray->device_type: '';
+	$device_token = (isset($postDataArray->device_token) && !empty($postDataArray->device_token)) ? $postDataArray->device_token: '';
+
+	if(empty($cleaner_id) || empty($device_type) || empty($device_token))
+	{
+		$Code = ResponseConstant::UNSUCCESS;
+		$rescode = 0; // Common Parameter is missing
+		$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+		//$Message = "sign up api missing parameter";
+
+		$this->sendResponse($Code,$rescode, $Message);
+	}
+	else
+	{
+
+				$data = array(
+				'device_type'=>$device_type,
+				'device_token'=>$device_token
+				);
+
+				$result = $this->cleaner_api_model->update_user_info($data, $cleaner_id);
+				if($result)
+				{
+				$Code = ResponseConstant::SUCCESS;
+				$rescode = ResponseConstant::SUCCESS;// Email is already exist
+				$Message = "UPDATED";
+				$this->sendResponse($Code,$rescode, $Message,$Message);
+			}else{
+				$Code = ResponseConstant::UNSUCCESS;
+				$rescode = ResponseConstant::UNSUCCESS;
+				$Message = "SOMETHING WENT WRONG";
+				$this->sendResponse($Code,$rescode, $Message);
+			}
+
+	}
+}
 }

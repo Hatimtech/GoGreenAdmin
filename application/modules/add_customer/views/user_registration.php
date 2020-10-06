@@ -10,17 +10,18 @@
  * *** *********************/
 ?>
 <style type="text/css">
-  
-   input[type=number]::-webkit-inner-spin-button, 
-  input[type=number]::-webkit-outer-spin-button { 
+
+   input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  margin: 0; 
+  margin: 0;
   }
 
 </style>
  <link href="<?php echo base_url_custom; ?>/build/css/selectstyle.css" rel="stylesheet">
+ <a href="<?php echo base_url('dashboard'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -28,7 +29,7 @@
        <div class="x_title">
         <h2> Add  User </h2>
         <?php if($this->session->flashdata('phone_exist'))
-          { 
+          {
             //echo"alresdy exist";die;
             echo"<div style='margin-left: 150px;'>";
             echo"<font color='red'>Email Already Exist</font>";
@@ -52,7 +53,7 @@
 
                   if(!empty($users))
                   {
-                    foreach ($users as $key => $value) 
+                    foreach ($users as $key => $value)
                     {
                       echo"<option class='".$value['phone_number']."_".$value['email']."' value='".$value['id']."'>".$value['name']."&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;".$value['email']."";
                     }
@@ -63,13 +64,13 @@
           </div> -->
                <!--  <h3 style="text-align: center;">OR</h3> -->
 
-          <div id="users_details_fields" style="display: block;"> 
+          <div id="users_details_fields" style="display: block;">
             <div class="form-group">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="phone_number-name">Phone Number <!-- <span class="required">*</span> -->
               </label>
               <div class="col-md-6 col-sm-6 col-xs-12">
                 <select name="countryCode" class="form-control" id="cc" style="width:25%; float:left;">
-    <option data-countryCode="DZ" value="213">Algeria (+213)</option>
+    <!-- <option data-countryCode="DZ" value="213">Algeria (+213)</option>
     <option data-countryCode="AD" value="376">Andorra (+376)</option>
     <option data-countryCode="AO" value="244">Angola (+244)</option>
     <option data-countryCode="AI" value="1264">Anguilla (+1264)</option>
@@ -267,9 +268,10 @@
     <option data-countryCode="TV" value="688">Tuvalu (+688)</option>
     <option data-countryCode="UG" value="256">Uganda (+256)</option>
     <option data-countryCode="GB" value="44">UK (+44)</option>
-    <option data-countryCode="UA" value="380">Ukraine (+380)</option>
+    <option data-countryCode="UA" value="380">Ukraine (+380)</option> -->
     <option data-countryCode="AE" selected value="971">UAE (+971)</option>
-    <option data-countryCode="UY" value="598">Uruguay (+598)</option>
+    <option data-countryCode="IN" value="91">India (+91)</option>
+    <!-- <option data-countryCode="UY" value="598">Uruguay (+598)</option>
     <option data-countryCode="US" value="1">USA (+1)</option>
     <option data-countryCode="UZ" value="7">Uzbekistan (+7)</option>
     <option data-countryCode="VU" value="678">Vanuatu (+678)</option>
@@ -282,7 +284,7 @@
     <option data-countryCode="YE" value="969">Yemen (North)(+969)</option>
     <option data-countryCode="YE" value="967">Yemen (South)(+967)</option>
     <option data-countryCode="ZM" value="260">Zambia (+260)</option>
-    <option data-countryCode="ZW" value="263">Zimbabwe (+263)</option>
+    <option data-countryCode="ZW" value="263">Zimbabwe (+263)</option> -->
 </select>
                 <input onchange="if(this.value.length < 1) {alert('Phone Number Is Required');this.focus();}else{is_phone_exist(this.value);}"  placeholder="Phone Number" type="number"  required id="phone_number" name="phone_number" class="form-control" style="width:73%; float:left; margin-left:2%;">
               </div>
@@ -306,31 +308,31 @@
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="password">Password <!-- <span class="required">*</span> -->
               </label>
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <input type="text" id="password" name="password" value="123456" required="required" placeholder="Enter Password" class="form-control col-md-7 col-xs-12" minlength="6">
+                <input type="password" id="password" name="password" value="" required="required" placeholder="Enter Password" class="form-control col-md-7 col-xs-12" minlength="6">
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="c_password"> Confirm Password <!-- <span class="required">*</span> -->
               </label>
-              
+
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <input type="text" id="c_password" name="c_password" onblur="check_password(this.value)" required="required" placeholder="Re Enter Password " value="123456" class="form-control col-md-7 col-xs-12">
+                <input type="password" id="c_password" name="c_password" onblur="check_password(this.value)" required="required" placeholder="Re Enter Password " value="" class="form-control col-md-7 col-xs-12">
                 <span id="span_error" style="color: red; display: none;">Password Didn't Match</span>
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="c_password">  Outstanding Balance <!-- <span class="required">*</span> -->
               </label>
-              
+
               <div class="col-md-6 col-sm-6 col-xs-12">
                 <input type="text" id="out_balance" name="out_balance"  required="required" placeholder="Outstanding Balance" class="form-control col-md-7 col-xs-12">
               </div>
             </div>
 
              <div class="form-group">
-              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="c_password">Send Credential <!-- <span class="required">*</span> -->
+              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="c_password">Send Credential
               </label>
-              
+
               <div class="col-md-6 col-sm-6 col-xs-12">
                 <input type="checkbox" checked  name="cred_flag" value="1" style="margin-top: 12px; "  class="">
               </div>
@@ -352,7 +354,7 @@
               </div>
             </div>
           </div><!-- div containing selected users detail in hidden -->
-        </form>  
+        </form>
       </div>
     </div><!--x panel-->
   </div>
@@ -372,7 +374,7 @@
     url : "<?php echo base_url(); ?>cleaner/get_locality",
     dataType : "json",
     data : {"city_id" : city_id},
-    success : function(data) 
+    success : function(data)
     {
        $("#locality_select").html(data);
        console.log(data);
@@ -386,7 +388,7 @@
 function get_user_info(element)
 {
   // var user_id = id;
-  // alert(user_id); 
+  // alert(user_id);
   var select_element = element;
   var user_name = select_element.options[select_element.selectedIndex].text;
   var user_id = select_element.options[select_element.selectedIndex].value;
@@ -411,7 +413,7 @@ function get_user_info(element)
 
   //show div containing users details
   $('#users_details_fields').show();
-  
+
 }
 
 function  is_phone_exist(number)
@@ -424,7 +426,7 @@ function  is_phone_exist(number)
   console.log(phone_number);
 
 
-  if (phone_number) 
+  if (phone_number)
   {
 
        $.ajax
@@ -433,7 +435,7 @@ function  is_phone_exist(number)
         url : "<?php echo base_url(); ?>add_customer/check_phone_existence",
         dataType : "json",
         data : {"phone_number" : phone_number},
-        success : function(data) 
+        success : function(data)
         {
            if(data==2)
            {
@@ -441,11 +443,11 @@ function  is_phone_exist(number)
               alert('Phone Number Already Exist');
               $('#phone_number').focus();
            }
-           else
-           {    
-
-                $('#email').val(phone_number + '@gogreen.com');
-           }
+           // else
+           // {
+           //
+           //      $('#email').val(phone_number + '@gogreen.com');
+           // }
          },
          error : function(data) {
           alert('Something went wrong');
@@ -468,7 +470,7 @@ function  is_email_exist(number)
       url : "<?php echo base_url(); ?>add_customer/check_email_existence",
       dataType : "json",
       data : {"email" : email},
-      success : function(data) 
+      success : function(data)
       {
          if(data==2)
          {
@@ -505,7 +507,3 @@ $("#users").select2();
 
   }
 </script>
-
-
-
- 

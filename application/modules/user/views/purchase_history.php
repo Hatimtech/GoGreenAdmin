@@ -15,6 +15,7 @@
 
 }
 </style>
+<a href="javascript: window.history.back();" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" role="main">
   <div class="page-title">
     <div class="title_left">
@@ -22,7 +23,7 @@
     </div>
 
     <div class="title_right">
-      
+
     </div>
   </div>
   <div class="row">
@@ -49,7 +50,7 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
-          
+
           <table id="datatable" class="table table-striped table-bordered">
             <thead>
               <tr>
@@ -69,8 +70,8 @@
                <?php
               if(!empty($purchase_history))
               {
-                  
-                    
+
+
                     if($purchase_history['services']==1)
                     {
                       $res = "Interior";
@@ -92,9 +93,9 @@
                       <td>".$purchase_history['days']."</td>
                       <td>".$purchase_history['amount']."</td>
                       <td>".$purchase_history['coupan_applied']."</td>
-                      <td>".$purchase_history['net_paid']."</td> 
+                      <td>".$purchase_history['net_paid']."</td>
                     </tr>";
-              } 
+              }
               ?>
             </tbody>
           </table>
@@ -108,10 +109,8 @@
 
 
   <div class="row">
-   
-    
+
+
 
   </div>
 </div>
-     
-

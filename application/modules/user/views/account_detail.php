@@ -32,7 +32,7 @@
 }
 </style>
 <script type="text/javascript" src="<?php echo base_url_custom; ?>/build/js/sumTable.js"></script>
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url().$back; ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" role="main">
   <div class="page-title">
     <div class="title_left">
@@ -44,7 +44,7 @@
     </div>
 
     <div class="title_right">
-      
+
     </div>
   </div>
   <div class="row">
@@ -70,7 +70,7 @@
               echo $personal_detail['phone_number'];
             }?></div>
           </div>
-          
+
           <!-- <ul class="nav navbar-right panel_toolbox">
             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
             </li>
@@ -87,26 +87,63 @@
             </li>
           </ul> -->
           <div class="clearfix">
-            
+
           </div>
         </div>
         <div class="x_content">
-         
+
             <div class="row">
                 <div class="col-md-4">
-                  
+
                 </div>
                 <div class="col-md-4">
-                  
+
                     <ul style="background-color: #E1DFDE;" class="nav nav-tabs nav-justified">
                       <li ><a href="<?php echo base_url('user/get_user_car_details?id='.$user_id.'')?>">Cars</a></li>
                       <li style="background-color: #4caf50; font-size:15px; font-weight: 500;"><a href="#" style="color: #fff;">Account Statement</a></li>
                     </ul>
-                  
+
                 </div>
                 <div class="col-md-4"></div>
             </div>
             <br>
+            <div class="filters text-center mt-1 mb-2 d-block clearfix">
+              <form class="" action="" method="get">
+                <?php if(isset($_GET['id'])){ ?>
+                <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
+                <?php $reset = "id=".$_GET['id']; } ?>
+                <span id="fthold">
+                  <input type="radio" name="ft" value="1" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '1') ? 'checked' : ''; ?>> Today
+                  <input type="radio" name="ft" value="2" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '2') ? 'checked' : ''; ?>> This Week
+                  <input type="radio" name="ft" value="3" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '3') ? 'checked' : ''; ?>> This Month
+                  <input type="radio" name="ft" value="4" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '4') ? 'checked' : ''; ?>> This Quarter
+                  <input type="radio" name="ft" value="5" class="ftf" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '5') ? 'checked' : ''; ?>> This Year
+                  <input type="radio" name="ft" value="6" class="ftf" id="customft" <?php echo (isset($_GET['ft']) && $_GET['ft'] == '6') ? 'checked' : ''; ?>> Custom
+                </span>
+                <div style="max-width:600px; margin:20px auto; display:<?php echo (isset($_GET['ft']) && $_GET['ft'] == '6') ? 'block' : 'none'; ?>;" class="row" id="ftcustom">
+                  <div class="col-md-6">
+                      <input type="text" value="<?php echo (isset($_GET['ftfr'])) ? $_GET['ftfr'] : ''; ?>" class="form-control has-feedback-left" id="single_cal2" placeholder="From Date" aria-describedby="inputSuccess2Status2" name="ftfr">
+                      <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
+                  </div>
+                  <div class="col-md-6">
+                    <input type="text" value="<?php echo (isset($_GET['ftto'])) ? $_GET['ftto'] : ''; ?>" class="form-control has-feedback-left" id="custom_calender" placeholder="To Date" aria-describedby="inputSuccess2Status2" name="ftto">
+                    <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
+                  </div>
+                </div>
+                <button class="btn btn-success ml-2" name="button">Filter</button>
+                <a href="?<?php echo $reset; ?>" class="btn btn-warning ml-2" name="button">Reset</a>
+              </form>
+              <script type="text/javascript">
+
+                document.getElementById("fthold").addEventListener("click", function(){
+                  if(document.getElementById("customft").checked){
+                    document.getElementById("ftcustom").style.display = "block";
+                  }else{
+                    document.getElementById("ftcustom").style.display = "none";
+                  }
+                })
+              </script>
+            </div>
             <?php if($this->session->flashdata('link_send')): ?>
             <div class="alert <?= $this->session->flashdata('alert_class') ?>" role="alert">
               <?= $this->session->flashdata('link_send') ?>
@@ -131,7 +168,7 @@
                 <th>Amount Dr</th>
                 <th>Amount Cr</th>
                 <th>Payment Mode</th>
-                
+
               </tr>
             </thead>
 
@@ -168,7 +205,7 @@
                       foreach ($payment_detail as $detail_key => $detail_value)
                       {
                         $newsate = date('d-M-y',strtotime($detail_value['created_at']));
-                        
+
                         $collected_amt  += $detail_value['amount_collected'];
                         $amount_dr = $value['net_paid'] -$collected_amt;
                         echo"<tr>
@@ -249,7 +286,7 @@
                       if($o_value['created_at'] !="0000-00-00 00:00:00")
                       {
                         $o_date = date('d-M-y',strtotime($o_value['created_at']));
-                        
+
                       }
                       else
                       {
@@ -264,7 +301,7 @@
                       <td>By Admin</td>
                       </tr>
                       ";
-                      
+
                     }
                   }
                }
@@ -273,13 +310,13 @@
               ?>
             </tbody>
           </table>
-         
+
         </div>
         <div class="row">
           <div class="col-md-4"></div>
           <div class="col-md-4 out_bal">Outstanding Balance : <spna id="out_amt"></spna></div>
           <div class="col-md-4">
-            
+
 
           </div>
         </div>
@@ -290,11 +327,11 @@
 
 
   <div class="row">
-    
+
 
   </div>
 </div>
-     
+
 
 <!-- Modal For Write-off -->
 <div style="" class="modal fade" id="myModal" role="dialog">
@@ -393,7 +430,7 @@ function for_outstanding_row() {
     });$(document).on('click', '.wt_off', function () {
         return confirm('Are you sure to add amount?');
     });
-   
+
 </script>
 
 <script>
@@ -401,8 +438,8 @@ function for_outstanding_row() {
    $(document).ready(function(){
     $("#datatable").dataTable().fnDestroy()
     $('#datatable').dataTable({
-     
-          
+
+
     "fnDrawCallback": function( oSettings )
     {
       ///alert( 'DataTables has redrawn the table' );

@@ -1,7 +1,7 @@
 <?php
 
 /*
-	
+
 
 
 */
@@ -31,16 +31,17 @@ class Pay extends MX_Controller
 			$name = $row['name'];
 			$email = $row['email'];
 			$phone_number = $row['phone_number'];
-
+			$phone_number = str_replace("+971", "", $phone_number);
+			$phone_number = str_replace("+91", "", $phone_number);
 			$name = $name;
 			$phone_number = $phone_number;
 			$url = "https://www.paytabs.com/apiv2/create_pay_page";
 
 
-			$values["merchant_email"] =  "karan@ripenapps.com";
+			$values["merchant_email"] =  "mustafazoeb@gogreen-uae.com";
 			$values['secret_key']        = "nCqyPKUQExNhDKiQqZpRF4Bp9dNFH875KyEzizqX7eeKYxBpw1gc5SCe5pUNx1TizxSS7iPew4ZvCAV8BbkH4WWamQYUSRcrp4kw";
-			$values['site_url']          =    "http://13.126.37.218/gogreen/index.php/push_api/get_data_for_auto_renewal";
-			$values['return_url']		= "http://13.126.37.218/gogreen/index.php/pay/paytab_response";
+			$values['site_url']          = base_url();
+			$values['return_url']		= base_url()."pay/paytab_response";
 			$values['title']             =    "Go Green";
 			$values['cc_first_name']     =    $name;
 			$values['cc_last_name']      =    "go green";

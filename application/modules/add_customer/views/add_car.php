@@ -18,7 +18,25 @@
     </div>
 
     <div class="title_right">
+      <?php if($this->session->flashdata('phone_exist'))
+        {
+          //echo"alresdy exist";die;
+          echo"<div style='margin-left: 150px;'>";
+          echo"<font color='red'>Email Already Exist</font>";
+          echo"</div>";
+        }
+        ?>
 
+      <div class="clearfix"></div>
+      <div style="color:green;">
+       <?php
+       echo $this->session->flashdata('customer_added');
+      echo $this->session->flashdata('car_inserted');
+      echo $this->session->flashdata('car_updated');
+      echo $this->session->flashdata('car_del');
+      echo $this->session->flashdata('package_activated');
+      ?>
+    </div>
     </div>
   </div>
 
@@ -29,23 +47,7 @@
        <div class="x_title">
         <h2></h2>
 
-        <?php if($this->session->flashdata('phone_exist'))
-          { 
-            //echo"alresdy exist";die;
-            echo"<div style='margin-left: 150px;'>";
-            echo"<font color='red'>Email Already Exist</font>";
-            echo"</div>";
-          }
-          ?>
 
-        <div class="clearfix"></div>
-         <?php
-        echo $this->session->flashdata('car_inserted');
-        echo $this->session->flashdata('car_updated');
-        echo $this->session->flashdata('car_del');
-        echo $this->session->flashdata('package_activated');
-
-        ?>
         <button class="btn btn-info" style="float: ;" onclick="open_form()">Add Car</button>
       </div>
       <div class="x_content">
@@ -69,7 +71,7 @@
 
             <tbody id="">
               <?php
-              
+
                  foreach($cars as $key => $value)
                  {
                   //print_r($cars); die;
@@ -100,14 +102,14 @@
                    <td>".$flag."</td>
                    <td>
                     <a  ".$class." href='".$assign_link."' class='btn btn-success btn-sm'><i class='fa  m-right-xs'></i>Assign Package</a>
-                    <button class='btn btn-primary' onclick='get_car_info(".$key.")'>Edit</button>
+                    <button class='btn btn-primary btn-sm' onclick='get_car_info(".$key.")'>Edit</button>
                      <a ".$class." href='".$delete_link."' class='btn btn-danger btn-sm'><i class='fa fa-trash-o m-right-xs'></i>Delete</a>
                    </td>
                   </tr>";
-                 }                 
-              ?> 
-             
-             
+                 }
+              ?>
+
+
             <!--  <td>
                    <a href='".base_url()."car/delete_brand_model?b_id=".$value['brand_id']."&m_id=".$value['model_id']."' class='btn btn-danger btn-sm'><i class='fa fa-trash-o m-right-xs'></i>Delete</a>
                    </td>-->
@@ -124,7 +126,7 @@
 
 
 
-
+<br><br>
 
         <div id="form_div" style="display: none;">
         <form method="post" action="<?php echo base_url()?>add_customer/add_update_car" id="car_data" data-parsley-validate class="form-horizontal form-label-left">
@@ -142,18 +144,18 @@
                     if(!empty($cars))
                     {
                        // print_r($cars); die;
-                      foreach ($cars as $key => $value) 
+                      foreach ($cars as $key => $value)
                       {
 
                         echo"<option  value='".$key."'>".$value['reg_no']."";
-                       
+
                       }
                     }
                   ?>
                 </select>
               </div>
             </div> -->
-            
+
              <div class="form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Registration Number <!-- <span class="required">*</span> -->
             </label>
@@ -183,9 +185,9 @@
 
                     if(!empty($all_brands))
                     {
-                      foreach ($all_brands as $key => $value) 
+                      foreach ($all_brands as $key => $value)
                       {
-                        echo"<option  value='".$value['id']."'>".$value['name'].""; 
+                        echo"<option  value='".$value['id']."'>".$value['name']."";
                       }
                     }
                   ?>
@@ -202,13 +204,13 @@
                   <?php
                     if(!empty($all_models))
                     {
-                      foreach ($all_models as $key => $value) 
+                      foreach ($all_models as $key => $value)
                       {
                         echo"<option   value='".$value['id']."'>".$value['name']."";
-                       
+
                       }
                     }
-                  ?> 
+                  ?>
 
                 </select>
               </div>
@@ -255,7 +257,7 @@
                <!--  <div class="col-md-2">
                 <input type="reset" onclick="hidden_reset();"  class="btn btn-danger" value="Reset">
                 </div> -->
-                </form> 
+                </form>
               </div>
             </div>
           </div>
@@ -278,7 +280,7 @@
     url : "<?php echo base_url(); ?>cleaner/get_locality",
     dataType : "json",
     data : {"city_id" : city_id},
-    success : function(data) 
+    success : function(data)
     {
        $("#locality_select").html(data);
        console.log(data);
@@ -312,12 +314,12 @@ function get_respective_models(id)
             alert('Something went wrong');
         }
         });
-   
+
 }
 
 function save_data(e)
 {
-  var post_array = $('#car_data').serialize(); 
+  var post_array = $('#car_data').serialize();
   console.log(post_array);
    event.preventDefault();
 }
@@ -328,7 +330,7 @@ function get_car_info(array_index)
   $('#form_div').show();
   var car_array = <?php echo json_encode( $cars) ?>;
   console.log(car_array);
-  var array_key = array_index; 
+  var array_key = array_index;
   var car_id = car_array[array_key].id;
   // var user_id = car_array[array_key].user_id;
   // alert(car_id); return false;
@@ -369,7 +371,7 @@ if (/\d/.test(reg_no) && /[a-zA-Z]/.test(reg_no))
       url : "<?php echo base_url(); ?>manual/check_reg_no_existence",
       dataType : "json",
       data : {"reg_no" : reg_no,"car_id":car_id},
-      success : function(data) 
+      success : function(data)
       {
          if(data==2)
          {
@@ -379,7 +381,7 @@ if (/\d/.test(reg_no) && /[a-zA-Z]/.test(reg_no))
        },
       error : function(data)
       {
-      alert('Something went wrong');
+      //alert('Something went wrong');
       }
     });
   }
@@ -390,14 +392,14 @@ else
   //$('#reg_no').focus();
   $('#reg_no').val('');
 }
- 
+
 
   // if(!reg_no.match(Exp))
   // {
   //   alert("Registration number should be alphanumeric");
   // }
 
- 
+
 }
 function hidden_reset()
 {

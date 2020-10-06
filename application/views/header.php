@@ -23,7 +23,7 @@
     <link href="<?php echo base_url_custom; ?>/vendors/nprogress/nprogress.css" rel="stylesheet">
     <!-- iCheck -->
     <link href="<?php echo base_url_custom; ?>/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
-	
+
     <!-- bootstrap-progressbar -->
     <link href="<?php echo base_url_custom; ?>/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
     <!-- JQVMap -->
@@ -36,7 +36,7 @@
 
 
 
-    
+
 
     <!--datatables-->
      <link href="<?php echo base_url_custom; ?>/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
@@ -45,6 +45,30 @@
     <link href="<?php echo base_url_custom; ?>/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo base_url_custom; ?>/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url_custom; ?>/build/css/custom-style.css">
+    <style media="screen">
+    .mt-1{
+      margin-top:10px;
+    }
+    .mb-2{
+      margin-bottom: 20px;
+    }
+    .ml-2{
+      margin-left: 20px;
+    }
+      .dataTables_wrapper th select{
+        display: block;
+      }
+      .dt-buttons {
+          display: inline;
+      }
+      .dataTables_wrapper thead, .dataTables_wrapper tfoot {
+          display: table-header-group;
+      }
+      .dataTables_wrapper{
+        width: 100%;
+        overflow: auto;
+      }
+    </style>
   </head>
 
   <body class="nav-md">

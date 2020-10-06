@@ -5,22 +5,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 class Cleaner extends MX_Controller {
-
+public $ftres;
 	function __construct()
     {
 		parent::__construct();
 		$this->load->model('cleaner_model');
+		$this->load->helper('filter');
 		$bool = $this->session->userdata('authorized');
-
 		if($bool != 1)
 		{
-			//echo $bool; die;
-			redirect('admin');
+		  redirect('admin');
 		}
+		$ft = $this->input->get("ft");
+		$from = $this->input->get("ftfr");
+		$to = $this->input->get("ftto");
+		$this->ftres = ftprocess($ft, $from, $to);
 	}
+
 	public function index()
 	{
-
+		 // print_r($this->input->post());
 		$city = $this->cleaner_model->get_city();
 		$data['city'] =$city;
 		$localities_id = $this->input->post('locality_id');
@@ -30,6 +34,48 @@ class Cleaner extends MX_Controller {
 		//$this->template->load('template', 'cleaner_view',$data);
 		$data['page'] ='cleaner_view';
 		_layout($data);
+	}
+	public function collection()
+	{
+		$cleaners = $this->cleaner_model->get_all_collection($this->ftres);
+
+		$data['collection'] =$cleaners;
+		//$this->template->load('template', 'cleaner_view',$data);
+		$data['page'] ='collection_view';
+		_layout($data);
+	}
+	public function complaints()
+	{
+		$cleaners = $this->cleaner_model->get_all_complaints($this->ftres);
+
+		$data['complaints'] =$cleaners;
+		//$this->template->load('template', 'cleaner_view',$data);
+		$data['page'] ='complaints_view';
+		_layout($data);
+	}
+	public function replies()
+	{
+		$id = $this->input->get('id');
+		$complaint = $this->cleaner_model->get_a_complaint($id);
+		$complaints = $this->cleaner_model->get_all_replies($id);
+
+		$data['complaint'] =$complaint;
+		$data['replies'] =$complaints;
+		//$this->template->load('template', 'cleaner_view',$data);
+		$data['page'] ='replies_view';
+		_layout($data);
+	}
+	public function get_replies()
+	{
+		$id = $this->input->get('id');
+		$complaints = $this->cleaner_model->get_all_replies($id);
+		foreach ($complaints as $key => $value) {
+			if($value['created_by'] == $this->session->userdata('authorized')){
+				echo "<div class='reply sent'>".$value['content']."<h6>".$value['created_at']."</h6></div>";
+			}else{
+				echo "<div class='reply received'>".$value['content']."<h6>".$value['created_at']."</h6></div>";
+			}
+		}
 	}
 	public function add_cleaner()
 	{
@@ -117,6 +163,86 @@ class Cleaner extends MX_Controller {
 		}
 		redirect('cleaner');
 	}
+	public function add_complaint()
+	{
+		$city_array = $this->cleaner_model->get_all_cleaners();
+		$data['cleaners'] = $city_array;
+		$data['title'] = "Add Complaint";
+		$data['page'] = 'add_complaint_view';
+		_layout($data);
+	}
+	public function edit_complaint()
+	{
+		$id = $this->input->get("id");
+		$city_array = $this->cleaner_model->get_all_cleaners();
+		$complaint = $this->cleaner_model->get_a_complaint($id);
+		$data['cleaners'] = $city_array;
+		$data['title'] = "Edit Complaint";
+		$data['complaint'] = $complaint;
+		$data['page'] = 'add_complaint_view';
+		_layout($data);
+	}
+	public function insert_complaint()
+	{
+		$id = $this->input->post('id');
+
+		$cleaner_id = $this->input->post('cleaner_id');
+		$title = $this->input->post('title');
+		$content = $this->input->post('content');
+		$created_at = date("Y-m-d H:i:s");
+		$created_by = $this->session->userdata('authorized');
+
+			$data = array(
+				'cleaner_id'=>$cleaner_id,
+				'title'=>$title,
+				'content'=>$content,
+				'created_at'=>$created_at,
+				'created_by'=>$created_by
+			);
+			if($id != ''){
+				$bool = $this->cleaner_model->update_complaint($data, $id);
+			}else{
+				$bool = $this->cleaner_model->insert_complaint($data);
+			}
+
+			if($bool)
+			{
+				$this->session->set_flashdata('cleaner_added','complaint added');
+			}
+			else{
+
+				$this->session->set_flashdata('cleaner_error','complaint added');
+			}
+
+		redirect('cleaner/complaints');
+	}
+	public function insert_reply()
+	{
+		$complaint_id = $this->input->post('id');
+		$content = $this->input->post('msg');
+		$created_at = date("Y-m-d H:i:s");
+		$created_by = $this->session->userdata('authorized');
+
+			$data = array(
+				'complaint_id'=>$complaint_id,
+				'content'=>$content,
+				'created_at'=>$created_at,
+				'created_by'=>$created_by
+			);
+				$bool = $this->cleaner_model->insert_reply($data);
+
+
+				$complaints = $this->cleaner_model->get_all_replies($complaint_id);
+				foreach ($complaints as $key => $value) {
+					if($value['created_by'] == $this->session->userdata('authorized')){
+						echo "<div class='reply sent'>".$value['content']."<h6>".$value['created_at']."</h6></div>";
+					}else{
+						echo "<div class='reply received'>".$value['content']."<h6>".$value['created_at']."</h6></div>";
+					}
+				}
+
+
+	}
 	public function edit_cleaner()
 	{
 		$cleaner_id = $this->input->get('id');
@@ -198,11 +324,35 @@ class Cleaner extends MX_Controller {
 		}
 		redirect('cleaner');
 	}
+	public function delete_complaint()
+	{
+		$cleaner_id = $this->input->get('id');
+		// echo $cleaner_id; die;
+		$bool = $this->cleaner_model->inactivate_complaint($cleaner_id);
+
+		redirect('cleaner/complaints');
+	}
+	public function resolve_complaint()
+	{
+		$cleaner_id = $this->input->get('id');
+		// echo $cleaner_id; die;
+		$bool = $this->cleaner_model->resolve_complaint($cleaner_id);
+
+		redirect('cleaner/complaints');
+	}
+	public function unresolve_complaint()
+	{
+		$cleaner_id = $this->input->get('id');
+		// echo $cleaner_id; die;
+		$bool = $this->cleaner_model->unresolve_complaint($cleaner_id);
+
+		redirect('cleaner/complaints');
+	}
 	public function cleaner_job_detail()
 	{
 		$cleaner_id = $this->input->get('id');
 
-		$work_history = $this->cleaner_model->get_cleaner_job_done_detail($cleaner_id);
+		$work_history = $this->cleaner_model->get_cleaner_job_done_detail($this->ftres,$cleaner_id);
 		// echo"<pre>";print_r($work_history); die;
 		$data['history'] = $work_history;
 		$data['page'] = 'cleaner_job_history';
@@ -211,18 +361,22 @@ class Cleaner extends MX_Controller {
 	public function get_locality_for_street()
 	{
 		 $city_id = $this->input->post('city_id');
+		 $ids = ($this->input->post('selected') != '') ? explode("|", $this->input->post('selected')) : array();
 		// $city_id=3;
 		 $localities = $this->cleaner_model->get_locality_ajax($city_id);
 		 $output = '';
 		 foreach ($localities as $key => $value)
 		 {
-		 	$output .='<label for="one">
-        <input name="locality_id[]" type="checkbox" value="'.$value['id'].'" id="'.$value['id'].'" />'.$value['name'].'</label>';
+			 $sel = (in_array($value['id'], $ids)) ? 'selected' : '' ;
+			 $output .= "<option $sel value='".$value['id']."'>".ucfirst($value['name'])."</option>";
+			 // $sel = (in_array($value['id'], $ids)) ? 'checked' : '';
+		 		// $output .='<label for="one">
+        // <input name="locality_id[]" '.$sel.' type="checkbox" value="'.$value['id'].'" id="'.$value['id'].'" />'.$value['name'].'</label>';
 		 }
 		 $data = array(
 			'option'=>$output,
 		 );
 		 //print_r($data); die;
-		 echo json_encode($data);
+		 echo json_encode($data, JSON_UNESCAPED_SLASHES);
 	}
 }

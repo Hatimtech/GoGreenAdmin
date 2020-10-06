@@ -18,13 +18,14 @@
 }
 </style>
 <br><br>
+<a href="<?php echo base_url('dashboard'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
   <div class="page-title" style="height: auto;">
     <div class="title_left">
-      
+
       <!-- <select onchange="get_locality_for_street(this.value)" class="select"><option value="" disabled selected>Select City</option>
             <?php if(!empty($city)){foreach ($city as $key => $value) {
-          
+
             echo"<option value=".$value['id'].">".ucfirst($value['name'])."</option>";}}?>
       </select>
       <select class="select" id="locality_ajax"><option>Choose City First</option></select> -->
@@ -62,23 +63,30 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
-          
+
           <table id="datatable" class="table table-striped table-bordered">
             <thead>
               <tr>
                 <th>Team Name</th>
                 <th>City</th>
                 <th>Locality</th>
-                <!-- <th>No Of Jobs</th> -->
                 <th>Operations</th>
-                <!-- <th>operation</th> -->
               </tr>
             </thead>
+
+            <tfoot>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </tfoot>
 
 
             <tbody id="">
               <?php
-              
+
                  foreach($teams as $key => $value)
                  {
                   //echo "<pre>";print_r($packages); die;
@@ -87,19 +95,19 @@
                   <tr>
                    <td>".$value['name']."</td>
                    <td>".$value['city']."</td>
-                   <td>".$value['locality']."</td>           
+                   <td>".$value['locality']."</td>
                    <td><a href='".base_url()."teams/edit_team?id=".$value['id']."' class='btn btn-success'>Edit</a>
                   <a href='".base_url()."teams/change_location?id=".$value['id']."' class='btn btn-info'>Change Location</a>
                   <a href='".base_url()."teams/delete_team?id=".$value['id']."' class='btn btn-danger'>Delete</a>
-                  </td>              
+                  </td>
                   </tr>";
                  }
               ?>
              <!-- <td>
                    <a href='".base_url()."packages/delete_package?id=".$value['id']."&l_id=".$value['locality_id']."&type=".$value['type']."' class='btn btn-danger btn-sm'><i class='fa fa-trash-o m-right-xs'></i>Delete</a>
                    </td> -->
-            
-              
+
+
               <!-- <tr>
                 <td>Airi Satou</td>
                 <td>Accountant</td>
@@ -115,12 +123,12 @@
     </div>
   </div>
   <div class="row">
-   
-    
+
+
 
   </div>
 </div>
-    
+
 
 
 
@@ -154,8 +162,8 @@
         }
     });
   }
- 
- 
+
+
 </script>
 
 <script>
@@ -163,33 +171,54 @@
   $(document).ready(function(){
     $("#datatable").dataTable().fnDestroy()
     $('#datatable').dataTable({
-            
-            dom: 'lBfrtip',
-            buttons: [
-                      {
-                extend: 'excelHtml5',
-                title: 'Data export',
-                 exportOptions: {
-                       columns: [ 0, 1, 2]
-                }
-            },
-            {
-                extend: 'csvHtml5',
-                title: 'Data export',
-                exportOptions: {
-                   columns: [ 0, 1, 2]
-                }
-            },
-    ],
-    oLanguage: {
-      "sSearch": "Search:"
-    },
-    columnDefs : [
-                { 
-                    'searchable'    : false, 
-                    'targets'       : [1,2,3] 
-                },
-            ]
+      initComplete: function() {
+          this.api().columns().every(function() {
+              var column = this;
+              var select = $('<select><option value="">All</option></select>')
+                  .appendTo($(column.footer()).empty())
+                  .on("click", function(e) {
+                      e.stopPropagation();
+                  })
+                  .on('change', function() {
+                      var val = $.fn.dataTable.util.escapeRegex(
+                          $(this).val()
+                      );
+                      column.search(val ? '^' + val + '$' : '', true, false).draw();
+                      //console.log($(this).val());
+                      //column.search(val).draw();
+                  });
+
+              column.data().unique().sort().each(function(d, j) {
+                  d = d.replace(/(<([^>]+)>)/ig, "");
+                  if(select.find('option[value="' + d + '"]').length <= 0){
+                    select.append('<option value="' + d + '">' + d + '</option>');
+                  }
+              });
           });
+          // $("#datatable tfoot select option").val(function(idx, val) {
+          //   $(this).siblings('[value="'+ val +'"]').remove();
+          // });
+      },
+      dom: 'lBfrtip',
+      buttons: [{
+              extend: 'excelHtml5',
+              title: 'Data export',
+              exportOptions: {
+                  columns: [0, 1, 2]
+              }
+          },
+          {
+              extend: 'csvHtml5',
+              title: 'Data export',
+              exportOptions: {
+                  columns: [0, 1, 2]
+              }
+          },
+      ],
+      ordering: true,
+      oLanguage: {
+          "sSearch": "Search:"
+      }
+  });
 });
 </script>

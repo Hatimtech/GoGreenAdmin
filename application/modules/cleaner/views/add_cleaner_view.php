@@ -9,7 +9,7 @@
  * codeigniter framework
  * *** *********************/
 ?>
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url('cleaner'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
   <div>
 
@@ -26,7 +26,7 @@
        <div class="x_title">
         <h2>Add Cleaner </h2>
         <?php if($this->session->flashdata('phone_exist'))
-          { 
+          {
             //echo"alresdy exist";die;
             echo"<div style='margin-left: 150px;'>";
             echo"<font color='red'>Email Already Exist</font>";
@@ -59,7 +59,7 @@
               <input  required id="middle-name" class="form-control col-md-7 col-xs-12" type="number" name="phone_number">
             </div>
           </div>
-          
+
           <div class="form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12">Select City <!-- <span class="required">*</span> -->
             </label>
@@ -111,7 +111,7 @@
               <button type="submit" class="btn btn-success">Submit</button>
             </div>
           </div>
-        </form>  
+        </form>
       </div>
     </div><!--x panel-->
   </div>
@@ -130,7 +130,7 @@
     url : "<?php echo base_url(); ?>cleaner/get_locality",
     dataType : "json",
     data : {"city_id" : city_id},
-    success : function(data) 
+    success : function(data)
     {
        $("#locality_select").html(data);
        console.log(data);

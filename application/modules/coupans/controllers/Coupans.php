@@ -5,23 +5,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 class Coupans extends MX_Controller {
-
+	public $ftres;
 	function __construct()
     {
 		parent::__construct();
 		 $this->load->library('form_validation');
 		$this->load->model('coupans_model');
+		$this->load->helper('filter');
 		$bool = $this->session->userdata('authorized');
-
 		if($bool != 1)
 		{
-			//echo $bool; die;
-			redirect('admin');
+		  redirect('admin');
 		}
+		$ft = $this->input->get("ft");
+		$from = $this->input->get("ftfr");
+		$to = $this->input->get("ftto");
+		$this->ftres = ftprocess($ft, $from, $to);
 	}
 	public function index()
 	{
-     $coupans = $this->coupans_model->get_all_coupans();
+     $coupans = $this->coupans_model->get_all_coupans($this->ftres);
 
     // $data['cleaners'] =$cleaners;
 		//$this->template->load('template', 'cleaner_view',$data);
@@ -73,7 +76,7 @@ class Coupans extends MX_Controller {
 					$this->form_validation->set_rules('minimum_order', 'Minimum Order', 'required');
 					$this->form_validation->set_rules('user_type', 'user_typ', 'required');
 					if ($this->form_validation->run() == true)
-					{ 
+					{
 						$offer_name = $this->input->post('offer_name');
 						$valid_from = $this->input->post('valid_from');
 						$valid_from_sql = date('Y-m-d', strtotime($valid_from));
@@ -86,19 +89,19 @@ class Coupans extends MX_Controller {
 						$max_discount = $this->input->post('max_discount');
 						$user_type = $this->input->post('user_type');
 						// uploaded file configuration
-						$config['upload_path']   = './uploads/'; 
-						$config['allowed_types'] = 'gif|jpg|png'; 
-						$config['max_size']      = 2048; 
-						$config['max_width']     = 0; 
-						$config['max_height']    = 0;  
+						$config['upload_path']   = './uploads/';
+						$config['allowed_types'] = 'gif|jpg|png';
+						$config['max_size']      = 2048;
+						$config['max_width']     = 0;
+						$config['max_height']    = 0;
 						$this->load->library('upload', $config);
 						if (!$this->upload->do_upload('coupan_image') && $flag==2)
 						{
 							$error = array('error' => $this->upload->display_errors());
 							$this->session->set_flashdata('image_error',$error);
 						}
-						else 
-						{ 	
+						else
+						{
 							$data = array('upload_data' => $this->upload->data());
 							// print_r($data);
 							 $filename = $data['upload_data']['file_name'];
@@ -113,7 +116,7 @@ class Coupans extends MX_Controller {
 							 	'discount'=>$discount,
 							 	'minimum_order'=>$minimum_order,
 							 	'max_discount'=>$max_discount,
-							 	'user_type'=>$user_type,	
+							 	'user_type'=>$user_type,
 							 );
 							 if($flag==1)
 							 {
@@ -131,9 +134,9 @@ class Coupans extends MX_Controller {
 							 else
 							 {
 							 	$this->session->set_flashdata('Failure','Error IN Adding Coupons');
-							 } 
-						} 
-					} 
+							 }
+						}
+					}
 				}
 			}//this one
 		}
@@ -175,7 +178,7 @@ class Coupans extends MX_Controller {
 		{
 			return false;
 		}
-		
+
 	}
 	public  function delete_coupans()
 	{
@@ -191,8 +194,4 @@ class Coupans extends MX_Controller {
 		}
 		redirect('coupans');
 	}
-}   
-  
-
-	
-
+}

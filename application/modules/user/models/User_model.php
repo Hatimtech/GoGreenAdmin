@@ -3,9 +3,21 @@
   {
 
 
-    public function get_all_users()
+    public function get_all_users($ftres)
     {
-
+      if($ftres['from'] == '' && $ftres['to'] == ''){
+        $d = date("Y-m-d", strtotime("-1 year"));
+        $where = "date(users.created_at) >= '$d'";
+      }else{
+        $where = array();
+        if($ftres['from'] != ''){
+          $where[] = "date(users.created_at) >= '".$ftres['from']."'";
+        }
+        if($ftres['to'] != ''){
+          $where[] = "date(users.created_at) <= '".$ftres['to']."'";
+        }
+        $where = implode(" AND ", $where);
+      }
      //  $this->db->select('users.*,count(car_detail.user_id) as no_of_cars,count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,ct.name as city,lt.name as locality,st.name as street');
      //  $this->db->join('booked_packages as bp','bp.user_id=users.id','left');
      //  $this->db->join('city as ct','ct.id=bp.city_id','left');
@@ -16,11 +28,13 @@
      // // $this->db->group_by('bp.id');
      //  $this->db->group_by(array("users.email", "bp.id"));
      //  $query = $this->db->get('users');
+     $d = date("Y-m-d", strtotime("-1 year"));
      $query=  $this->db->query("select distinct id,name,email,phone_number,device_type,is_phone_verified,is_payment,no_of_cars,active_cars,city,locality,expiry_date,street,package_id,service_stop,created_at,user_status from (SELECT `users`.id as id,`users`.name as name,`users`.email as email,`users`.created_at,`users`.service_stop,`users`.status as user_status,
 `users`.phone_number as phone_number,
 `users`.device_type as device_type,
 `users`.is_phone_verified as is_phone_verified,
 `users`.is_payment as is_payment,
+`users`.status as status,
 count(car_detail.user_id) as no_of_cars,
 count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street`,bp.expiry_date,bp.id as package_id
 FROM `users`
@@ -29,21 +43,75 @@ LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id`
 LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
  LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
  LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
-
-
+ WHERE ".$where." AND users.archived = 0
 GROUP BY  `users`.`id`
 ,  `bp`.`id`
 
 ) user_dashboard
-GROUP BY email order by  created_at desc");
+GROUP BY email order by status, created_at desc");
        //echo $this->db->last_query(); die;
       return $query->result_array();
       // $this->db->select('*');
       // $query = $this->db->get('users');
       // return $query->result_array();
     }
-    public function get_filtered_user($flag)
+
+    public function get_archived_users($ftres)
     {
+
+      if($ftres['from'] == '' && $ftres['to'] == ''){
+        $d = date("Y-m-d", strtotime("-1 year"));
+        $where = "date(users.created_at) >= '$d'";
+      }else{
+        $where = array();
+        if($ftres['from'] != ''){
+          $where[] = "date(users.created_at) >= '".$ftres['from']."'";
+        }
+        if($ftres['to'] != ''){
+          $where[] = "date(users.created_at) <= '".$ftres['to']."'";
+        }
+        $where = implode(" AND ", $where);
+      }
+
+        $query=  $this->db->query("select distinct id,name,email,phone_number,device_type,is_phone_verified,is_payment,no_of_cars,active_cars,city,locality,expiry_date,street,package_id,service_stop,created_at,user_status from (SELECT `users`.id as id,`users`.name as name,`users`.email as email,`users`.created_at,`users`.service_stop,`users`.status as user_status,
+   `users`.phone_number as phone_number,
+   `users`.device_type as device_type,
+   `users`.is_phone_verified as is_phone_verified,
+   `users`.is_payment as is_payment,
+   `users`.status as status,
+   count(car_detail.user_id) as no_of_cars,
+   count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street`,bp.expiry_date,bp.id as package_id
+   FROM `users`
+   LEFT JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id`
+   LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id`
+   LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
+    LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
+    LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
+    WHERE ".$where." AND users.archived = 1
+   GROUP BY  `users`.`id`
+   ,  `bp`.`id`
+
+   ) user_dashboard
+   GROUP BY email order by status, created_at desc");
+
+
+      return $query->result_array();
+    }
+
+    public function get_filtered_user($flag, $ftres)
+    {
+      if($ftres['from'] == '' && $ftres['to'] == ''){
+        $where = "1=1";
+      }else{
+        $where = array();
+        if($ftres['from'] != ''){
+          $where[] = "date(users.created_at) >= '".$ftres['from']."'";
+        }
+        if($ftres['to'] != ''){
+          $where[] = "date(users.created_at) <= '".$ftres['to']."'";
+        }
+        $where = implode(" AND ", $where);
+      }
       if($flag==2)// active user
       {
       $query=  $this->db->query("SELECT distinct id,name,email,phone_number,device_type,is_phone_verified,is_payment,no_of_cars,active_cars,city,locality,street,created_at,expiry_date,service_stop,package_id,user_status from (SELECT `users`.id as id,`users`.name as name,`users`.email as email,`users`.created_at,
@@ -59,9 +127,9 @@ GROUP BY email order by  created_at desc");
       LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
       LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
       LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
-      Where users.status=1
-      AND users.is_payment=2
-      AND bp.expiry_date > CURDATE()
+      Where $where AND users.status=1
+      -- AND users.is_payment=2
+      -- AND bp.expiry_date > CURDATE()
 
       GROUP BY  `users`.`id`
       ,  `bp`.`id`
@@ -82,16 +150,102 @@ GROUP BY email order by  created_at desc");
       count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street`,`bp`.`expiry_date`,`bp`.`id` as `package_id`
       FROM `users`
 
+      LEFT JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id`
+      LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id`
+      LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
+      LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
+      LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
+      Where $where AND users.status=2
+      -- AND
+      --  bp.expiry_date < curdate()
+      --  AND
+      --  bp.status=1
+
+      GROUP BY  `users`.`id`
+      ,  `bp`.`id`
+
+      ) user_dashboard
+      GROUP BY email order by  created_at desc");
+      //echo $this->db->last_query(); die;
+      return $query->result_array();
+    }
+    elseif ($flag==5)// inactive user
+    {
+      $query=  $this->db->query("SELECT distinct id,name,email,phone_number,device_type,is_phone_verified,is_payment,no_of_cars,active_cars,city,locality,street,created_at,service_stop,expiry_date,package_id,user_status from (SELECT `users`.id as id,`users`.name as name,`users`.email as email,`users`.created_at,
+      `users`.phone_number as phone_number,`users`.service_stop,`users`.status as user_status,
+      `users`.device_type as device_type,
+      `users`.is_phone_verified as is_phone_verified,
+      `users`.is_payment as is_payment,
+      count(car_detail.user_id) as no_of_cars,
+      count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street`,`bp`.`expiry_date`,`bp`.`id` as `package_id`
+      FROM `users`
+
       JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id`
       LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id`
       LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
       LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
       LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
-      Where users.status=1
+      Where $where AND users.status=1
       AND
-       bp.expiry_date < curdate()
+       bp.auto_renewal = 1
        AND
        bp.status=1
+
+      GROUP BY  `users`.`id`
+      ,  `bp`.`id`
+
+      ) user_dashboard
+      GROUP BY email order by  created_at desc");
+      //echo $this->db->last_query(); die;
+      return $query->result_array();
+    }
+    elseif ($flag==6)// inactive user
+    {
+      $query=  $this->db->query("SELECT distinct id,name,email,phone_number,device_type,is_phone_verified,is_payment,no_of_cars,active_cars,city,locality,street,created_at,service_stop,expiry_date,package_id,user_status from (SELECT `users`.id as id,`users`.name as name,`users`.email as email,`users`.created_at,
+      `users`.phone_number as phone_number,`users`.service_stop,`users`.status as user_status,
+      `users`.device_type as device_type,
+      `users`.is_phone_verified as is_phone_verified,
+      `users`.is_payment as is_payment,
+      count(car_detail.user_id) as no_of_cars,
+      count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street`,`bp`.`expiry_date`,`bp`.`id` as `package_id`
+      FROM `users`
+
+      JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id`
+      LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id`
+      LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
+      LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
+      LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
+      Where $where AND users.status=1
+      AND
+       bp.auto_renewal = 2
+       AND
+       bp.status=1
+
+      GROUP BY  `users`.`id`
+      ,  `bp`.`id`
+
+      ) user_dashboard
+      GROUP BY email order by  created_at desc");
+      //echo $this->db->last_query(); die;
+      return $query->result_array();
+    }
+    elseif ($flag==7)// cleaner user
+    {
+      $query=  $this->db->query("SELECT distinct id,name,email,phone_number,device_type,is_phone_verified,is_payment,no_of_cars,active_cars,city,locality,street,created_at,service_stop,expiry_date,package_id,user_status from (SELECT `users`.id as id,`users`.name as name,`users`.email as email,`users`.created_at,
+      `users`.phone_number as phone_number,`users`.service_stop,`users`.status as user_status,
+      `users`.device_type as device_type,
+      `users`.is_phone_verified as is_phone_verified,
+      `users`.is_payment as is_payment,
+      count(car_detail.user_id) as no_of_cars,
+      count(CASE WHEN car_detail.is_package = 2 then 1 ELSE NULL END) as active_cars,  `ct`.`name` as `city`, `lt`.`name` as `locality`, `st`.`name` as `street`,`bp`.`expiry_date`,`bp`.`id` as `package_id`
+      FROM `users`
+
+      LEFT JOIN `booked_packages` as `bp` ON `bp`.`user_id`=`users`.`id`
+      LEFT JOIN `city` as `ct` ON `ct`.`id`=`bp`.`city_id`
+      LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
+      LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
+      LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
+      Where $where AND users.cleaner_id IS NOT NULL
 
       GROUP BY  `users`.`id`
       ,  `bp`.`id`
@@ -117,7 +271,7 @@ GROUP BY email order by  created_at desc");
       LEFT JOIN `locality` as `lt` ON `lt`.`id`=`bp`.`locality_id`
       LEFT JOIN `street` as `st` ON `st`.`id`=`bp`.`street_id`
       LEFT JOIN `car_detail` ON `users`.`id` = `car_detail`.`user_id`
-      Where users.status=1
+      Where $where AND users.status=1
       AND car_detail.user_id IS NULL
 
       GROUP BY  `users`.`id`
@@ -257,15 +411,23 @@ GROUP BY email order by  created_at desc");
 
     }
 
-    public function get_orders_ledger($user_id)
+    public function get_orders_ledger($user_id, $ftres)
     {
+
 
 
       $this->db->select('up.*,bp.purchase_date');
       $this->db->where('up.user_id',$user_id);
+        if($ftres['from'] != ''){
+          $this->db->where('date(up.timestamp) >=',$ftres['from']);
+        }
+        if($ftres['to'] != ''){
+          $this->db->where('date(up.timestamp) <=',$ftres['to']);
+        }
       $this->db->join('booked_packages as bp','bp.payment_key=up.id','left');
       //$this->db->group_by('bp.purchase_date');
       $query =  $this->db->get('user_payment as up');
+       //echo $this->db->last_query(); die;
       return $query->result_array();
     }
 
@@ -277,7 +439,7 @@ GROUP BY email order by  created_at desc");
 
     public function get_user_detail($user_id)
     {
-      $this->db->select('phone_number');
+      $this->db->select('phone_number, email');
       $this->db->where('id',$user_id);
       $query = $this->db->get('users');
       return $query->row_array();
@@ -306,6 +468,38 @@ GROUP BY email order by  created_at desc");
     {
       $this->db->where('id',$id);
       $this->db->set('status',1);
+      $query = $this->db->update('users');
+      if($query)
+      {
+        return 1;
+      }
+      else
+      {
+        return 0;
+      }
+
+    }
+
+    public function archive_user($id)
+    {
+      $this->db->where('id',$id);
+      $this->db->set('archived',1);
+      $query = $this->db->update('users');
+      if($query)
+      {
+        return 1;
+      }
+      else
+      {
+        return 0;
+      }
+
+    }
+
+    public function unarchive_user($id)
+    {
+      $this->db->where('id',$id);
+      $this->db->set('archived',0);
       $query = $this->db->update('users');
       if($query)
       {

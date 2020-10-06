@@ -16,6 +16,7 @@ select
     height: 25px;
 }
 </style>
+<a href="<?php echo base_url('orders'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" role="main">
   <div class="page-title">
     <div class="title_left">
@@ -27,11 +28,11 @@ select
           <li><a href="<?php echo base_url()?>orders/crew_detail?id=<?php echo $customer_detail['id'];?>">Crew Detail</a></li>
          <!--  <li><a href="<?php echo base_url()?>orders/history?id=<?php echo $customer_detail['id'];?>">History</a></li> -->
         </ul>
-      
+
     </div>
 
     <div class="title_right">
-      
+
     </div>
   </div>
   <div class="row">
@@ -42,11 +43,11 @@ select
           <div class="row">
             <div class="col-md-3">
           </div>
-        </div> 
+        </div>
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
-          
+
           <div class="table-responsive">
                             <table class="table">
                               <?php
@@ -75,16 +76,12 @@ select
   </div>
 
 
- 
+
 
 
   <div class="row">
-   
-    
+
+
 
   </div>
 </div>
-    
-
-
-

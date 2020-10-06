@@ -1,10 +1,16 @@
 <?php
   Class Orders_model extends CI_Model
   {
-    public function get_all_orders($payment_type,$locality_id=null)
+    public function get_all_orders($ftres,$payment_type,$locality_id=null)
     {
       $this->db->select('up.id as primary_id,up.status,up.orders_id,up.net_paid,up.partial_payment,up.user_id,up.remark,up.transaction_id,up.status as payment_status,users.id as user_id,users.name as username,users.phone_number,t.name as team_name,t.id,ct.name as city,lt.name as locality,st.name as street,bp.purchase_date,cd.reg_no');
       $this->db->where('up.payment_type',$payment_type,FALSE);
+      if($ftres['from'] != ''){
+        $this->db->where('bp.purchase_date >=',$ftres['from']);
+      }
+      if($ftres['to'] != ''){
+        $this->db->where('bp.purchase_date <=',$ftres['to']);
+      }
       $this->db->join('users','users.id=up.user_id','left');
       $this->db->join('assiagned_team as at','at.payment_key=up.id','left');
       $this->db->join('booked_packages as bp','bp.payment_key=up.id','left');
@@ -19,7 +25,7 @@
       $this->db->group_by('up.id');
       $this->db->join('teams as t','t.id=at.team_id');
       $query = $this->db->get('user_payment as up');
-     // echo $this->db->last_query(); die;
+      //echo $this->db->last_query(); die;
       return $query->result_array();
 
     }
@@ -77,7 +83,45 @@
       $query = $this->db->get('user_payment as up');
       return $query->result_array();
     }
-    public function get_pending_payment_order()
+    public function get_activity($ftres,$orders_id)
+    {
+      $this->db->select('B.*, C.first_name, C.last_name, C.email, C.phone_number');
+      $this->db->join('cleaner_job_done_history as B','A.id=B.payment_key','inner');
+      $this->db->join('cleaners as C','B.cleaner_id=C.id','inner');
+      // $this->db->join('assiagned_team as at','at.payment_key=up.id','left');
+      // $this->db->join('teams as t','t.id=at.team_id','left');
+      // $this->db->group_by('up.id');
+      if($ftres['from'] != ''){
+        $this->db->where('B.job_done_date >=',$ftres['from']);
+      }
+      if($ftres['to'] != ''){
+        $this->db->where('B.job_done_date <=',$ftres['to']);
+      }
+      $this->db->where('A.orders_id',$orders_id);
+      $query = $this->db->get('user_payment as A');
+      //echo $this->db->last_query(); die;
+      return $query->result_array();
+    }
+    public function get_additional($ftres,$orders_id)
+    {
+      $this->db->select('B.*, C.service_name, C.price');
+      $this->db->join('booked_additional_services as B','A.id=B.payment_key','inner');
+      $this->db->join('additional_services as C','B.additional_services_id=C.id','left');
+      // $this->db->join('assiagned_team as at','at.payment_key=up.id','left');
+      // $this->db->join('teams as t','t.id=at.team_id','left');
+      // $this->db->group_by('up.id');
+      if($ftres['from'] != ''){
+        $this->db->where('B.purchase_at >=',$ftres['from']);
+      }
+      if($ftres['to'] != ''){
+        $this->db->where('B.purchase_at <=',$ftres['to']);
+      }
+      $this->db->where('A.orders_id',$orders_id);
+      $query = $this->db->get('user_payment as A');
+      //echo $this->db->last_query(); die;
+      return $query->result_array();
+    }
+    public function get_pending_payment_order($ftres)
     {
       $this->db->select('up.orders_id,up.net_paid,u.name,u.phone_number,bp.purchase_date,cd.reg_no');
       $this->db->join('users as u','u.id=up.user_id','left');
@@ -85,6 +129,12 @@
        $this->db->join('car_detail as cd','cd.id=bp.car_id','left');
       $this->db->where('up.payment_type',1);
       $this->db->where('up.status',1);
+      if($ftres['from'] != ''){
+        $this->db->where('date(bp.purchase_date) >=',$ftres['from']);
+      }
+      if($ftres['to'] != ''){
+        $this->db->where('date(bp.purchase_date) <=',$ftres['to']);
+      }
       $this->db->group_by('up.id');
       $query = $this->db->get('user_payment as up');
       return $query->result_array();
@@ -99,7 +149,7 @@
         $query = $this->db->get('booked_packages as bp');
         return $query->result_array();
 
-       
+
     }
     public function update_assiagned_team_tabel($team_id,$payment_key)
     {
@@ -120,7 +170,7 @@
       $this->db->where('id',$id);
       $this->db->set('remark',$remark);
       $this->db->set('partial_payment', 'partial_payment + ' . (int) $partial_amount, FALSE);
-      
+
       $query = $this->db->update('user_payment');
       if($query)
       {

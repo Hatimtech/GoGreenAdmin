@@ -11,6 +11,7 @@
 ?>
 <!--  <link href="<?php echo base_url_custom; ?>build/css/selectstyle.css" rel="stylesheet"> -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<a href="<?php echo base_url('dashboard'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
 
 
@@ -20,7 +21,7 @@
        <div class="x_title">
         <h2> Search  User </h2>
         <?php if($this->session->flashdata('phone_exist'))
-          { 
+          {
             //echo"alresdy exist";die;
             echo"<div style='margin-left: 150px;'>";
             echo"<font color='red'>Email Already Exist</font>";
@@ -42,9 +43,9 @@
                 <?php
                   if(!empty($users))
                   {
-                    foreach ($users as $key => $value) 
+                    foreach ($users as $key => $value)
                     {
-                      echo"<option class='".$value['phone_number']."_".$value['email']."' value='".$value['id']."'>".$value['name']."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$value['email']."";
+                      echo"<option class='".$value['phone_number']."_".$value['email']."_".$value['status']."' value='".$value['id']."'>".$value['name']." (".$value['email'].")";
                     }
                   }
                 ?>
@@ -53,7 +54,7 @@
           </div>
                <!--  <h3 style="text-align: center;">OR</h3> -->
 
-          <div id="users_details_fields" style="display: none;"> 
+          <div id="users_details_fields" style="display: none;">
             <div class="form-group">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="phone_number-name">Phone Number <!-- <span class="required">*</span> -->
               </label>
@@ -75,21 +76,29 @@
               </div>
             </div>
             <div class="form-group">
+              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Status <!-- <span class="required">*</span> -->
+              </label>
+              <div class="col-md-6 col-sm-6 col-xs-12 " style="padding-top:8px;">
+                <span id="status" class="label label-primary"></span>
+              </div>
+            </div>
+            <div class="form-group">
               <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                 <div class="row">
-                  <div class="col-md-4"></div>
+                  <div class="col-md-2"></div>
                   <div class="col-md-2">
                     <button type="submit" id="form_button" class="btn btn-success">Next</button>
                   </div>
+                  <div class="col-md-2"><a href="<?php echo base_url(); ?>edit_customer?id=" type="submit" id="edit_button" class="btn btn-dark">Edit</a></div>
                    <div class="col-md-2">
-                    <button type="reset" onClick="window.location.reload()" class="btn btn-danger">Clear</button>
+                    <button type="button" onClick="window.location.reload()" class="btn btn-warning">Cancel</button>
                   </div>
                   <div class="col-md-4"></div>
                 </div>
               </div>
             </div>
           </div><!-- div containing selected users detail in hidden -->
-        </form>  
+        </form>
       </div>
     </div><!--x panel-->
   </div>
@@ -110,7 +119,7 @@
     url : "<?php echo base_url(); ?>cleaner/get_locality",
     dataType : "json",
     data : {"city_id" : city_id},
-    success : function(data) 
+    success : function(data)
     {
        $("#locality_select").html(data);
        console.log(data);
@@ -124,7 +133,7 @@
 function get_user_info(element)
 {
   // var user_id = id;
-  // alert(user_id); 
+  // alert(user_id);
   var select_element = element;
   var user_name = select_element.options[select_element.selectedIndex].text;
   var user_id = select_element.options[select_element.selectedIndex].value;
@@ -133,12 +142,19 @@ function get_user_info(element)
   var myarr = phone_email.split("_");
   var phone_number = myarr[0];
   var email = myarr[1];
+  var status = myarr[2];
   // alert(phone_number);
   // alert(email);
-
+  $("#edit_button").attr("href", "<?php echo base_url(); ?>add_customer/edit?id="+user_id+'&from=manual');
   $('#hidden_user_id').val(user_id);
 
   $('#name').val(user_name);
+  if(status == 1){
+    $('#status').removeClass("label-danger").addClass("label-success").text('Active');
+  }else{
+    $('#status').removeClass("label-success").addClass("label-danger").text('In-active');
+  }
+
   $("#name").prop("disabled", true);
 
   $('#phone_number').val(phone_number);
@@ -149,14 +165,14 @@ function get_user_info(element)
 
   //show div containing users details
   $('#users_details_fields').show();
-  
+
 }
 
 function  is_phone_exist(number)
 {
   var phone_number = number;
 
-  if (phone_number) 
+  if (phone_number)
   {
 
        $.ajax
@@ -165,7 +181,7 @@ function  is_phone_exist(number)
         url : "<?php echo base_url(); ?>manual/check_phone_existence",
         dataType : "json",
         data : {"phone_number" : phone_number},
-        success : function(data) 
+        success : function(data)
         {
            if(data==2)
            {
@@ -194,7 +210,7 @@ function  is_email_exist(number)
       url : "<?php echo base_url(); ?>manual/check_email_existence",
       dataType : "json",
       data : {"email" : email},
-      success : function(data) 
+      success : function(data)
       {
          if(data==2)
          {
@@ -218,6 +234,3 @@ $("#users").select2();
 //   alert('sss');
 // }
 </script>
-
-
-

@@ -1,6 +1,31 @@
 <?php
   Class Orders_api_model extends CI_Model
   {
+    public function get_activity($orders_id, $cleaner_id)
+    {
+      //$this->db->select('B.*, C.first_name, C.last_name, C.email, C.phone_number');
+      $this->db->select('B.*, D.name as user_name, F.name as car_brand, G.name as car_model, E.type as car_type, E.reg_no, E.color, E.parking_number, C.first_name, C.last_name, C.email, C.phone_number');
+      $this->db->join('cleaner_job_done_history as B','A.id=B.payment_key','inner');
+      $this->db->join('cleaners as C','B.cleaner_id=C.id','inner');
+      $this->db->join('users as D','B.user_id=D.id','inner');
+      $this->db->join('car_detail as E','B.car_id=E.id','left');
+      $this->db->join('car_brand as F','E.brand=F.id','left');
+      $this->db->join('car_model as G','E.model=G.id','left');
+      // $this->db->join('assiagned_team as at','at.payment_key=up.id','left');
+      // $this->db->join('teams as t','t.id=at.team_id','left');
+      // $this->db->group_by('up.id');
+      // if($ftres['from'] != ''){
+      //   $this->db->where('B.job_done_date >=',$ftres['from']);
+      // }
+      // if($ftres['to'] != ''){
+      //   $this->db->where('B.job_done_date <=',$ftres['to']);
+      // }
+      $this->db->where('A.orders_id',$orders_id);
+      $this->db->where('B.cleaner_id',$cleaner_id);
+      $query = $this->db->get('user_payment as A');
+      //echo $this->db->last_query(); die;
+      return $query->result_array();
+    }
      public function get_orders_by_user_id($user_id)
      {
 
@@ -13,7 +38,15 @@
         $this->db->join('user_payment as up','up.id=bp.payment_key','left');
         $query = $this->db->get('booked_packages as bp');
         //echo $this->db->last_query(); die;
-        return $query->result_array();
+        $row = $query->result_array();
+        foreach ($row as $key => $value) {
+          $this->db->select('A.id as additional_service_id, A.status, A.amount, B.service_name, B.image_string');
+            $this->db->join('additional_services as B','B.id=A.additional_services_id');
+            $this->db->where('A.payment_key',$value['payment_key']);
+          $query = $this->db->get('booked_additional_services AS A');
+          $row[$key]['additional_services'] = $query->result_array();
+        }
+        return $row;
         //$this->db->where('bp.expiry_date')
      }
      public function get_expired_orders_by_user_id($user_id)
@@ -28,7 +61,15 @@
         $this->db->join('user_payment as up','up.id=bp.payment_key','left');
         $query = $this->db->get('booked_packages as bp');
         //echo $this->db->last_query(); die;
-        return $query->result_array(); die;
+        $row = $query->result_array();
+        foreach ($row as $key => $value) {
+          $this->db->select('A.id as additional_service_id, A.status, A.amount, B.service_name, B.image_string');
+            $this->db->join('additional_services as B','B.id=A.additional_services_id');
+            $this->db->where('A.payment_key',$value['payment_key']);
+          $query = $this->db->get('booked_additional_services AS A');
+          $row[$key]['additional_services'] = $query->result_array();
+        }
+        return $row;
 
         //$this->db->where('bp.expiry_date')
      }
@@ -38,10 +79,11 @@
         $query = $this->db->get('users');
         return $query->row_array();
      }
-     public function update_cleaners_rating_info($feedback,$activity_id)
+     public function update_cleaners_rating_info($rating, $feedback,$activity_id)
      {
         $this->db->where('id',$activity_id);
         $this->db->set('feedback',$feedback);
+        $this->db->set('rating',$rating);
         $this->db->set('status',2);
         $query = $this->db->update('cleaner_job_done_history');
         if($query)
@@ -123,18 +165,21 @@
         // purchase date should be before than the current date
         $this->db->where('bp.purchase_date <=','CURDATE()',FALSE);
 
-        // phaase 2 changes ends here
-
-
-
         $this->db->where('bp.expiry_date >','CURDATE()',FALSE);
         $this->db->where('bp.is_off',1);
         $this->db->where('u.service_stop',1);
         $this->db->where('tc.cleaner_id',$cleaner_id);
         $query = $this->db->get('team_cleaner as tc');
         //echo $this->db->last_query(); die;
-        return $query->result_array();
-
+        $row = $query->result_array();
+        foreach ($row as $key => $value) {
+          $this->db->select('A.id as additional_service_id, A.status, A.amount, B.service_name, B.image_string');
+          $this->db->join('additional_services as B','B.id=A.additional_services_id');
+          $this->db->where('A.payment_key',$value['payment_key']);
+          $query = $this->db->get('booked_additional_services AS A');
+          $row[$key]['additional_services'] = $query->result_array();
+        }
+        return $row;
 
      }
      public function get_completed_job_count($cleaner_id)
@@ -222,12 +267,26 @@
         $this->db->join('street as st','st.id=bp.street_id','left');
         $this->db->join('users as u','u.id=up.user_id','left');
         $this->db->where('up.payment_type',1);
-
-        //status 1 means payment is not collected yet
-        //$this->db->where('up.status',1);
         $this->db->where('tc.cleaner_id',$cleaner_id);
         $query = $this->db->get('team_cleaner as tc');
-        //echo $this->db->last_query();die;
+        return $query->result_array();
+     }
+     public function get_user_account_statement($user_id)
+     {
+       $start = date("Y-m-d", strtotime("-6 months"));
+       $end = date("Y-m-d");
+        $this->db->select('up.id,up.status as payment_status,up.net_paid,up.partial_payment,up.orders_id,up.user_id, up.payment_type, st.name as street_name,cd.apartment_number,u.name as username,u.phone_number');
+        $this->db->join('assiagned_team as at','at.team_id=tc.team_id','left');
+        $this->db->join('user_payment as up','up.id=at.payment_key');
+        $this->db->join('booked_packages as bp','bp.payment_key=up.id','left');
+        $this->db->group_by('bp.payment_key');
+        $this->db->join('car_detail as cd','cd.id=bp.car_id','left');
+        $this->db->join('street as st','st.id=bp.street_id','left');
+        $this->db->join('users as u','u.id=up.user_id','left');
+        $this->db->where('up.user_id',$user_id);
+        $this->db->where('date(up.timestamp) >=', $start);
+        $this->db->where('date(up.timestamp) <=', $end );
+        $query = $this->db->get('team_cleaner as tc');
         return $query->result_array();
      }
      public function insert_to_payment_collected($data)
@@ -328,10 +387,17 @@
         $this->db->set('status',2);
         $this->db->update('cleaner_job_done_history');
      }
+     public function update_additional_service_status($aid, $st, $re, $cleaner_id)
+     {
+        $this->db->where('id',$aid);
+        $this->db->set('status',$st);
+        $this->db->set('status_reason',$re);
+        $this->db->update('booked_additional_services');
+     }
      public function get_all_todays_task()
      {
         $this->db->select('bp.car_id,bp.payment_key,bp.days,bp.one_time_service_date,at.team_id,bp.package_type,bp.expiry_date,bp.services,bp.payment_key,bp.user_id');
-        $this->db->join('assiagned_team as at','at.payment_key=bp.payment_key');//if no team assiagn then no result 
+        $this->db->join('assiagned_team as at','at.payment_key=bp.payment_key');//if no team assiagn then no result
         $this->db->where('bp.expiry_date >','CURDATE()',FALSE);
         $query = $this->db->get('booked_packages as bp');
         //echo $this->db->last_query(); die;
@@ -400,7 +466,7 @@
         {
             return 0;
         }
-        
+
      }
      public function get_net_paid_and_partial_paid_amount($id)
      {

@@ -35,7 +35,7 @@ class Teams extends MX_Controller {
 	public function get_locality()
 	{
 		 $city_id = $this->input->post('city_id');
-		
+
 
 		 $localities = $this->teams_model->get_locality_ajax($city_id);
 		 $output = '';
@@ -45,7 +45,7 @@ class Teams extends MX_Controller {
 		 	<option value ='.$value['id'].'>'.$value['name'].'</option>
 
 		 	';
-		 } 
+		 }
 		 $data = array(
 
 			'table'=>$output
@@ -65,10 +65,10 @@ class Teams extends MX_Controller {
 		$streets = $this->teams_model->get_streets($letters,$locality_id);
 		//echo"<pre>";print_r($streets); die;
 		$output = '';
-		foreach ($streets as $key => $value) 
+		foreach ($streets as $key => $value)
 		{
 
-			$output .='<span onclick="add_street(this.id)" value='.$value['name'].' class="forhover" id='.$value['id'].'>'.$value['name'].'</span>,&nbsp;&nbsp;&nbsp;';
+			$output .='<span onclick="add_street(this.id)" value='.$value['name'].' class="forhover" id='.$value['id'].'>'.$value['name'].'</span>';
 
 		}
 		 $data = array(
@@ -110,7 +110,8 @@ class Teams extends MX_Controller {
 		$output = '';
 		foreach ($cleaners as $key => $value) {
 
-			$output .='<span onclick="add_cleaner(this.id)" value='.$value['first_name'].' class="forhover" id='.$value['id'].'>'.$value['first_name'].'</span>,&nbsp;&nbsp;&nbsp;';
+			//$output .='<span onclick="add_cleaner(this.id)" value='.$value['first_name'].' class="forhover" id='.$value['id'].'>'.$value['first_name'].'</span>';
+			$output .='<span onclick="add_cleaner(this.id)" value='.$value['first_name'].' class="forhover" id='.$value['id'].'>'.$value['first_name'].'</span>';
 
 		}
 		 $data = array(
@@ -147,7 +148,7 @@ class Teams extends MX_Controller {
 		$this->form_validation->set_rules('cleaners_ids[]', 'Cleaners', 'required');
 	    if ($this->form_validation->run() == TRUE)
 	    {
-	    	
+
 
 			$team_name = $this->input->post('tname');
 			$city_id = $this->input->post('city');
@@ -188,7 +189,7 @@ class Teams extends MX_Controller {
 					$last_insert_id = $this->teams_model->insert_cleaners_id_to_team($data);
 					$this->teams_model->update_cleaner_status($value);
 
-					
+
 
 				}
 				$this->session->set_flashdata('team','SUCCESFULLY INSERTED DATA');
@@ -196,7 +197,7 @@ class Teams extends MX_Controller {
 			}
 		}
 		$this->session->set_flashdata('team','ERROR IN INSERTION');
-		redirect('teams/add_team');		
+		redirect('teams/add_team');
 	}
 	public function edit_team()
 	{
@@ -205,9 +206,9 @@ class Teams extends MX_Controller {
 		$team_info = $this->teams_model->get_team_info($team_id);
 		$team_cleaner = $this->teams_model->get_cleaner_assaigned_to_this_team($team_id);
 		$all_free_cleaner = $this->teams_model->get_all_free_cleaner_on_street($team_info['street_id']);
-		// echo"<pre>";  print_r($team_cleaner); 
+		// echo"<pre>";  print_r($team_cleaner);
 		// echo"<br>";
-		//  echo"<pre>";print_r($all_free_cleaner); 
+		//  echo"<pre>";print_r($all_free_cleaner);
 		 $new = array_merge($team_cleaner,$all_free_cleaner);
 		 // echo"<pre>";print_r($new);die;
 		$data['all_free_cleaner'] = $new;
@@ -261,18 +262,18 @@ class Teams extends MX_Controller {
 		}
 
 
-		
+
 
 
 		$this->db->trans_complete();
 		$trans_status = $this->db->trans_status();
 
-		if ($trans_status == FALSE) 
+		if ($trans_status == FALSE)
 		{
 			$this->db->trans_rollback();
 			$this->session->set_flashdata('team_edit','Error In Edit Team');
-		} 
-		else 
+		}
+		else
 		{
 			$this->db->trans_commit();
 			// die('done');
@@ -294,7 +295,7 @@ class Teams extends MX_Controller {
 	 		//echo"hello"; die;
 	 		// free all cleaner associated to this team
 			$this->db->trans_start();
-			
+
 			$cleaner_id_array = $this->teams_model->get_all_cleaner_associated_to_team($team_id);
 			$cleaner_id_column_arrray = array_column($cleaner_id_array,'cleaner_id');
 
@@ -309,12 +310,12 @@ class Teams extends MX_Controller {
 			$this->db->trans_complete();
 			$trans_status = $this->db->trans_status();
 
-			if ($trans_status == FALSE) 
+			if ($trans_status == FALSE)
 			{
 				$this->db->trans_rollback();
 				$this->session->set_flashdata('team_del','Error In Team Delete');
-			} 
-			else 
+			}
+			else
 			{
 				$this->db->trans_commit();
 				$this->session->set_flashdata('team_del','Team Delete Successfully');
@@ -400,7 +401,7 @@ class Teams extends MX_Controller {
 	 		}
 	 		$output.="<label for='one'> <input ".$selected." value='".$value['id']."' name='streets_checkbox[]' type='checkbox'>".$value['name']."
 	 		</label>
-	 		";	 		
+	 		";
 	 	}
 	 	echo json_encode($output);
 	 }
@@ -434,7 +435,7 @@ class Teams extends MX_Controller {
 					$id =  $value;
 					$this->teams_model->insert_new_streets_to_this_team($team_id,$id);
 				}
-				
+
 			}
 
 		// }
@@ -442,25 +443,21 @@ class Teams extends MX_Controller {
 		$this->db->trans_complete();
 		$trans_status = $this->db->trans_status();
 
-		if ($trans_status == FALSE) 
+		if ($trans_status == FALSE)
 		{
 			$this->db->trans_rollback();
 			 // echo "error"; die;
 			$this->session->set_flashdata('location_change','Error In Changing Locations');
-		} 
-		else 
+		}
+		else
 		{
 			$this->db->trans_commit();
 			 // die('done');
 			$this->session->set_flashdata('location_change','Team Location Changed Succesfully');
-			
+
 		}
 		redirect('teams');
 
 
 	 }
-}   
-  
-
-	
-
+}

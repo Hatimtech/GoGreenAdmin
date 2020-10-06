@@ -9,10 +9,10 @@
  * codeigniter framework
  * *** *********************/
 ?>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css">
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js"></script> -->
 
  <!-- <link href="<?php echo base_url(); ?>/build/css/datepicker.css" rel="stylesheet">
  <script src="<?php echo base_url(); ?>/build/js/datepicker.js"></script> -->
@@ -29,7 +29,7 @@
   margin-top: 5px;
 }
 </style>
-<a href="#" onclick="history.go(-1);" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
+<a href="<?php echo base_url('coupans'); ?>" style="display:flex; align-items:center; position: absolute; top: 3px; left: 255px; color:#4caf50;"><i class="fa fa-long-arrow-left" style="font-size: 31px; color: #4caf50; margin-right:9px;"></i>Back</a>
 <div class="right_col" id="cool" role="main">
   <div class="row">
 
@@ -39,7 +39,7 @@
         <h2>Add Coupon</h2>
         <?php
          if($this->session->flashdata('image_error'))
-        { 
+        {
             //echo"alresdy exist";die;
           echo"<div style='margin-left: 150px;'>";
           echo  $this->session->flashdata('image_error')['error'];
@@ -47,14 +47,14 @@
         }
 
         if($this->session->flashdata('Failure'))
-        { 
+        {
             //echo"alresdy exist";die;
           echo"<div style='margin-left: 150px;'>";
           echo  $this->session->flashdata('Failure');
           echo"</div>";
         }
         if($this->session->flashdata('choose_file'))
-        { 
+        {
             //echo"alresdy exist";die;
           echo"<div style='margin-left: 150px;'>";
           echo  $this->session->flashdata('choose_file');
@@ -67,7 +67,7 @@
           echo validation_errors();
           echo"</font>";
           echo"</div>";
-          
+
 
         ?>
 
@@ -85,7 +85,7 @@
              <img id="myimg" src="" height="50" alt="Image preview...">
            </div>
          </div>
-         
+
          <div class="form-group">
           <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Offer Name <!-- <span class="required">*</span> -->
           </label>
@@ -157,6 +157,12 @@
           <div class="col-md-2 col-sm-3 col-xs-6 custom_label">
             <label>New User</label>
           </div>
+          <div class="col-md-2 col-sm-3 col-xs-6 custom">
+            <input type="radio" name="user_type" required="required" value="3" class="form-control">
+          </div>
+          <div class="col-md-2 col-sm-3 col-xs-6 custom_label">
+            <label>Both</label>
+          </div>
         </div>
 
         <div class="ln_solid"></div>
@@ -165,13 +171,63 @@
             <button type="submit" class="btn btn-success">Submit</button>
           </div>
         </div>
-      </form>  
+      </form>
     </div>
   </div><!--x panel-->
 </div>
 </div>
 </div>
 <script>
+$(document).ready(function(){
+  $("#custom_calender").on("change", function(){
+    var from = $("#single_cal2").val();
+    var to = $(this).val();
+    if(to != ''){
+    $.ajax
+    ({
+      type : "GET",
+      url : "<?php echo base_url(); ?>dashboard/validate_to",
+      data : {from, to},
+      success : function(data)
+      {
+        console.log(data);
+       if(data == -1){
+         alert("To date should be lesser than or equal to from date");
+         $("#custom_calender").val('');
+       }
+     },
+     error : function(data) {
+      alert('Something went wrong');
+      }
+    });
+    }
+  });
+
+  $("#single_cal2").on("change", function(){
+    var from = $(this).val();
+    if(from != ''){
+    $.ajax
+    ({
+      type : "GET",
+      url : "<?php echo base_url(); ?>dashboard/validate_from",
+      data : {from},
+      success : function(data)
+      {
+        console.log(data);
+       if(data == -1){
+         alert("From date should be greater than or equal to current date");
+         $("#single_cal2").val('');
+         $("#custom_calender").val('');
+
+       }
+     },
+     error : function(data) {
+      alert('Something went wrong');
+      }
+    });
+    }
+  });
+});
 
  function get_city(val)
  {
@@ -184,7 +240,7 @@
     url : "<?php echo base_url(); ?>cleaner/get_locality",
     dataType : "json",
     data : {"city_id" : city_id},
-    success : function(data) 
+    success : function(data)
     {
      $("#locality_select").html(data);
      console.log(data);
@@ -243,12 +299,12 @@ function previewFile() {
          $("#code").val('');
         },
     });
-  } 
+  }
 </script>
 
 <script>
 function percentage(val)
-{ 
+{
   var percentage = parseInt(val);
   if(percentage >100)
   {

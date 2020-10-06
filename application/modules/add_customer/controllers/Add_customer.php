@@ -27,13 +27,35 @@ class Add_customer extends MX_Controller {
 		_layout($data);
 	}
 
+	public function edit()
+	{
+		$id = $this->input->get("id");
+		//$users = $this->add_customer_model->get_all_users();
+		// echo"<pre>";print_r($users); die;
+		$row = $this->add_customer_model->get_single_user($id);
+		// $data['id'] = $id;
+		$data['user'] = $row;
+		$data['page'] = 'edit_user';
+		_layout($data);
+	}
+
+	public function test(){
+		$message = "<div><p>Dear Customer,</p>
+			<p>You have successfully registered with Go Green Car Wash Services Mobile App.Your log-in credentials are:</p>
+			<p> </p>
+			<p>Download the App</p>
+			<p>Android-(https://play.google.com/store/apps/details?id=com.gogreen.main&hl=en)</p>
+			<p>Ios-(https://itunes.apple.com/ae/app/go-green-uae/id1440585352?mt=8)</p></div>";
+		$this->send_mail("anand.india99@gmail.com", "Welcome to Go Green", $message);
+	}
+
 	public function add_user()
 	{
 		//print_r($_POST); die;
 		$user_id = $this->input->post('hidden_user_id');
 		if($user_id)
 		{
-			redirect('add_customer/add_cars?id='.$user_id.'');
+			redirect('manual/add_cars?id='.$user_id.'');
 		}
 		else
 		{
@@ -75,14 +97,30 @@ class Add_customer extends MX_Controller {
 					if($cred_flag)
 					{
 						$this->send_cred($email,$password,$phone_number);
-						
+
+					}else{
+						$message = "Dear Customer,
+							You have successfully registered with Go Green Car Wash Services Mobile App.
+							Download the App
+							Android-(https://play.google.com/store/apps/details?id=com.gogreen.main&hl=en)
+							Ios-(https://itunes.apple.com/ae/app/go-green-uae/id1440585352?mt=8)
+							";
+							$message2 = "<div><p>Dear Customer,</p>
+								<p>You have successfully registered with Go Green Car Wash Services Mobile App.Your log-in credentials are:</p>
+								<p> </p>
+								<p>Download the App</p>
+								<p>Android-(https://play.google.com/store/apps/details?id=com.gogreen.main&hl=en)</p>
+								<p>Ios-(https://itunes.apple.com/ae/app/go-green-uae/id1440585352?mt=8)</p></div>";
+							$this->send_sms($phone_number, $message);
+							$this->send_mail($email, "Welcome to Go Green", $message2);
 					}
-					redirect('add_customer/add_cars?id='.$insert_id.'');
+					$this->session->set_flashdata('customer_added','Customer has been added, add cars for this customer');
+					redirect('manual/add_cars?id='.$insert_id.'');
 					// $this->add_cars($insert_id);
 				}
 				else
 				{
-					alert('Error In Insertion');	
+					alert('Error In Insertion');
 				}
 			}
 			else
@@ -92,29 +130,76 @@ class Add_customer extends MX_Controller {
 			}
 		}
 	}
-	 public function send_mail($email,$password)
-    {
 
-       
-            $this->load->library('email');
-            $config['protocol']    = 'smtp';
-            $config['smtp_host']    = 'smtp.gmail.com';
-            $config['smtp_port']    = '567';
-            $config['smtp_timeout'] = '7';
-            $config['smtp_user']    = 'veee.kay258@gmail.com';
-            //$config['smtp_pass']    = 'Heyudude@0';
-            $config['charset']    = 'utf-8';
-            $config['newline']    = "\r\n";
-            $config['mailtype'] = 'html'; // or html
-            $config['validation'] = TRUE; // bool whether to validate email or not      
-            $this->load->library('email', $config);
-            $this->email->from('vicky@ripenapps.com', 'vicky');
-            $this->email->to($email);
-            $this->email->subject('Go Green');
-            $message = "Your password  Is ".$password."";
-            $this->email->message($message);
-            // $this->email->send();
-    }
+	public function update_user()
+	{
+		//print_r($_POST); die;
+		$user_id = $this->input->post('id');
+		$this->form_validation->set_rules('phone_number','Phone Number','required');
+			if($this->form_validation->run()==TRUE)
+			{
+				$name = $this->input->post('name');
+				$phone_number = $this->input->post('phone_number');
+				$countryCode = $this->input->post('countryCode');
+				$phone_number = "+".$countryCode.$phone_number;
+				$email = $this->input->post('email');
+				$password = $this->input->post('password');
+				$out_balance = $this->input->post('out_balance');
+				$cred_flag = $this->input->post('cred_flag');
+				//$password = rand(1,8);
+				$data = array
+				(
+					'name'=>$name,
+					'phone_number'=>$phone_number,
+					'email'=>$email,
+					'outstanding_balance'=>$out_balance
+				);
+				if($password != ''){
+					$data['password'] = md5($password);
+				}
+				$insert_id = $this->add_customer_model->update_user($data, $user_id);
+				// if($insert_id)
+				// {
+					$this->session->set_flashdata('customer_added','Customer has been updated, add cars for this customer');
+					redirect('user');
+				// }
+				// else
+				// {
+				// 	alert('Error In Insertion');
+				// }
+		}
+		else
+		{
+			$this->session->set_flashdata('phone_invalid','Phone Number should be between 10-12 Digits');
+			redirect(base_url()."add_customer/edit?id=".$user_id);
+		}
+
+	}
+	 // public function send_mail($email,$password)
+   //  {
+	 //
+	 //
+	 //
+	 //
+   //          $this->load->library('email');
+   //          $config['protocol']    = 'smtp';
+   //          $config['smtp_host']    = 'smtp.sendgrid.net';
+		// 				$config['smtp_port']    = 587;
+   //          $config['smtp_timeout'] = '10';
+   //          $config['smtp_user']    = 'gogreen4app@gmail.com';
+   //          $config['smtp_pass']    = 'Gogreen@1234';
+   //          $config['charset']    = 'utf-8';
+   //          $config['newline']    = "\r\n";
+   //          $config['mailtype'] = 'html'; // or html
+   //          $config['validation'] = TRUE; // bool whether to validate email or not
+   //          $this->load->library('email', $config);
+   //          $this->email->from("gogreen4app@gmail.com", 'Go Green');
+   //          $this->email->to($email);
+   //          $this->email->subject('Go Green');
+   //          $message = "Your password  Is ".$password."";
+   //          $this->email->message($message);
+   //          // $this->email->send();
+   //  }
 
     public function add_cars()
     {
@@ -129,7 +214,7 @@ class Add_customer extends MX_Controller {
     	{
     		$all_cars = $this->add_customer_model->get_all_cars($user_id);
 
-    		
+
    //  		$all_cars = $this->add_customer_model->get_inactive_cars($user_id);
    //  		$data['cars'] = $all_cars;
 			$all_brands = $this->add_customer_model->get_all_brands();
@@ -186,13 +271,13 @@ class Add_customer extends MX_Controller {
 			if($bool)
 			{
 				$this->session->set_flashdata('car_updated','Car Updated Succesfully');
-				redirect('add_customer/add_cars?id='.$user_id.'');
+				redirect('manual/add_cars?id='.$user_id.'');
 				// $this->add_cars($user_id);
 			}
 			else
 			{
 				$this->session->set_flashdata('car_updated','Error In Car Updation');
-				redirect('add_customer/add_cars?id='.$user_id.'');
+				redirect('manual/add_cars?id='.$user_id.'');
 				// $this->add_cars($user_id);
 
 			}
@@ -222,13 +307,13 @@ class Add_customer extends MX_Controller {
 			if($insert_id)
 			{
 				$this->session->set_flashdata('car_inserted','Car Added Succesfully');
-				redirect('add_customer/add_cars?id='.$user_id.'');
+				redirect('manual/add_cars?id='.$user_id.'');
 				// $this->add_cars($user_id);
 			}
 			else
 			{
 				$this->session->set_flashdata('car_inserted','Error In Car Adding');
-				redirect('add_customer/add_cars?id='.$user_id.'');
+				redirect('manual/add_cars?id='.$user_id.'');
 				// $this->add_cars($user_id);
 
 			}
@@ -237,7 +322,7 @@ class Add_customer extends MX_Controller {
 
 	public function check_phone_existence()
 	{
-		
+
 		$phone_number = $this->input->post('phone_number');
 
 		$row = $this->add_customer_model->is_phone_exist($phone_number);
@@ -253,10 +338,10 @@ class Add_customer extends MX_Controller {
 	}
 	public function check_email_existence()
 	{
-		
-		$email = $this->input->post('email');
 
-		$row = $this->add_customer_model->is_email_exist($email);
+		$email = $this->input->post('email');
+		$id = $this->input->post('id');
+		$row = $this->add_customer_model->is_email_exist($email, $id);
 		if($row)
 		{
 			$flag =2; //phone_number exist
@@ -346,7 +431,7 @@ class Add_customer extends MX_Controller {
 		//echo $car_id; die;
 		$locality_id = $this->input->post('locality');
 		$services = $this->input->post('services');
-		$package_type = $this->input->post('type');		
+		$package_type = $this->input->post('type');
 		$frequency = $this->input->post('frequency');
 		$no_of_months = $this->input->post('no_of_months');
 		if(empty($frequency))
@@ -406,26 +491,26 @@ class Add_customer extends MX_Controller {
 					}
 
 				}
-				
+
 					$price = ($price * $no_of_months);
 					$discount = ($price * $monthly_discount)/100;
 					$price = $price - $discount;
-				
+
 			}
-			else 			//package type is once here  
+			else 			//package type is once here
 			{
 
 				if($services==2) // exteriror services only
 				{
 					$price = $package_row['price_exterior'];
 				}
-				else 		// 3 i.e enterior + exterior Service 
+				else 		// 3 i.e enterior + exterior Service
 				{
 					$price = $package_row['price_interior']+$package_row['price_exterior'];
 
 				}
 			}
-				
+
 		}
 
 		$price = $price + 5;
@@ -451,7 +536,7 @@ class Add_customer extends MX_Controller {
             $this->add_customer_model->update_order_id($insert_id, $order_id);
 
 
-            // foreach loop to insert details in booked_package tabel start from here 
+            // foreach loop to insert details in booked_package tabel start from here
             $this->assiagn_team($user_id,$street_id,$insert_id);
             $car_id = $car_id;
             $package_type = $package_type;
@@ -506,16 +591,16 @@ class Add_customer extends MX_Controller {
             if($insert_id_of_booked_package)
             {
             	$this->session->set_flashdata('package_activated', 'Package Activated Succesfully');
-            	redirect('add_customer/add_cars?id='.$user_id.'');
+            	redirect('manual/add_cars?id='.$user_id.'');
             }
             else
             {
             	$this->session->set_flashdata('package_activated', 'Errorn  In Package Activation ');
-            	redirect('add_customer/add_cars?id='.$user_id.'');
+            	redirect('manual/add_cars?id='.$user_id.'');
 
             }
         }
-		
+
 	}
 	public function assiagn_team($user_id,$street_id,$insert_id)
     {
@@ -549,32 +634,33 @@ class Add_customer extends MX_Controller {
 
      public function send_mail_order_detial($insert_id,$paid_amount)
     {
-    	
+
     	$row = $this->add_customer_model->get_mail_address_and_paid_amount($insert_id);
     	$email = $row['email'];
     	$amount = $row['net_paid'];
-       $order_id = 100000 + $insert_id;
-       $amount = $paid_amount;
-       $data['order_id'] = $order_id;
-       
+	     $order_id = 100000 + $insert_id;
+	     $amount = $paid_amount;
+	     $data['order_id'] = $order_id;
+
        $message = $this->load->view('email_template',$data,true);
-            $this->load->library('email');
-            $config['protocol']    = 'smtp';
-            $config['smtp_host']    = 'smtp.gmail.com';
-            $config['smtp_port']    = '567';
-            $config['smtp_timeout'] = '7';
-            $config['smtp_user']    = 'veee.kay258@gmail.com';
-            //$config['smtp_pass']    = 'Heyudude@0';
-            $config['charset']    = 'utf-8';
-            $config['newline']    = "\r\n";
-            $config['mailtype'] = 'html'; // or html
-            $config['validation'] = TRUE; // bool whether to validate email or not      
-            $this->load->library('email', $config);
-            $this->email->from('noreply@gogreen-uae.com', 'GO GREEN');
-            $this->email->to($email);
-            $this->email->subject('Go Green');
-            $this->email->message($message);  
+            // $this->load->library('email');
+            // $config['protocol']    = 'smtp';
+            // $config['smtp_host']    = 'smtp.gmail.com';
+            // $config['smtp_port']    = '567';
+            // $config['smtp_timeout'] = '7';
+            // $config['smtp_user']    = 'veee.kay258@gmail.com';
+            // //$config['smtp_pass']    = 'Heyudude@0';
+            // $config['charset']    = 'utf-8';
+            // $config['newline']    = "\r\n";
+            // $config['mailtype'] = 'html'; // or html
+            // $config['validation'] = TRUE; // bool whether to validate email or not
+            // $this->load->library('email', $config);
+            // $this->email->from('noreply@gogreen-uae.com', 'GO GREEN');
+            // $this->email->to($email);
+            // $this->email->subject('Go Green');
+            // $this->email->message($message);
             // $this->email->send();
+						$this->send_mail($email, 'Go Green', $message);
     }
 
     public function delete_car()
@@ -595,45 +681,122 @@ class Add_customer extends MX_Controller {
     		echo 'failure'; die;
 
     	}
-    	redirect(base_url('add_customer/add_cars?id='.$user_id.''));
+    	redirect(base_url('manual/add_cars?id='.$user_id.''));
 
     }
     public function send_cred($email,$password,$phone_number)
     {
 
-    		
-    		$key = "43b7c518-5060-4118-9348-f8316f9be5e0";
-			$secret = "K1zMMGiPG0WiA55nNd3xeA==";
-			$phone_number = $phone_number;
-			$user = "application\\" . $key . ":" . $secret;
-			$message = array("message"=>"Dear Customer,
+
+    	// 	$key = "43b7c518-5060-4118-9348-f8316f9be5e0";
+			// $secret = "K1zMMGiPG0WiA55nNd3xeA==";
+			// $phone_number = $phone_number;
+			// $user = "application\\" . $key . ":" . $secret;
+			$message = "Dear Customer,
 				You have successfully registered with Go Green Car Wash Services Mobile App.Your log-in credentials are:
 				email: ".$email."
 				password:".$password."
 				Download the App
 				Android-(https://play.google.com/store/apps/details?id=com.gogreen.main&hl=en)
 				Ios-(https://itunes.apple.com/ae/app/go-green-uae/id1440585352?mt=8)
-				");
+				";
+				$message2 = "<div><p>Dear Customer,</p>
+					<p>You have successfully registered with Go Green Car Wash Services Mobile App.Your log-in credentials are:</p>
+					<p> </p>
+					<p>Download the App</p>
+					<p>Android-(https://play.google.com/store/apps/details?id=com.gogreen.main&hl=en)</p>
+					<p>Ios-(https://itunes.apple.com/ae/app/go-green-uae/id1440585352?mt=8)</p></div>";
+				$this->send_sms($phone_number, $message);
+				$this->send_mail($email, "Welcome to Go Green", $message2);
 			// gogreenpay.com?id=".$user_id."&amount=".$link_amount);
 			//print_r($message); die;
-			$data = json_encode($message);
-			$ch = curl_init('https://messagingapi.sinch.com/v1/sms/' . $phone_number);
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_USERPWD,$user);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-
-			$result = curl_exec($ch);
-
-			if(curl_errno($ch)) {
-			echo 'Curl error: ' . curl_error($ch);
-			
-			}
-
-			curl_close($ch);
+			// $data = json_encode($message);
+			// $ch = curl_init('https://messagingapi.sinch.com/v1/sms/' . $phone_number);
+			// curl_setopt($ch, CURLOPT_POST, true);
+			// curl_setopt($ch, CURLOPT_USERPWD,$user);
+			// curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+			// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			// curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+			//
+			// $result = curl_exec($ch);
+			//
+			// if(curl_errno($ch)) {
+			// echo 'Curl error: ' . curl_error($ch);
+			//
+			// }
+			//
+			// curl_close($ch);
 
 
     }
+
+		public function send_sms($phone, $sms, $type="ARN"){
+      $phone = str_replace("+", "", $phone);
+      if(strlen($phone) <= 10){
+        $phone = '971'.$phone;
+      }
+
+      $curl = curl_init();
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://rest-api.telesign.com/v1/messaging",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => "message=".urlencode($sms)."&message_type=".$type."&phone_number=".$phone,
+        CURLOPT_HTTPHEADER => array(
+          "authorization: Basic NThEMkY1RDItM0QyQi00NTQ1LUIwRDEtOEFGNjBDMUMwNEU4OlF0V2FHTmdEbUY0azc5YkRyZGwvNmZMYlZCS3RIZUNKMksvMzRQRXRNdUdydXpiUjk4NEZZVm43Yk1pcWRoN2NXM203U2dqeWVYUkYycWg0N2t3U093PT0=",
+          "content-type: application/x-www-form-urlencoded"
+        ),
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+
+      if ($err) {
+        return false;
+      } else {
+        return $response;
+      }
+    }
+		public function send_mail($email, $subject = 'Welcome to Go Green', $message = '')
+		{
+
+			if(!empty($email))
+			{
+	      if($message == ''){
+	        $message = "".$email." Registerd Succesfully With Go Green Team.";
+	      }
+				//$this->load->library('email');
+	            $config['protocol']    = 'smtp';
+	            $config['smtp_host']    = 'smtp.sendgrid.net';
+	            $config['smtp_port']    = 587;
+	            $config['smtp_timeout'] = '10';
+	            $config['smtp_user']    = 'gogreen4app@gmail.com';
+	            $config['smtp_pass']    = 'Gogreen@1234';
+	            $config['charset']    = 'utf-8';
+	            $config['newline']    = "\r\n";
+	            $config['mailtype'] = 'html'; // or html
+	            $config['validation'] = TRUE; // bool whether to validate email or not
+	            $this->load->library('email', $config);
+	            $this->email->from("gogreen4app@gmail.com", 'Go Green');
+	            $this->email->to($email);
+	            $this->email->subject($subject);
+
+	            // $message .="<a href = ".base_url()."admin/confirm_password?id=$id>Link</a>";
+	            $this->email->message($message);
+							echo $message;
+	            $o = $this->email->send();
+	            return $o;
+			}else{
+	      return false;
+	    }
+
+		}
 }

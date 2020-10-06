@@ -1,5 +1,5 @@
-<?php  
-echo phpinfo(); die;
+<?php
+// echo phpinfo(); die;
 if(mail('vinodthalwal87@gmail.com','test','message'.'abs@gmail.com')){
 	echo "yes"; die;
 }
@@ -27,7 +27,7 @@ $twilio_number = "+17049816330";
 $client = new Client($account_sid, $auth_token);
 $client->messages->create(
     // Where to send a text message (your cell phone?)
-    '+919034195001',
+    '+917418888668',
     array(
         'from' => $twilio_number,
         'body' => 'I sent this message in under 10 minutes!'

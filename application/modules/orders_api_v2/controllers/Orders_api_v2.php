@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Orders_api_v2 extends MY_Controller
 {
 
-	
+
 	function __construct()
     {
     	//echo"hi";die;
@@ -27,13 +27,13 @@ class Orders_api_v2 extends MY_Controller
 		else
 		{
 
-	
+
 			$postData =  file_get_contents('php://input');
 			$postDataArray = json_decode($postData);
 	       	if(!empty($postDataArray->method))
 	       	{
 	            $method = $postDataArray->method;
-	            //echo $method; die; 
+	            //echo $method; die;
 	            if(!empty($postDataArray->app_key))
 	            {
 	                //Verify AppKey
@@ -43,7 +43,7 @@ class Orders_api_v2 extends MY_Controller
 	                    $Code = ResponseConstant::UNSUCESS;
 	                    $rescode = ResponseConstant::HEADER_UNAUTHORIZED;
 	                    $Message = ResponseConstant::message('HEADER_UNAUTHORIZED');
-	                    $this->sendResponse($Code,$rescode, $Message); // return data                                 
+	                    $this->sendResponse($Code,$rescode, $Message); // return data
 	                }
 	            }
 	            else
@@ -51,19 +51,19 @@ class Orders_api_v2 extends MY_Controller
 	                $Code = ResponseConstant::UNSUCCESS;
 	                $rescode = ResponseConstant::APPKEY_NOT_FOUND;
 	                $Message = ResponseConstant::message('APPKEY_NOT_FOUND');
-	                $this->sendResponse($Code,$Message); // return data    
+	                $this->sendResponse($Code,$Message); // return data
 	            }
 	        }
 	        else
-	        { 
+	        {
 
 	            $Code = ResponseConstant::UNSUCCESS;
 	            $rescode = ResponseConstant::METHOD_NOT_FOUND;
 	            $Message = ResponseConstant::message('METHOD_NOT_FOUND');
-	            $this->sendResponse($Code,$Message); // return data      
+	            $this->sendResponse($Code,$Message); // return data
 	        }
 	        switch($method)
-	        { 
+	        {
 	            case 'get_orders':
 	            $this->get_orders($postDataArray);
 	            break;
@@ -81,6 +81,9 @@ class Orders_api_v2 extends MY_Controller
 	            break;
 	            case 'cleaner_job_done_detail':
 	            $this->cleaner_job_done_detail($postDataArray);
+	            break;
+							case 'get_cleaner_job_done_detail':
+	            $this->get_cleaner_job_done_detail($postDataArray);
 	            break;
 	            case 'get_past_task':
 	            $this->get_past_task($postDataArray);
@@ -114,6 +117,12 @@ class Orders_api_v2 extends MY_Controller
 	            break;
 	            case 'start_subscription':
 	            $this->start_subscription($postDataArray);
+	            break;
+							case 'get_user_account_statement':
+	            $this->get_user_account_statement($postDataArray);
+	            break;
+							case 'update_additional_service_status':
+	            $this->update_additional_service_status($postDataArray);
 	            break;
 	        }
 	    }
@@ -164,7 +173,7 @@ class Orders_api_v2 extends MY_Controller
 				$this->sendResponse($Code,$rescode,$Message);
 			}
 
-			
+
 		}
 
     }
@@ -174,11 +183,11 @@ class Orders_api_v2 extends MY_Controller
 		$activity_id = (isset($postDataArray->activity_id) && !empty($postDataArray->activity_id)) ? $postDataArray->activity_id: '';
 		$user_id = (isset($postDataArray->user_id) && !empty($postDataArray->user_id)) ? $postDataArray->user_id: '';
 		$cleaner_id = (isset($postDataArray->cleaner_id) && !empty($postDataArray->cleaner_id)) ? $postDataArray->cleaner_id: '';
-		$rating = (isset($postDataArray->rating) && !empty($postDataArray->rating)) ? $postDataArray->rating: '';
+		$rating = (isset($postDataArray->rating) && !empty($postDataArray->rating)) ? $postDataArray->rating: 0;
 		$car_id = (isset($postDataArray->car_id) && !empty($postDataArray->car_id)) ? $postDataArray->car_id: '';
 		$feedback = (isset($postDataArray->feedback) && !empty($postDataArray->feedback)) ? $postDataArray->feedback: '';
-		$order_id = (isset($postDataArray->order_id) && !empty($postDataArray->order_id)) ? $postDataArray->order_id: '';
-		if(empty($user_id) || empty($cleaner_id) || empty($rating) || empty($car_id) || empty($order_id) || empty($activity_id))
+		// $order_id = (isset($postDataArray->order_id) && !empty($postDataArray->order_id)) ? $postDataArray->order_id: '';
+		if(empty($user_id) || empty($cleaner_id) || empty($rating) || empty($car_id) || empty($activity_id))
 		{
 
 			$Code = ResponseConstant::UNSUCCESS;
@@ -194,14 +203,14 @@ class Orders_api_v2 extends MY_Controller
 			{
 				$already_rated = $this->orders_api_model->check_if_user_already_rated($activity_id);
 				if($already_rated)
-				{	
+				{
 					$Code = ResponseConstant::SUCCESS;
 					$rescode = 0;
 					$Message = "CLEANER ALREADY RATED";
 					$this->sendResponse($Code,$rescode,$Message);
 				}
 				else
-				{					
+				{
 					// $data = array(
 					// 'rate_by_user'=>$user_id,
 					// //'rating'=>'rating+'.$rating.'',
@@ -209,10 +218,10 @@ class Orders_api_v2 extends MY_Controller
 					// 'feedback'=>$feedback,
 					// 'order_id'=>$order_id,
 					// );
-					$bool = $this->orders_api_model->update_cleaners_rating_info($feedback,$activity_id);
-							$this->orders_api_model->increment_to_rating_and_count_column($cleaner_id,$rating);
-							//$this->orders_api_model->update_status_as_activity_rated($activity_id);
-							// echo $this->db->last_query(); die;
+					$bool = $this->orders_api_model->update_cleaners_rating_info($rating, $feedback,$activity_id);
+					$this->orders_api_model->increment_to_rating_and_count_column($cleaner_id,$rating);
+					//$this->orders_api_model->update_status_as_activity_rated($activity_id);
+					// echo $this->db->last_query(); die;
 					if($bool)
 					{
 						$Code = ResponseConstant::SUCCESS;
@@ -237,7 +246,7 @@ class Orders_api_v2 extends MY_Controller
 				$this->sendResponse($Code,$rescode,$Message);
 			}
 
-			
+
 		}
 
 	}
@@ -361,7 +370,7 @@ class Orders_api_v2 extends MY_Controller
 					// echo $tbl_cleaner_id;
 					// echo"<br>";
 					// echo $cleaner_id;
-					// echo"<br>";					
+					// echo"<br>";
 				}
 			}
 			else
@@ -408,9 +417,9 @@ class Orders_api_v2 extends MY_Controller
 					// {
 					// 	$todays_data[] =$value;
 					// }
-				} 
-			}						
-		} 
+				}
+			}
+		}
 
 			$Code = ResponseConstant::SUCCESS;
 			$rescode = ResponseConstant::SUCCESS;
@@ -430,7 +439,7 @@ class Orders_api_v2 extends MY_Controller
 		$service_type = (isset($postDataArray->service_type) && !empty($postDataArray->service_type)) ? $postDataArray->service_type: '';
 
 
-		//$car_id = (isset($postDataArray->car_id) && !empty($postDataArray->car_id)) ? $postDataArray->car_id: '';	
+		//$car_id = (isset($postDataArray->car_id) && !empty($postDataArray->car_id)) ? $postDataArray->car_id: '';
 		if(empty($cleaner_id) || empty($team_id) || empty($payment_key) || empty($package_type) || empty($user_id)  || empty($car_id) || empty($attendent) || empty($service_type) )
 		{
 
@@ -465,7 +474,7 @@ class Orders_api_v2 extends MY_Controller
 				$rescode = ResponseConstant::SUCCESS;
 				$Message = "SUCCESS";
 				$this->sendResponse($Code,$rescode,$Message);
-				
+
 			}
 			else
 			{
@@ -476,11 +485,44 @@ class Orders_api_v2 extends MY_Controller
 			}
 		}
 	}
+	public function get_cleaner_job_done_detail($postDataArray)
+	{
+		$orders_id = (isset($postDataArray->order_id) && !empty($postDataArray->order_id)) ? $postDataArray->order_id: '';
+		$cleaner_id = (isset($postDataArray->cleaner_id) && !empty($postDataArray->cleaner_id)) ? $postDataArray->cleaner_id: '';
+
+
+		//$car_id = (isset($postDataArray->car_id) && !empty($postDataArray->car_id)) ? $postDataArray->car_id: '';
+		if(empty($orders_id) || empty($cleaner_id))
+		{
+			$Code = ResponseConstant::UNSUCCESS;
+			$rescode = ResponseConstant::UNSUCCESS;
+			$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+			$this->sendResponse($Code,$rescode,$Message);
+		}
+		else
+		{
+			$past_detail = $this->orders_api_model->get_activity($orders_id, $cleaner_id);
+			if($past_detail)
+			{
+				$Code = ResponseConstant::SUCCESS;
+				$rescode = ResponseConstant::SUCCESS;
+				$Message ="SUCCESFULL";
+				$this->sendResponse($Code,$rescode,$Message,$past_detail);
+			}
+			else
+			{
+				$Code = ResponseConstant::UNSUCCESS;
+				$rescode = ResponseConstant::UNSUCCESS;
+				$Message = "DATA DOES NOT EXIT";
+				$this->sendResponse($Code,$rescode,$Message);
+			}
+		}
+	}
 	public function get_past_task($postDataArray)
 	{
 
 		$cleaner_id = (isset($postDataArray->cleaner_id) && !empty($postDataArray->cleaner_id)) ? $postDataArray->cleaner_id: '';
-		'';	
+		'';
 		if(empty($cleaner_id) )
 		{
 
@@ -545,13 +587,47 @@ class Orders_api_v2 extends MY_Controller
 		}
 	}
 
+	public function get_user_account_statement($postDataArray)
+	{
+		$cleaner_id = (isset($postDataArray->user_id) && !empty($postDataArray->user_id)) ? $postDataArray->user_id: '';
+
+		if(empty($cleaner_id) )
+		{
+
+			$Code = ResponseConstant::UNSUCCESS;
+			$rescode = ResponseConstant::UNSUCCESS;
+			$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+			$this->sendResponse($Code,$rescode,$Message);
+
+		}
+		else
+		{
+			$orders_array = $this->orders_api_model->get_user_account_statement($cleaner_id);
+			//print_r($orders_array); die;
+			if($orders_array)
+			{
+				$Code = ResponseConstant::SUCCESS;
+				$rescode = ResponseConstant::SUCCESS;
+				$Message ="SUCCESFULL";
+				$this->sendResponse($Code,$rescode,$Message,$orders_array);
+			}
+			else
+			{
+				$Code = ResponseConstant::UNSUCCESS;
+				$rescode = ResponseConstant::UNSUCCESS;
+				$Message ="NO DATA AVALIABLE";
+				$this->sendResponse($Code,$rescode,$Message,$orders_array);
+			}
+		}
+	}
+
 	public function update_payment_status($postDataArray)
 	{
 		$cleaner_id = (isset($postDataArray->cleaner_id) && !empty($postDataArray->cleaner_id)) ? $postDataArray->cleaner_id: '';
 		$id = (isset($postDataArray->id) && !empty($postDataArray->id)) ? $postDataArray->id: '';
 		$partial_cash = (isset($postDataArray->partial_cash) && !empty($postDataArray->partial_cash)) ? $postDataArray->partial_cash: '';
 		$user_id = (isset($postDataArray->user_id) && !empty($postDataArray->user_id)) ? $postDataArray->user_id: '';
-		// this id is primary id of user_payment_tabel and its foriegn name is payment_key 
+		// this id is primary id of user_payment_tabel and its foriegn name is payment_key
 		if(empty($cleaner_id) || empty($id) || empty($partial_cash) || empty($user_id))
 		{
 			$Code = ResponseConstant::UNSUCCESS;
@@ -613,7 +689,7 @@ class Orders_api_v2 extends MY_Controller
 						$Message = "PAYMENT NOT INSERTED";
 						$this->sendResponse($Code,$rescode,$Message);
 					}
-					
+
 
 				}
 				else
@@ -658,7 +734,7 @@ class Orders_api_v2 extends MY_Controller
 
 						$todays_data[] =$value;
 						$count++;
-					//}						
+					//}
 				}
 
 			}
@@ -671,8 +747,8 @@ class Orders_api_v2 extends MY_Controller
 					// {
 						$todays_data[] =$value;
 						$count++;
-					//}	
-				} 
+					//}
+				}
 			}
 		}
 		$dashboard['today']=$count;
@@ -728,7 +804,7 @@ class Orders_api_v2 extends MY_Controller
 			//print_r($cleaners_count_row); die;
 			if(!empty($cleaners_count_row))
 			{
-				// total cleaner count  on given order 
+				// total cleaner count  on given order
 				$total_cleaner_on_assiagned_team = $cleaners_count_row['cleaner_count'];
 				//echo $total_cleaner_on_assiagned_team; die;
 
@@ -779,7 +855,7 @@ class Orders_api_v2 extends MY_Controller
 				$Message = "NO CLEANER EXIST ON TEAM";
 				$this->sendResponse($Code,$rescode,$Message,$response);
 			}
-			
+
 		}
 	}
 
@@ -801,7 +877,7 @@ class Orders_api_v2 extends MY_Controller
 					//echo"exist";die;
 					//echo $current_day;die;
 					$todays_task[] = $value;
-				}	
+				}
 			 //echo"<pre>";print_r($todays_task); die;
 			}
 			else
@@ -813,7 +889,7 @@ class Orders_api_v2 extends MY_Controller
 					$todays_task[] = $value;
 				}
 			}	//
-			
+
 		}
 		//echo"<pre>";print_r($todays_task);die;
 		if(!empty($todays_task))
@@ -879,7 +955,7 @@ class Orders_api_v2 extends MY_Controller
 					//$bool = $this->orders_api_model->insert_ignored_car($data);
 					//echo $this->db->last_query(); die;
 				}
-				
+
 			}
                      //   echo $insert_id; die;
 			if(!empty($insert_id) && isset($insert_id))
@@ -891,7 +967,7 @@ class Orders_api_v2 extends MY_Controller
 		else
 		{
 			echo "NO task found for today";
-		}	
+		}
 	}
 
 	public function update_job_done_as_attendent($postDataArray)
@@ -1013,7 +1089,7 @@ class Orders_api_v2 extends MY_Controller
 					$this->sendResponse($Code,$rescode,$Message);
 
 				}
-				
+
 			}
 			else
 			{
@@ -1079,7 +1155,7 @@ class Orders_api_v2 extends MY_Controller
 					$email = $user_info['email'];
 					if($mode==2)
 					{
-						
+
 						$message = "Dear Admin,
 							User name ".$name." having phone number ".$phone_number." and email ".$email." Has pause his package;
 						 ";
@@ -1110,7 +1186,7 @@ class Orders_api_v2 extends MY_Controller
 
 	public function Cancell_subscription($postDataArray)
 	{
-		
+
 		$user_id = (isset($postDataArray->user_id) && !empty($postDataArray->user_id)) ? $postDataArray->user_id: '';
 
 		if(empty($user_id))
@@ -1146,12 +1222,12 @@ class Orders_api_v2 extends MY_Controller
 					$message = "Dear Customer, Your Subscription Has been cancelled.";
 					$user_name = 'Go Green';
 					$title = 'Subscription cancelled';
-					$body = $message;  
+					$body = $message;
 					$notification = array('title' =>$title , 'body' => $body, 'sound' => 'default', 'badge' => '1');
 					$arrayToSend = array('to' => $device_token, 'notification' => $notification,'priority'=>'high');
 					$json = json_encode($arrayToSend);
 					if(!empty($device_token))
-					{ 
+					{
 						$next_level=  $this->orders_api_model->sendPush($json);
 						print_r($next_level);
 						// echo "hellllo";die;
@@ -1213,7 +1289,7 @@ class Orders_api_v2 extends MY_Controller
 	 public function send_mail($message)
     {
 
-       
+
             $this->load->library('email');
             $config['protocol']    = 'smtp';
             $config['smtp_host']    = 'smtp.gmail.com';
@@ -1224,7 +1300,7 @@ class Orders_api_v2 extends MY_Controller
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html
-            $config['validation'] = TRUE; // bool whether to validate email or not      
+            $config['validation'] = TRUE; // bool whether to validate email or not
             $this->load->library('email', $config);
             $this->email->from('vicky@ripenapps.com', 'vicky');
             //$this->email->to('info@gogreen-uae.com');
@@ -1234,5 +1310,39 @@ class Orders_api_v2 extends MY_Controller
             $this->email->message($message);
              $this->email->send();
     }
+
+		public function update_additional_service_status($postDataArray)
+		{
+			$cleaner_id = (isset($postDataArray->cleaner_id) && !empty($postDataArray->cleaner_id)) ? $postDataArray->cleaner_id: '';
+			$status = (isset($postDataArray->status) && $postDataArray->status != '') ? $postDataArray->status: '';
+			$additional_service_id = (isset($postDataArray->additional_service_id) && !empty($postDataArray->additional_service_id)) ? $postDataArray->additional_service_id: '';
+			$reason = (isset($postDataArray->reason) && !empty($postDataArray->reason)) ? $postDataArray->reason: '';
+
+			// this id is primary id of user_payment_tabel and its foriegn name is payment_key
+			if(empty($cleaner_id) || $status == '' || empty($additional_service_id))
+			{
+				$Code = ResponseConstant::UNSUCCESS;
+				$rescode = ResponseConstant::UNSUCCESS;
+				$Message = ResponseConstant::message('REQUIRED_PARAMETER');
+				$this->sendResponse($Code,$rescode,$Message);
+			}
+			else
+			{
+				$row = $this->orders_api_model->update_additional_service_status($additional_service_id, $status, $reason, $cleaner_id);
+				// if($row)
+				// {
+					$Code = ResponseConstant::SUCCESS;
+					$rescode = ResponseConstant::SUCCESS;
+					$Message = "SUCCESS";
+					$this->sendResponse($Code,$rescode,$Message);
+				// }
+				// else
+				// {
+				// 	$Code = ResponseConstant::UNSUCCESS;
+				// 	$rescode = ResponseConstant::UNSUCCESS;
+				// 	$Message = "ERROR IN UPDATION";
+				// 	$this->sendResponse($Code,$rescode,$Message);
+				// }
+			}
+		}
 }
-			
