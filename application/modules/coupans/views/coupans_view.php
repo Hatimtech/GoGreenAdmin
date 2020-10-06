@@ -131,7 +131,7 @@
                     <td>".$valid_upto."</td>
                     <td>".$value['coupan_code']."</td>
                     <td>".$value['discount']."</td>
-                    <td>".$value['FixedDiscount']."</td>
+                    <td>".$value['fixedDiscount']."</td>
                     <td>".$value['minimum_order']."</td>
                     <td>".$user_type."</td>
                     <td>".$value['max_discount']."</td>
