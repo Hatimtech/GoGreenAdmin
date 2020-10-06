@@ -73,6 +73,7 @@ class Coupans extends MX_Controller {
 						$this->form_validation->set_rules('coupan_code', 'Coupan Code', 'required');
 					}
 					$this->form_validation->set_rules('discount', 'Discount', 'required');
+					$this->form_validation->set_rules('fixedDiscount', 'fixedDiscount', 'required');
 					$this->form_validation->set_rules('minimum_order', 'Minimum Order', 'required');
 					$this->form_validation->set_rules('user_type', 'user_typ', 'required');
 					if ($this->form_validation->run() == true)
