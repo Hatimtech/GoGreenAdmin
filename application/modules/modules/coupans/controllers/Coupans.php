@@ -70,6 +70,7 @@ class Coupans extends MX_Controller {
 						$this->form_validation->set_rules('coupan_code', 'Coupan Code', 'required');
 					}
 					$this->form_validation->set_rules('discount', 'Discount', 'required');
+					$this->form_validation->set_rules('fixedDiscount', 'fixedDiscount', 'required');
 					$this->form_validation->set_rules('minimum_order', 'Minimum Order', 'required');
 					$this->form_validation->set_rules('user_type', 'user_typ', 'required');
 					if ($this->form_validation->run() == true)
@@ -82,6 +83,7 @@ class Coupans extends MX_Controller {
 						$valid_upto = $this->input->post('valid_upto');
 						$coupan_code = $this->input->post('coupan_code');
 						$discount = $this->input->post('discount');
+						$fixedDiscount = $this->input->post('fixedDiscount');
 						$minimum_order = $this->input->post('minimum_order');
 						$max_discount = $this->input->post('max_discount');
 						$user_type = $this->input->post('user_type');
@@ -110,7 +112,8 @@ class Coupans extends MX_Controller {
 							 	'valid_from'=>$valid_from_sql,
 							 	'valid_upto'=>$valid_upto_sql,
 							 	'coupan_code'=>$coupan_code,
-							 	'discount'=>$discount,
+								'discount'=>$discount,
+								'fixedDiscount'=>$fixedDiscount,
 							 	'minimum_order'=>$minimum_order,
 							 	'max_discount'=>$max_discount,
 							 	'user_type'=>$user_type,	
