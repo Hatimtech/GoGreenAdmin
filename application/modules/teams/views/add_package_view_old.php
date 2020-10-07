@@ -99,12 +99,12 @@
       <div class="col-md-12">
         <div class="col-md-4">
           <select " class="form-control" name="car_type" placeholder="select car type">
-          <option>Select City</option>
+          <option>Select Area</option>
           </select>
         </div>
         <div class="col-md-4">
           <select class="form-control" name="car_type" placeholder="select car type">
-          <option>Select Locality</option>
+          <option>Select Building</option>
           </select>
         </div>
         <div class="col-md-4">
@@ -131,12 +131,12 @@
       <div class="col-md-4" id="varientdiv1">
         <br>
         <select class="" id="varientselect" name="car_type" placeholder="select car type">
-        <option>Select City</option>
+        <option>Select Area</option>
         </select>
         <br>
         <br>
         <select class="" id="varientselect" name="car_type" placeholder="select car type">
-          <option>Select Locality</option>
+          <option>Select Building</option>
         </select>
         <br>
         <br>

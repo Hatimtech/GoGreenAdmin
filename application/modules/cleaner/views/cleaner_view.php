@@ -57,7 +57,7 @@
       <form method="post" action="<?php echo base_url()?>cleaner">
       <div class="col-md-4">
          <select onchange="get_locality_for_street(this.value)" id="city_multiselect" class="select" multiple name="city[]">
-           <!-- <option value="" disabled selected>Select City</option> -->
+           <!-- <option value="" disabled selected>Select Area</option> -->
           <?php
           $scity = (isset($_POST['city'])) ? $_POST['city'] : array();
           if(!empty($city)){foreach ($city as $key => $value) {
@@ -111,8 +111,8 @@
               <tr>
                 <th>Name</th>
                 <th>Phone Number</th>
-                <th>City</th>
-                <th>Locality</th>
+                <th>Area</th>
+                <th>Building</th>
                 <th>Latest Collection</th>
                 <th>Report</th>
                 <th>Team</th>
@@ -262,7 +262,7 @@ $(document).ready(function(){
   <?php } ?>
     multify();
   $('#city_multiselect').multiselect({
-    nonSelectedText: 'Select City',
+    nonSelectedText: 'Select Area',
     enableFiltering: true,
     enableCaseInsensitiveFiltering: true,
     buttonWidth:'250px'
@@ -270,7 +270,7 @@ $(document).ready(function(){
 });
 function multify(){
   $('#locality_multiselect').multiselect({
-   nonSelectedText: 'Select City',
+   nonSelectedText: 'Select Area',
    enableFiltering: true,
    enableCaseInsensitiveFiltering: true,
    buttonWidth:'250px'
@@ -304,7 +304,7 @@ function multify(){
     }
     else
     {
-      $("#locality_ajax").html('<option disabled selected>Choose City First</option>');
+      $("#locality_ajax").html('<option disabled selected>Choose Area First</option>');
     }
   }
 </script>

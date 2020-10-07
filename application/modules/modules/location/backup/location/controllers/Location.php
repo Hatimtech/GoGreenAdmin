@@ -50,8 +50,8 @@ class Location extends MX_Controller {
 
 	public function addlocality()
 	{
-		$this->form_validation->set_rules('city_select', 'Select City', 'required');
-		$this->form_validation->set_rules('locality', 'Locality', 'required');
+		$this->form_validation->set_rules('city_select', 'Select Area', 'required');
+		$this->form_validation->set_rules('locality', 'Building', 'required');
 		$this->form_validation->set_rules('service_start', 'Start Time', 'required');
 		$this->form_validation->set_rules('service_end', 'End Time', 'required');
 
@@ -72,7 +72,7 @@ class Location extends MX_Controller {
 			if($last_id)
 			{
 				$this->session->set_flashdata('last_insert_id_to_call_ajax', $city_id);
-				$this->session->set_flashdata('locality_added_succesfully','Locality Sucessfully Added');
+				$this->session->set_flashdata('locality_added_succesfully','Building Sucessfully Added');
 			}
 		}
 		else
@@ -119,7 +119,7 @@ class Location extends MX_Controller {
 		 $localities = $this->location_model->get_locality_ajax($city_id);
 		 $output = '';
 		 $output.='
-		 <option value="" disabled selected> Select Locality</option>';
+		 <option value="" disabled selected> Select Building</option>';
 		 foreach ($localities as $key => $value)
 		 {
 		 	$output .='
@@ -140,8 +140,8 @@ class Location extends MX_Controller {
 
 	public function addstreet()
 	{
-		$this->form_validation->set_rules('city_select', 'Select City', 'required');
-		$this->form_validation->set_rules('locality_select', 'Locality', 'required');
+		$this->form_validation->set_rules('city_select', 'Select Area', 'required');
+		$this->form_validation->set_rules('locality_select', 'Building', 'required');
 		$this->form_validation->set_rules('street', 'Street', 'required');
 
 		if ($this->form_validation->run() == TRUE)
@@ -158,7 +158,7 @@ class Location extends MX_Controller {
 			if($bool)
 			{	
 				$this->session->set_flashdata('last_insert_street_id_to_call_ajax', $locality_id);
-				$this->session->set_flashdata('street_added_succesfully','Locality Sucessfully Added');
+				$this->session->set_flashdata('street_added_succesfully','Building Sucessfully Added');
 			}
 		}
 		else

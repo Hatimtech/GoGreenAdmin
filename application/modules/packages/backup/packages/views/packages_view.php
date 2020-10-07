@@ -23,12 +23,12 @@
   <div class="page-title">
     <div class="title_left">
       
-      <!-- <select onchange="get_locality_for_street(this.value)" class="select"><option value="" disabled selected>Select City</option>
+      <!-- <select onchange="get_locality_for_street(this.value)" class="select"><option value="" disabled selected>Select Area</option>
             <?php if(!empty($city)){foreach ($city as $key => $value) {
           
             echo"<option value=".$value['id'].">".ucfirst($value['name'])."</option>";}}?>
       </select>
-      <select class="select" id="locality_ajax"><option>Choose City First</option></select> -->
+      <select class="select" id="locality_ajax"><option>Choose Area First</option></select> -->
       <!-- <button style="float: right">Add New</button> -->
     </div>
 
@@ -68,8 +68,8 @@
                 <th>Monthly/Once</th>
                 <th>Cost(I)</th>
                 <th>Cost(E)</th>
-                <th>City</th>
-                <th>Locality</th>
+                <th>Area</th>
+                <th>Building</th>
                 <th>once(I)</th>
                 <th>once(E)</th>
                 <th>Thrice(I)</th>

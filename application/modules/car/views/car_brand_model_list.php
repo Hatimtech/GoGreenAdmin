@@ -166,13 +166,13 @@
           <div class="modal-body" style="">
            <form method="post" action="<?php base_url();?>car/edit_brand_model">
             <label>Brand Name</label>
-            <input required type="text" class="form-control" required id="brand_edit" onblur="check_this_name(this.value)" name="brand_edit" placeholder="City Name">
+            <input required type="text" class="form-control" required id="brand_edit" onblur="check_this_name(this.value)" name="brand_edit" placeholder="Area Name">
             <span id="brand_exist"  style="color: red"></span>
             <input type="hidden" name="brand_id_edit" id="brand_id_edit">
             <input type="hidden" name="modal_id_edit" id="modal_id_edit">
             <br>
              <label>Model Name</label>
-            <input required type="text" class="form-control" required id="modal_edit" name="modal_edit" placeholder="City Name">
+            <input required type="text" class="form-control" required id="modal_edit" name="modal_edit" placeholder="Area Name">
 
             <span id="modal_span" style="color: red"></span>
             <input type="hidden" name="payment_key" id="payment_key">

@@ -260,7 +260,7 @@ $(document).ready(function(){
   <?php } ?>
     multify();
   $('#city_multiselect').multiselect({
-    nonSelectedText: 'Select City',
+    nonSelectedText: 'Select Area',
     enableFiltering: true,
     enableCaseInsensitiveFiltering: true,
     buttonWidth:'250px'
@@ -268,7 +268,7 @@ $(document).ready(function(){
 });
 function multify(){
   $('#locality_multiselect').multiselect({
-   nonSelectedText: 'Select City',
+   nonSelectedText: 'Select Area',
    enableFiltering: true,
    enableCaseInsensitiveFiltering: true,
    buttonWidth:'250px'
@@ -302,7 +302,7 @@ function multify(){
     }
     else
     {
-      $("#locality_ajax").html('<option disabled selected>Choose City First</option>');
+      $("#locality_ajax").html('<option disabled selected>Choose Area First</option>');
     }
   }
 </script>

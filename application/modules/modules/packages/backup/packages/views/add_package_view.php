@@ -133,7 +133,7 @@ if($this->session->flashdata('frequency'))
           <?php echo"<font color = 'red'>"; echo form_error('car_type');echo"</font>";?>
           <div class="form-group">
             <div class="control-label col-md-3 col-sm-3 col-xs-12">
-              <label>Selecte City</label>
+              <label>Selecte Area</label>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
 
@@ -174,7 +174,7 @@ if($this->session->flashdata('frequency'))
           <?php echo"<font color = 'red'>"; echo form_error('city');echo"</font>";?>
           <div class="form-group">
             <div class="control-label col-md-3 col-sm-3 col-xs-12">
-              <label>Select Locality</label>
+              <label>Select Building</label>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <div  required class="selectBox" onclick="showCheckboxes()"> 
@@ -184,7 +184,7 @@ if($this->session->flashdata('frequency'))
                 <?php
                 if($this->session->flashdata('locality'))
                 {
-                  echo"<font color='red'>Please Choose Locality</font>";
+                  echo"<font color='red'>Please Choose Building</font>";
                 }
                 ?>
                 <div class="overSelect"></div>

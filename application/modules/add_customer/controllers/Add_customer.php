@@ -394,7 +394,7 @@ class Add_customer extends MX_Controller {
 		$city_id = $this->input->post('city_id');
 		$locality_array =$this->add_customer_model->get_locality_by_ajax($city_id);
 		//echo "<pre>";print_r($locality_array); die;
-		$output = '<option value="" disabled selected>Choose Locality</option>';
+		$output = '<option value="" disabled selected>Choose Building</option>';
 
 		foreach($locality_array as $key=>$value)
 		{

@@ -85,11 +85,11 @@
               </select>
             </div>
           </div>  <div class="form-group">
-            <label class="control-label col-md-3 col-sm-3 col-xs-12">Select City
+            <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Area
             </label>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <select required name="city" onchange="get_city(this.value)"  class="form-control">
-                <option value="" disabled selected>Select City</option>
+                <option value="" disabled selected>Select Area</option>
                 <?php
                 if(!empty($cities))
                 {
@@ -106,11 +106,11 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Locality
+            <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Building
             </label>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <select required name="locality" id="locality_select" onchange="get_street(this.value)"   class="form-control">
-                <option value="" disabled selected>Choose City First</option>
+                <option value="" disabled selected>Choose Area First</option>
               </select>
             </div>
           </div>
@@ -120,7 +120,7 @@
             </label>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <select required name="street" id="street_select" onchange=""   class="form-control">
-                <option value="" disabled selected>Choose Locality First</option>
+                <option value="" disabled selected>Choose Building First</option>
                 <?php
 
                 // if(!empty($all_brands))

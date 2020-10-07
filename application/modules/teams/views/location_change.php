@@ -98,11 +98,11 @@ select
             <input type="hidden" value="<?php echo $location_array['team_id']?>" id="team_id_hidden">
           <div class="form-group">
             <div class="control-label col-md-3 col-sm-3 col-xs-12">
-              <label>Select City</label>
+              <label>Select Area</label>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <select required name="city" onchange="get_city_wise_locality(this.value)">
-                  <option >Select City</option>
+                  <option >Select Area</option>
                   <?php
                     if(!empty($city))
                     {
@@ -125,7 +125,7 @@ select
           </div>
           <div class="form-group">
             <div class="control-label col-md-3 col-sm-3 col-xs-12">
-              <label>Select Locality</label>
+              <label>Select Building</label>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <select name="locality" onchange="get_streets_by_locality_id(this.value)" id="locality_row" required>

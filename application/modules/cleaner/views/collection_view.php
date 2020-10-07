@@ -283,7 +283,7 @@ function showCheckboxes() {
     }
     else
     {
-      $("#locality_ajax").html('<option disabled selected>Choose City First</option>');
+      $("#locality_ajax").html('<option disabled selected>Choose Area First</option>');
     }
   }
 </script>

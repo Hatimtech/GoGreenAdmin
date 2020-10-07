@@ -53,8 +53,8 @@ select
               <tr>
                 <tr>
                 <th>Package Type</th>
-                <th>City</th>
-                <th>Locality</th>
+                <th>Area</th>
+                <th>Building</th>
                 <th>Street</th>
                 <th>Days</th>
                 <th>Price</th>

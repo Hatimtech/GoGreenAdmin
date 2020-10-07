@@ -65,14 +65,14 @@
          <!--  <div class="row">
             <div class="col-md-3">
 
-             <select onchange="get_locality_for_street(this.value)" class="select"><option value="" disabled selected>Select City</option>
+             <select onchange="get_locality_for_street(this.value)" class="select"><option value="" disabled selected>Select Area</option>
                 <?php if(!empty($city)){foreach ($city as $key => $value) {
               
                 echo"<option value=".$value['id'].">".ucfirst($value['name'])."</option>";}}?>
               </select>
             </div>
             <div class="col-md-3">
-              <select class="select" id="locality_ajax"><option>Choose City First</option>
+              <select class="select" id="locality_ajax"><option>Choose Area First</option>
               </select>
             </div>
             <div class="col-md-3">

@@ -44,7 +44,7 @@ class Packages extends MX_Controller {
 		 $localities = $this->packages_model->get_locality_ajax($city_id);
 		 $output = '';
 		 $output.='
-		 <option value="" disabled selected> Select Locality</option>';
+		 <option value="" disabled selected> Select Building</option>';
 		 foreach ($localities as $key => $value)
 		 {
 		 	$output .='
@@ -99,7 +99,7 @@ class Packages extends MX_Controller {
 		 {
 		 	$textarea.="<span id='".$value['id']."' class='tag'><span>
 		 	".$value['name']."&nbsp;&nbsp;</span>
-		 	<span id='".$value['id']."' onclick='removefunction(this.id)' class='span_ajax_class' title='Remove City'>x</span></span>
+		 	<span id='".$value['id']."' onclick='removefunction(this.id)' class='span_ajax_class' title='Remove Area'>x</span></span>
 			";
 			$counter++;
 		 }
@@ -129,7 +129,7 @@ class Packages extends MX_Controller {
 
 			if(empty($this->input->post('locality_checkbox')))
 			{
-				$this->session->set_flashdata('locality', 'Please Choose  Locality');
+				$this->session->set_flashdata('locality', 'Please Choose  Building');
 				$this->add_package();
 			}
 			else
@@ -317,7 +317,7 @@ class Packages extends MX_Controller {
 		 {
 		 	$span_list.="<span id='".$value['id']."' class='tag'><span>
 		 	".$value['name']."&nbsp;&nbsp;</span>
-		 	<span id='".$value['id']."' onclick='removespan(this.id)' class='span_ajax_class' title='Remove City'>x</span></span>
+		 	<span id='".$value['id']."' onclick='removespan(this.id)' class='span_ajax_class' title='Remove Area'>x</span></span>
 
 			";
 		 }

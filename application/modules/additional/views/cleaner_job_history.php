@@ -51,7 +51,7 @@
               <tr>
                 <th>Order Id</th>
                 <th>Date</th>
-                <th>Locality</th>
+                <th>Building</th>
                 <th>Street</th>
                 <th>Report</th>
                 <th>Reason</th>

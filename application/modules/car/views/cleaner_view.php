@@ -56,8 +56,8 @@
               <tr>
                 <th>Name</th>
                 <th>Phone Number</th>
-                <th>City</th>
-                <th>Locality</th>
+                <th>Area</th>
+                <th>Building</th>
 
               </tr>
             </thead>

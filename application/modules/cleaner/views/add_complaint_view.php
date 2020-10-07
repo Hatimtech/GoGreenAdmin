@@ -62,7 +62,7 @@
             </label>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <select name="cleaner_id" required class="form-control">
-                <option value="" disabled selected>Select City</option>
+                <option value="" disabled selected>Select Area</option>
                 <?php
                   if(!empty($cleaners))
                   {

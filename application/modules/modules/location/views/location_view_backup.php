@@ -50,15 +50,15 @@
   <div class="row">
 
     <div class="col-md-12">
-      <div class="col-md-1"><font size="4px">City</font></div>
+      <div class="col-md-1"><font size="4px">Area</font></div>
       <div class="col-md-3">
         
-        <button type="button" value="" data-toggle="modal" data-target="#myModal"> Add City</button>
+        <button type="button" value="" data-toggle="modal" data-target="#myModal"> Add Area</button>
       </div>
-      <div class="col-md-1"><font size="4px"> Locality</font></div>
+      <div class="col-md-1"><font size="4px"> Building</font></div>
 
       <div class="col-md-3">
-        <button type="button" data-toggle="modal" data-target="#localitymodal" value="">Add locality</button>
+        <button type="button" data-toggle="modal" data-target="#localitymodal" value="">Add Building</button>
 
       </div>
       <div class="col-xs-1"><font size="4px"> Street</font></div>
@@ -74,7 +74,7 @@
         <thead>
           <tr>
             <th></th>
-            <th><font>City</th>
+            <th><font>Area</th>
             </tr>
           </thead>
           <tbody>
@@ -102,7 +102,7 @@
       
       <div class="col-md-4" >
         <div class="citydiv">
-        <select class="select" onchange="get_city_wise_locality(this.value)"><option value="" disabled selected>Select City</option>
+        <select class="select" onchange="get_city_wise_locality(this.value)"><option value="" disabled selected>Select Area</option>
           <?php if(!empty($city)){foreach ($city as $key => $value) {
         
           echo"<option value=".$value['id'].">".ucfirst($value['name'])."</option>";}}?>
@@ -110,7 +110,7 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>Locality</th>
+                <th>Building</th>
                 <th>Timing</th>
               </tr>
             </thead>
@@ -155,13 +155,13 @@
         
         <div class="col-md-4">
           <div class="citydiv">
-          <select onchange="get_locality_for_street(this.value)" class="select"><option value="" disabled selected>Select City</option>
+          <select onchange="get_locality_for_street(this.value)" class="select"><option value="" disabled selected>Select Area</option>
             <?php if(!empty($city)){foreach ($city as $key => $value) {
           
             echo"<option value=".$value['id'].">".ucfirst($value['name'])."</option>";}}?>
           </select>
          <select onchange="get_street(this.value)" id="locality_ajax_table" class="select">
-          <option value="" disabled selected> Select Locality</option>
+          <option value="" disabled selected> Select Building</option>
            
          </select>
 
@@ -223,11 +223,11 @@
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">Add City</h4>
+              <h4 class="modal-title">Add Area</h4>
             </div>
             <div class="modal-body" style="">
              <form method="post" action="<?php base_url();?>location/addcity">
-              <input required type="text" name="city" placeholder="City Name">
+              <input required type="text" name="city" placeholder="Area Name">
               
             </div>
             <div class="modal-footer">
@@ -249,20 +249,20 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Add Locality</h4>
+            <h4 class="modal-title">Add Building</h4>
           </div>
           <div class="modal-body" style="">
            <form method="post" action="<?php echo base_url();?>location/addlocality">
             <select required  name="city_select" style="width: 30%; height:27px">
-              <!-- <option value="NULL">City</option> -->
-              <option value="" disabled selected>Select City</option>
+              <!-- <option value="NULL">Area</option> -->
+              <option value="" disabled selected>Select Area</option>
               <?php if(!empty($city)){foreach ($city as $key => $value) {
           # code...
                 echo"<option value=".$value['id'].">".ucfirst($value['name'])."</option>";}}?>
               </select>
               <br>
               <br>
-              <input required type="text" name="locality" placeholder="Locality Name">
+              <input required type="text" name="locality" placeholder="Building Name">
               <br>
               <br>
               <input required class="timepicker1" type="text" name="service_start" placeholder="Service Start Timing">
@@ -293,8 +293,8 @@
           <div class="modal-body" style="">
            <form method="post" action="<?php echo base_url();?>location/addstreet">
             <select required onchange="get_locality_for_street(this.value)" name="city_select" style="width: 30%; height:27px">
-              <!-- <option value="NULL">City</option> -->
-              <option value="" disabled selected>Select City</option>
+              <!-- <option value="NULL">Area</option> -->
+              <option value="" disabled selected>Select Area</option>
               <?php if(!empty($city)){foreach ($city as $key => $value) {
           
                 echo"<option value=".$value['id'].">".ucfirst($value['name'])."</option>";}}?>
@@ -302,7 +302,7 @@
               <br>
               <br> 
               <select required id="locality_ajax"   name="locality_select" style="width: 30%; height:27px">
-                <option value="" disabled selected> Select Locality</option>
+                <option value="" disabled selected> Select Building</option>
               </select>
               <br>
               <br>

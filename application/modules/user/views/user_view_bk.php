@@ -76,8 +76,8 @@
                 <th>Name</th>
                 <th>Phone Number</th>
                 <th>Email</th>
-                <th>City</th>
-                <th>Locality</th>
+                <th>Area</th>
+                <th>Building</th>
                 <th>Street</th>
                 <th>Number Of Cars</th>
                 <th>Active Cars</th>
